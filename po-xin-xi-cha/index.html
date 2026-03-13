@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sqnuzy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="面向商师 ACM 选手的 XCPC 入门整理，包含竞赛概念、赛事分类、训练建议、常见术语与常用网站">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【打破信息差】商师ACM专供精简版">
+<meta property="og:url" content="https://sqnuzy.github.io/po-xin-xi-cha/index.html">
+<meta property="og:site_name" content="sqnuzy 的算法小站">
+<meta property="og:description" content="面向商师 ACM 选手的 XCPC 入门整理，包含竞赛概念、赛事分类、训练建议、常见术语与常用网站">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://sqnuzy.github.io/po-xin-xi-cha/assets2/1.jpg">
+<meta property="article:published_time" content="2026-03-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-03-13T03:32:41.455Z">
+<meta property="article:author" content="zy">
+<meta property="article:tag" content="算法竞赛">
+<meta property="article:tag" content="XCPC">
+<meta property="article:tag" content="ACM">
+<meta property="article:tag" content="入门指南">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://sqnuzy.github.io/po-xin-xi-cha/assets2/1.jpg">
+
+
+<link rel="canonical" href="https://sqnuzy.github.io/po-xin-xi-cha/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://sqnuzy.github.io/po-xin-xi-cha/","path":"po-xin-xi-cha/","title":"【打破信息差】商师ACM专供精简版"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【打破信息差】商师ACM专供精简版 | sqnuzy 的算法小站</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">sqnuzy 的算法小站</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录算法、比赛与成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%93%E7%A0%B4%E4%BF%A1%E6%81%AF%E5%B7%AE-%E5%95%86%E5%B8%88acm%E4%B8%93%E4%BE%9B-%E7%B2%BE%E7%AE%80%E7%89%88"><span class="nav-number">1.</span> <span class="nav-text">【打破信息差】 (商师ACM专供
+精简版)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%85%E5%89%8D%E9%A1%BB%E7%9F%A5"><span class="nav-number">1.1.</span> <span class="nav-text">阅前须知</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E6%9C%AF%E8%AF%9A%E4%BF%A1"><span class="nav-number">1.2.</span> <span class="nav-text">学术诚信</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AB%9E%E8%B5%9B%E6%A6%82%E5%BF%B5"><span class="nav-number">1.3.</span> <span class="nav-text">竞赛概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#xcpc-icpc-ccpc"><span class="nav-number">1.3.1.</span> <span class="nav-text">XCPC (ICPC &amp; CCPC)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#acm-%E8%B5%9B%E5%88%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">ACM 赛制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#oi%E8%B5%9B%E5%88%B6"><span class="nav-number">1.3.3.</span> <span class="nav-text">OI赛制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%84%E7%B1%BB%E8%B5%9B%E4%BA%8B"><span class="nav-number">1.3.4.</span> <span class="nav-text">各类赛事</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#xcpc-%E6%AF%94%E8%B5%9B%E7%B1%BB%E5%88%AB"><span class="nav-number">1.3.5.</span> <span class="nav-text">XCPC 比赛类别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%9E%E8%B5%9B%E6%97%B6%E9%97%B4%E7%BA%BF%E6%A2%B3%E7%90%86%E4%BE%9D%E7%85%A72025%E8%87%AA%E7%84%B6%E5%B9%B4%E5%AE%9E%E9%99%85%E6%83%85%E5%86%B5%E4%B8%BA%E6%97%B6%E9%97%B4%E7%BA%BF%E6%AF%8F%E5%B9%B4%E7%95%A5%E6%9C%89%E4%B8%8D%E5%90%8C"><span class="nav-number">1.3.6.</span> <span class="nav-text">竞赛时间线梳理（依照2025自然年实际情况为时间线，每年略有不同）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%B7%A5%E5%85%B7"><span class="nav-number">1.4.</span> <span class="nav-text">代码工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E8%AE%AD%E7%BB%83"><span class="nav-number">1.5.</span> <span class="nav-text">关于训练</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%95%99%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.1.</span> <span class="nav-text">请教问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E6%AF%94%E8%B5%9B"><span class="nav-number">1.5.2.</span> <span class="nav-text">推荐比赛</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%BC%9A%E4%BA%A4%E9%99%85"><span class="nav-number">1.5.3.</span> <span class="nav-text">学会交际</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%BD%91%E7%AB%99"><span class="nav-number">1.6.</span> <span class="nav-text">关键网站</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%9C%AF%E8%AF%AD"><span class="nav-number">1.7.</span> <span class="nav-text">常见术语</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%B4%E8%B0%A2"><span class="nav-number">1.8.</span> <span class="nav-text">致谢</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zy"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zy</p>
+  <div class="site-description" itemprop="description">这是我的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">17</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sqnuzy.github.io/po-xin-xi-cha/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sqnuzy 的算法小站">
+      <meta itemprop="description" content="这是我的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【打破信息差】商师ACM专供精简版 | sqnuzy 的算法小站">
+      <meta itemprop="description" content="面向商师 ACM 选手的 XCPC 入门整理，包含竞赛概念、赛事分类、训练建议、常见术语与常用网站">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【打破信息差】商师ACM专供精简版
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-03-13 00:00:00 / 修改时间：11:32:41" itemprop="dateCreated datePublished" datetime="2026-03-13T00:00:00+08:00">2026-03-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AB%9E%E8%B5%9B%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">竞赛入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">面向商师 ACM 选手的 XCPC 入门整理，包含竞赛概念、赛事分类、训练建议、常见术语与常用网站</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="打破信息差-商师acm专供-精简版">【打破信息差】 (商师ACM专供
+精简版)</h1>
+<blockquote>
+<p>祝愿每一位选手都可以在竞赛中享受一份纯粹的快乐。</p>
+</blockquote>
+<p>[TOC]</p>
+<p><strong>参加XCPC能够收获的能力与成长</strong></p>
+<p>全国大学生程序设计竞赛（XCPC）不仅是一项高水平的算法与编程赛事，更是一次全面提升综合素质的机会。通过系统训练与比赛实践，你将收获：</p>
+<ul>
+<li><strong>团队协作与沟通能力</strong><br />
+三人协作的竞赛形式促使成员在任务分配、策略制定、信息交流等方面高效配合。<br />
+</li>
+<li><strong>抗压能力与心理素质</strong><br />
+在高压竞赛环境中锻炼冷静应对挑战的能力，保持专注与稳定发挥。<br />
+</li>
+<li><strong>学术与职业发展的竞争优势</strong><br />
+在国内外学术竞赛、知名企业技术招聘及研究生推免等方面具备显著优势。</li>
+</ul>
+<p>XCPC不仅是一场竞赛，更是促进学生在算法思维、工程实践、协作沟通等多方面全面发展的重要平台。</p>
+<h2 id="阅前须知">阅前须知</h2>
+<p><strong>关于本文</strong></p>
+<p><strong>原作者信息如下，本文结合本校（商师）实际情况做出一些修改，使更加符合本校实际情况</strong></p>
+<p>作者知乎主页：<a
+target="_blank" rel="noopener" href="https://www.zhihu.com/people/resot">Resot</a></p>
+<p>完整版GitHub链接：<a
+target="_blank" rel="noopener" href="https://github.com/NullResot/xcpc">【打破信息差】萌新认识与入门算法竞赛</a></p>
+<p>完整版博客wiki版本：<a
+target="_blank" rel="noopener" href="https://nullresot.github.io/xcpc-wiki/">【打破信息差】萌新认识与入门算法竞赛</a></p>
+<h2 id="学术诚信">学术诚信</h2>
+<p>学术诚信在算法竞赛中更是重中之重，所以我将学术诚信放在了文章的第一个章节。</p>
+<p>在算法竞赛的求索之路上，我们追求卓越的代码与精妙的算法，这固然重要。然而，超越所有荣誉与排名的，是对<strong>学术诚信</strong>的坚定秉持。每一次代码的提交，都应是独立思考的结晶，真实反映自身能力的提升。作弊行为不仅损害了竞赛的公平基石，更是对个人学习机会的自我剥夺。维护这一原则，方能赢得社区的尊重，并为未来的学术与职业生涯奠定坚实基础。</p>
+<h2 id="竞赛概念">竞赛概念</h2>
+<h3 id="xcpc-icpc-ccpc">XCPC (ICPC &amp; CCPC)</h3>
+<p>XCPC 是一个统称，主要指
+<strong>ICPC（国际大学生程序设计竞赛）</strong>和
+<strong>CCPC（中国大学生程序设计竞赛）</strong>。这两个比赛是目前国内顶尖的大学生算法竞赛，难度相对较高，社会认可度高。实际上大家日常所说的ACM即ACM-ICPC，CCPC是由中国大学生程序设计竞赛组委会组织举办的与<strong>ICPC</strong>赛制、参赛选手几乎一致的比赛。因此统称为XCPC，在难度含金量各方面几乎也划等号。</p>
+<p><strong>赛制特点：</strong> XCPC
+采用<strong>三人团队协作</strong>的赛制。一个队伍通常使用一台电脑，需要在
+5 个小时内解决 10-13 道题目（目前大多比赛为13题）。比赛采用 <strong>ACM
+赛制</strong>。</p>
+<h3 id="acm-赛制">ACM 赛制</h3>
+<p>每道题目只有零分与满分两种情况。</p>
+<p>选手可以多次提交代码并获得<strong>实时评测</strong>反馈。如果评测未通过，将获得相应惩罚，例如在
+XCPC 比赛中会增加 20 分钟的罚时。</p>
+<p>比赛实时更新排名。排名首先依据<strong>题目得分</strong>高低，得分越高排名越靠前。如果得分相同，则依据<strong>罚时</strong>高低，罚时越少排名越靠前。</p>
+<h3 id="oi赛制">OI赛制</h3>
+<p>OI赛制有点像高中参加过的各类考试，你提交之后并不会给你反馈，只有在比赛结束之后你才能知道你的分数。在大家所能参加的比赛之中，仅有蓝桥杯为OI赛制，此处不做过多介绍。</p>
+<h3 id="各类赛事">各类赛事</h3>
+<p>由于算法类竞赛是各大高效及企业筛选人才的一个有利手段，因此也有各类竞赛与XCPC所考内容几乎一致均为程序设计与算法比赛，此处一并列出但只做简单介绍，详细介绍可以通过搜索引擎得知。</p>
+<h4 id="xcpc">XCPC</h4>
+<p>重中之重，下面单独列出并详细介绍。</p>
+<h4 id="蓝桥杯oi赛制">蓝桥杯（OI赛制）</h4>
+<p>普及性较强，许多没有系统学习过算法的人也会参加，因此难度较低。我们通常参加的类别是<strong>软件赛</strong>。比赛从学校层次分为A组（985/211只能报名A组），B组（非985/211高校可报），C组（仅专科）以及按照语言分为C/C++组，java组，python组，因此就有了C++B组，javaA组等多个组别，简称为CB组，JA组。</p>
+<p>蓝桥杯省赛通常在每年的 <strong>四月</strong> 举行，国赛则在
+<strong>六月</strong> 举行。</p>
+<ul>
+<li><strong>省赛</strong> 我校有赛点，在三商楼举行。</li>
+<li><strong>国赛</strong>
+一般在每个省的一两个赛点学校线下进行。国赛成绩公布较快，通常在一两天至一周内。国赛选手会获赠蓝桥杯T恤，国赛一等奖获得者还将有额外礼品。</li>
+</ul>
+<p>省赛获奖比例为：10%一等奖（晋级国赛），20%二等奖，30%三等奖，40%优秀奖。每个组别独立评奖。即CB，JA等等组别各自评奖。</p>
+<p>国赛获奖比例为：5%一等奖，20%二等奖，35%三等奖，40%优秀奖。</p>
+<p>选手可以向上报名但不可向下报名。例如B组可以报名B组和A组，C组可以报A,B,C三个组别。</p>
+<h4 id="团体程序设计天梯赛">团体程序设计天梯赛</h4>
+<p>简称为天梯赛，采用IOI赛制，十人一队。该比赛较特殊，赛制与获奖规则均与其他比赛不同，此处不做过多介绍，大家知道有此项赛事即可。通常举行时间也在四月。</p>
+<h4 id="百度之星">百度之星</h4>
+<p>百度之星程序设计大赛是一项具有较高知名度和影响力的算法竞赛，其赛制特点使其成为衡量选手个人编程竞技水平的重要平台之一。</p>
+<p><strong>赛制特点：</strong>
+百度之星采用<strong>个人ACM赛制</strong>，比赛时长通常为<strong>三个小时</strong>。这意味着选手需在规定时间内独立完成题目，并遵循ACM赛制规则，如实时反馈、无部分分、以及累计罚时等。</p>
+<p>个人ACM赛制的特点，百度之星能够相对直观地<strong>体现参赛选手的个人竞赛水平</strong>，是检验和提升个人算法能力的重要舞台。但难度相比蓝桥杯较高且认可度又不如XCPC，因此目前不统一组织参赛。</p>
+<p><strong>此外还有码蹄杯，传智杯等与上述比赛相比规模较小的比赛此处不再列出。</strong></p>
+<h3 id="xcpc-比赛类别">XCPC 比赛类别</h3>
+<p>从竞赛的普遍含金量和竞技水平角度来看，通常遵循以下层级关系：</p>
+<p><strong>省赛 &lt; 邀请赛 ≪ 区域赛</strong></p>
+<p>河南省赛分为ICPC与CCPC两场赛事，通常在4月<sub>6月举行，多为4月</sub>5月。赛程为两天，普遍第一天下午为热身赛，第二天九点到下午两点为正式赛。会设置一小时封榜环节，即最后一小时将无法从排行榜的得知其余队伍是否提交通过，只能得知其余队伍是否提交。正式赛结束后会进行现场滚榜，颁奖环节。</p>
+<p>####ICPC省赛</p>
+<p>ICPC省赛由各大高校轮流举办，2024年由<strong>我校承办</strong>，2025年由周口师范学院承办，2026年将由<strong>许昌学院</strong>承办。且ICPC省赛与CCPC省赛会相互避开，并会避开蓝桥杯等大型赛事。2024年我校承办时由于时间实在错不开选择了周日和周一两天举行。</p>
+<h4 id="ccpc省赛">CCPC省赛</h4>
+<p>由<strong>郑州轻工业大学</strong>承办，几乎年年如此，2025年较特殊由郑州轻工业大学与黄河科技学院联办，且赛场在黄河科技学院。</p>
+<h4 id="全国邀请赛">全国邀请赛</h4>
+<p>也多在4月~5月举行，场次不固定，在2025年有ICPC西安邀请赛，ICPC武汉邀请赛，CCPC郑州邀请赛（与省赛联办，即河南高校同时参与两个榜单，可以同时获得两块奖牌）等等，需要由学生教练在教练群获取消息。难度比省赛高且多在省外，并且有名额限制。</p>
+<h4 id="网络赛">网络赛</h4>
+<p>用于获取区域赛名额，线上举行，网络赛本身无名额限制，因此一般参赛院校与队伍数都较多。</p>
+<h4 id="区域赛">区域赛</h4>
+<p>ICPC亚洲区域赛简称，由于CCPC是中国大学生程序设计竞赛，因此只有国赛，但实际上ICPC区域赛与CCPC国赛的参赛选手和规模几乎一样。一般情况下在10月~12月举行。</p>
+<p>你可能会好奇，全国邀请赛和CCPC国赛有什么区别？不都是全国级别吗？事实上由于<strong>全国邀请赛</strong>的参赛选手与规模与区域赛有别，因此部分竞赛强校区分比较严格，并不认为邀请赛是国家级赛事，且邀请赛含金量也不如区域赛。在我校评级角度来看不进行区分，均为全国级别赛事，但实质上含金量相差较大。</p>
+<p><strong>因此大家应以区域赛获奖作为终极目标</strong></p>
+<p><strong>此外</strong>，在更高层级还存在
+<strong>CCPCF（CCPC总决赛）</strong>、<strong>ECF（亚洲区总决赛，如ICPC亚洲区决赛）</strong>、以及全球最高级别的
+<strong>WF（ICPC世界总决赛）</strong>
+等赛事。这些比赛通常面向顶尖队伍，与我校的直接关联度较低😭。但也不否认你们当中可能产生这样的选手。</p>
+<h3
+id="竞赛时间线梳理依照2025自然年实际情况为时间线每年略有不同">竞赛时间线梳理（依照2025自然年实际情况为时间线，每年略有不同）</h3>
+<p><strong>自然年的上半年为大部分赛事的密集时间</strong>，下半年则多为区域赛（ICPC区域赛和CCPC国赛）。</p>
+<p>3月2日：传智杯省赛</p>
+<p><strong>4月12日：蓝桥杯省赛</strong></p>
+<p><strong>4月20日：天梯赛</strong></p>
+<p><strong>4月27日：我校校赛（一年一度，尽可能还原XCPC比赛，发放气球）</strong></p>
+<p><strong>5月18日：ICPC省赛</strong></p>
+<p><strong>6月2日：CCPC省赛</strong></p>
+<p><strong>6月15日：蓝桥杯国赛</strong></p>
+<p>6月29日：百度之星第一场</p>
+<p>7月6日：码蹄杯本科组省赛</p>
+<figure>
+<img src="assets2/1.jpg" alt="区域赛时间" />
+<figcaption aria-hidden="true">区域赛时间</figcaption>
+</figure>
+<p><strong>注</strong>：上述标黑为统一组织参赛，其余每年有差别，按照实际情况。邀请赛和其余例如CCSP，全国计算机挑战赛等等过于繁杂不再列出。</p>
+<h2 id="代码工具">代码工具</h2>
+<p>实际上算法竞赛中对工具的要求极低，甚至一些网页的在线代码运行都足够了。</p>
+<p>此处推荐devc++以及小熊猫。虽然devc++为人诟病，但下载即用。小熊猫c++也是不错的选择。</p>
+<p>在正式比赛时有可能采用linux系统没有devc++或者单纯的不提供这两样工具，赛前会由学长学姐提醒。</p>
+<h2 id="关于训练">关于训练</h2>
+<p>对于除语法入门外的大多数阶段，总结为一句话：<strong>大量的去刷难度略高于自己能力的题目</strong>。</p>
+<h3 id="请教问题">请教问题</h3>
+<p>简单来说：</p>
+<ul>
+<li><p>要有礼貌，毕竟没有任何一个群友有免费解答的义务。</p></li>
+<li><p>描述好自己的需求，是完全不懂思路，还是不理解某个部分的推到或是其他情况，请不要甩了个题目链接和代码就不说话了。</p></li>
+<li><p>在问问题时群友可能会要看你的代码来找bug，这个时候请不要直接把代码发到群里，首先会对群聊产生刷屏影响，其次有些大佬是用手机在帮忙找bug的，会非常不方便。所以正确的做法是去找云剪贴板，将代码粘贴到云剪贴板后生成链接，然后发送链接即可（可见本文章节
+关键网站-洛谷-云剪贴板 部分）。</p></li>
+<li><p>并且一定要自己做过尽可能地尝试后再去请教问题，不要随便想了一下感觉不会就去问，无论是对自己的训练还是对群友的时间都是不好的影响。</p></li>
+</ul>
+<h3 id="推荐比赛">推荐比赛</h3>
+<p>对于初入竞赛的选手们我推荐打以下比赛，并且赛后补题进行学习（除非ak，否则不补题相当于白打）</p>
+<ol type="1">
+<li><a target="_blank" rel="noopener" href="https://codeforces.com/contests">Codeforces div2/3/4</a>
+不定期举办，一般时间是22：35</li>
+<li><a target="_blank" rel="noopener" href="https://atcoder.jp/contests">Atcoder Beginner Contest</a>
+每周六20：00-21：40</li>
+<li><a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/vip-index">牛客周赛/月赛</a>
+周赛每周日19：00-21：00；月赛一般每隔两周的周五19：00-21：00</li>
+</ol>
+<h3 id="学会交际">学会交际</h3>
+<p>算法竞赛的圈子其实很小，很多时候都是一群相同的人在不同的群里聊天。</p>
+<p>在算法竞赛中交际非常重要，自己写一道题可能要研究两三天（其实并不算罕见现象），而去向群友请教的话有可能一句话就能让你开悟理解这道题的思想。</p>
+<p>也可以喊上几个人一起vp，比自己单独vp会更有意思。</p>
+<p>另外推荐给自己取一个简短的id，也方便群友记住你。</p>
+<h2 id="关键网站">关键网站</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>网站</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a
+target="_blank" rel="noopener" href="https://codeforces.com/contests">codeforces.com/contests</a></td>
+<td>简称cf。全球最活跃的算法竞赛平台 Codeforces
+，也是目前算法竞赛训练的主要平台。</td>
+</tr>
+<tr>
+<td><a
+target="_blank" rel="noopener" href="https://cftracker.netlify.app/contests">cftracker.netlify.app/contests</a></td>
+<td>Codeforces 已经举办过的比赛可视化追踪器，可以直观地看到自己做过哪些题与题目对应的难度。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://www.luogu.com.cn/">luogu.com.cn</a></td>
+<td>国内大型 OI/XCPC
+社区与题库，支持同步多平台题目与刷题统计，配有高质量文章区。</td>
+</tr>
+<tr>
+<td><a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/vip-index">ac.nowcoder.com/acm/contest/vip-index</a></td>
+<td>牛客网竞赛中心，提供每周有周赛/月赛/练习赛/挑战赛，假期会有寒假训练营与暑假多校。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://board.xcpcio.com/">xcpcboard</a></td>
+<td>xcpcboard是一个用于展示XCPC（中国大学生程序设计竞赛）实时排行榜的平台。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://cpcfinder.com/">cpcfinder</a></td>
+<td>由代码源开发，可以通过姓名/学校来查询个人/学校的获奖情况。</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://atcoder.jp/contests">atcoder.jp/contests</a></td>
+<td>日本 AtCoder 官方比赛列表，每周六/日会有ABC,
+ARC比赛等。同样是全球知名算法竞赛平台。ABC是训练的重要比赛之一。</td>
+</tr>
+<tr>
+<td><a
+target="_blank" rel="noopener" href="https://kenkoooo.com/atcoder#/table">kenkoooo.com/atcoder#/table</a></td>
+<td>AtCoder
+题目难度与个人进度可视化工具，可以直观地看到自己做过哪些题与题目对应的难度。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="常见术语">常见术语</h2>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 40%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>缩写</th>
+<th>全称（中文）</th>
+<th>简要说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>ACM</strong></td>
+<td>Association for Computing Machinery（美国计算机协会）</td>
+<td>国际计算机领域最悠久的专业组织之一。早期 ICPC 以“ACM‑ICPC”冠名，因此“ACM”在华语社区常作为 ICPC 的口语简称。2018 年起 ICPC
+独立运营，但“ACM”一词仍沿用。</td>
+</tr>
+<tr>
+<td><strong>ICPC</strong></td>
+<td>International Collegiate Programming
+Contest（国际大学生程序设计竞赛）</td>
+<td>面向在校本科生/研究生的团队式编程竞赛，被视为大学阶段最高级别赛事。区域赛（Regional）、全球总决赛（World
+Finals）两级赛制，三人一队，共用一台电脑，五小时内解题。</td>
+</tr>
+<tr>
+<td><strong>CCPC</strong></td>
+<td>China Collegiate Programming Contest（中国大学生程序设计竞赛）</td>
+<td>由中国高校计算机教育研究会主办的年度性大学生程序设计竞赛。旨在提高中国大学生的程序设计能力和计算机应用水平，是国内规模最大、影响力最广的大学生程序设计赛事之一。其赛事组织形式与ACM/ICPC相似。</td>
+</tr>
+<tr>
+<td><strong>CF</strong></td>
+<td><strong>Codeforces</strong></td>
+<td>俄罗斯团队运营的在线评测与竞赛平台，以“Rating”体系闻名。常见赛事有
+Round、Div.1/2/3、Educational Round
+等，赛后可即时看到排名与官方题解。</td>
+</tr>
+<tr>
+<td><strong>AC / WA / TLE …</strong></td>
+<td>Accepted / Wrong Answer / Time Limit Exceeded 等判题结果</td>
+<td>在线评测返回的常见状态码：AC 表示通过全部测试点；WA 输出错误；TLE
+超时；MLE 超内存；RE 运行期错误；CE 编译错误等。</td>
+</tr>
+<tr>
+<td><strong>OJ</strong></td>
+<td>Online Judge（在线评测系统）</td>
+<td>一种自动化系统，用于接收、编译、运行参赛者提交的程序代码，并根据预设的测试数据和评测标准（如正确性、运行时间、内存占用）给出评测结果。它是算法竞赛的核心平台。</td>
+</tr>
+<tr>
+<td><strong>IOI</strong></td>
+<td>International Olympiad in Informatics（国际信息学奥林匹克）</td>
+<td>面向全球中学生的信息学竞赛，旨在发掘、鼓励和表彰世界各地在信息学方面有才能的青少年。通常侧重于算法设计、数据结构和数学思维。</td>
+</tr>
+<tr>
+<td><strong>NOI</strong></td>
+<td>National Olympiad in
+Informatics（中国全国青少年信息学奥林匹克竞赛）</td>
+<td>中国国内最高水平的青少年信息学竞赛。由中国计算机学会 (CCF)
+主办，旨在选拔和培养优秀的计算机人才，并组建中国国家队参加IOI。</td>
+</tr>
+<tr>
+<td><strong>IDE</strong></td>
+<td>Integrated Development Environment（集成开发环境）</td>
+<td>软件开发中用于提供程序开发环境的应用程序。它通常包括源代码编辑器、编译器/解释器、调试器和构建自动化工具。在算法竞赛中，选手可以使用IDE编写、调试和测试代码。</td>
+</tr>
+</tbody>
+</table>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr>
+<th>黑话</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ap</td>
+<td>a批，泛指打算法竞赛的选手。</td>
+</tr>
+<tr>
+<td>xcpc</td>
+<td>icpc和ccpc的统称。</td>
+</tr>
+<tr>
+<td>封榜</td>
+<td>一些赛事会在比赛结束前一个小时封榜，即榜单会停滞在结束前一个小时的状态。</td>
+</tr>
+<tr>
+<td>滚榜</td>
+<td>因为封榜的存在所以大家无法直接得知最终排名，会在比赛结束后开滚榜环节，从后到前依次公布最终排名。</td>
+</tr>
+<tr>
+<td>vp</td>
+<td>virtual participation，打一场在之前已经举办过的比赛。</td>
+</tr>
+<tr>
+<td>对拍</td>
+<td>一种程序，很多时候不确定自己写的符合时空复杂度的代码是否正确，但是可以写出来一个复杂度爆炸但是绝对正确的暴力代码，对拍程序可以实现生成若干随机数据，然后比较两个程序在随机数据下是否输出答案一致，常见于oi类比赛。</td>
+</tr>
+<tr>
+<td>hack</td>
+<td>有时候虽然写了错误代码，但是侥幸通过了所有测试点，但是其他选手可以自己造数据来让你的代码无法通过题目，同时也是cf的特性之一。</td>
+</tr>
+<tr>
+<td>fst</td>
+<td>failed system
+testing，cf的大多数比赛在赛时只评测一小部分的测试点，在赛后会统一评测所有的测试点，所以会有赛时通过了题目赛后发现其实没过的情况，这就称为fst。</td>
+</tr>
+<tr>
+<td>spj</td>
+<td>special judge，题目的评测方式，例如有些题目必须输出 <code>YES</code>
+才能判断为正确，而对于spj无论 <code>YES</code> <code>yes</code>
+<code>yEs</code>
+等都可以判断为正确，如果题目是spj的话一般会在题目的输出格式中说明。</td>
+</tr>
+<tr>
+<td>ak</td>
+<td>表示这场比赛的所有题目全部拿到满分。</td>
+</tr>
+<tr>
+<td>rp++</td>
+<td>人品加一，用于表示祝福。</td>
+</tr>
+<tr>
+<td>bx</td>
+<td>拜谢 的简写。</td>
+</tr>
+<tr>
+<td>orz/or2</td>
+<td>orz看起来像一个人认输跪倒在地，or2的屁股更翘。</td>
+</tr>
+<tr>
+<td>tql</td>
+<td>太强了 的简写。</td>
+</tr>
+<tr>
+<td>%/膜</td>
+<td>膜拜 的简写。</td>
+</tr>
+<tr>
+<td>n+1,n+2</td>
+<td>一般指一场比赛中自己做出了n道题，另一个人比自己多做出来1/2道题，就可以说被这个人n
++ 1/2了</td>
+</tr>
+<tr>
+<td>吧唧</td>
+<td>可以简单的理解为是以自己qq头像为样式的徽章，可以去定制这样的徽章后，在比赛赛场面基熟悉的群友时分发出去。</td>
+</tr>
+</tbody>
+</table>
+<h2 id="致谢">致谢</h2>
+<p><strong>以下致谢均来自原文，未做修改</strong></p>
+<p>向所有通过 [提交 Issue / 提交 PR / 提出建议]
+等方式为本项目做出贡献的选手表示衷心感谢。正是有了大家的参与和支持，文章才能不断完善与进步。</p>
+<p>特别鸣谢四位审阅老师：<strong>Silencer76老师</strong>、<strong>Qingyu老师</strong>、<strong>Chenzhe老师</strong>和<strong>Temp老师</strong>。感谢各位老师抽出时间提供了专业且细致的审核意见。</p>
+<p>特别鸣谢<strong>PHarr老师</strong>，感谢PHarr老师为博客建立了一个Wiki版本，使得大家可以更方便的查阅本文内容。</p>
+<p>衷心感谢<strong>XCPC萌新互助进步群2群</strong>的群友们，在文章撰写过程中帮忙提供了非常多的idea，并且热心地帮助我找出了许多bug。感谢群友的鼎力支持，才让这篇文章得以不断完善和提升。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/" rel="tag"># 算法竞赛</a>
+              <a href="/tags/XCPC/" rel="tag"># XCPC</a>
+              <a href="/tags/ACM/" rel="tag"># ACM</a>
+              <a href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" rel="tag"># 入门指南</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/duipai/" rel="prev" title="对拍">
+                  <i class="fa fa-angle-left"></i> 对拍
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

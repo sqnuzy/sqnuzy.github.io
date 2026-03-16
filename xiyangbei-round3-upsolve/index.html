@@ -27,7 +27,7 @@
 <meta property="og:description" content="小羊杯 Round 3 的赛后补题记录与题解总结">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-03-15T14:30:00.000Z">
-<meta property="article:modified_time" content="2026-03-16T07:00:37.412Z">
+<meta property="article:modified_time" content="2026-03-16T07:03:46.009Z">
 <meta property="article:author" content="zy">
 <meta property="article:tag" content="算法竞赛">
 <meta property="article:tag" content="补题">
@@ -260,7 +260,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2026-03-16 15:00:37" itemprop="dateModified" datetime="2026-03-16T15:00:37+08:00">2026-03-16</time>
+      <time title="修改时间：2026-03-16 15:03:46" itemprop="dateModified" datetime="2026-03-16T15:03:46+08:00">2026-03-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -301,42 +301,7 @@ Round 3_ACM/NOI/CSP/CCPC/ICPC算法编程高难度练习赛_牛客竞赛OJ</a></
 <h3 id="易错点">易错点</h3>
 <p>在修改字典树的前缀题中，根需要从1开始，否则会有误判的错误，同时每次查询的时候要从当前根开始</p>
 <h3 id="代码">代码</h3>
-<p>```cpp #include &lt;bits/stdc++.h&gt; using namespace std;</p>
-<p>using ll = long long;</p>
-<p>const int N = 1500000 + 10; const int SIGMA = 26;</p>
-<p>int to[N][SIGMA], cnt[N], idx; int root, tot;</p>
-<p>int id(char c) { return c - ‘a’; }</p>
-<p>void init() { for (int i = 0; i &lt;= idx; i++) { cnt[i] = 0; for
-(int j = 0; j &lt; SIGMA; j++) to[i][j] = 0; } idx = 1; root = 1; tot =
-0; }</p>
-<p>void add(char ch) { if (tot == 0) return; int u = id(ch); ++idx;
-to[idx][u] = root; cnt[idx] = cnt[root]; root = idx; }</p>
-<p>void insert(const string &amp;s) { int p = root; tot++; cnt[p]++; for
-(char c : s) { int u = id(c); if (!to[p][u]) to[p][u] = ++idx; p =
-to[p][u]; cnt[p]++; } }</p>
-<p>ll query(const string &amp;s) { int p = root; ll ans = 0; for (char c
-: s) { int u = id(c); if (!to[p][u]) break; p = to[p][u]; ans += cnt[p];
-} return ans; }</p>
-<p>void solve() { init();</p>
-<pre><code>int q;
-cin &gt;&gt; q;
-while (q--) &#123;
-    int op;
-    string s;
-    cin &gt;&gt; op &gt;&gt; s;
-    if (op == 1) &#123;
-        add(s[0]);
-    &#125; else if (op == 2) &#123;
-        reverse(s.begin(), s.end());
-        insert(s);
-    &#125; else &#123;
-        reverse(s.begin(), s.end());
-        cout &lt;&lt; query(s) &lt;&lt; &quot;\n&quot;;
-    &#125;
-&#125;</code></pre>
-<p>}</p>
-<p>int main() { ios::sync_with_stdio(false); cin.tie(0); init(); int _T
-= 1; // cin &gt;&gt; _T; while (_T–) solve(); return 0; }</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1500000</span> + <span class="number">10</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> SIGMA = <span class="number">26</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> to[N][SIGMA], cnt[N], idx;</span><br><span class="line"><span class="type">int</span> root, tot;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">id</span><span class="params">(<span class="type">char</span> c)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> c - <span class="string">&#x27;a&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">init</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= idx; i++) &#123;</span><br><span class="line">        cnt[i] = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; SIGMA; j++) to[i][j] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    idx = <span class="number">1</span>;</span><br><span class="line">    root = <span class="number">1</span>;</span><br><span class="line">    tot = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">add</span><span class="params">(<span class="type">char</span> ch)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tot == <span class="number">0</span>) <span class="keyword">return</span>;</span><br><span class="line">    <span class="type">int</span> u = <span class="built_in">id</span>(ch);</span><br><span class="line">    ++idx;</span><br><span class="line">    to[idx][u] = root;</span><br><span class="line">    cnt[idx] = cnt[root];</span><br><span class="line">    root = idx;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">insert</span><span class="params">(<span class="type">const</span> string &amp;s)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> p = root;</span><br><span class="line">    tot++;</span><br><span class="line">    cnt[p]++;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">        <span class="type">int</span> u = <span class="built_in">id</span>(c);</span><br><span class="line">        <span class="keyword">if</span> (!to[p][u]) to[p][u] = ++idx;</span><br><span class="line">        p = to[p][u];</span><br><span class="line">        cnt[p]++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">ll <span class="title">query</span><span class="params">(<span class="type">const</span> string &amp;s)</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> p = root;</span><br><span class="line">    ll ans = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">char</span> c : s) &#123;</span><br><span class="line">        <span class="type">int</span> u = <span class="built_in">id</span>(c);</span><br><span class="line">        <span class="keyword">if</span> (!to[p][u]) <span class="keyword">break</span>;</span><br><span class="line">        p = to[p][u];</span><br><span class="line">        ans += cnt[p];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> ans;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">init</span>();</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> q;</span><br><span class="line">    cin &gt;&gt; q;</span><br><span class="line">    <span class="keyword">while</span> (q--) &#123;</span><br><span class="line">        <span class="type">int</span> op;</span><br><span class="line">        string s;</span><br><span class="line">        cin &gt;&gt; op &gt;&gt; s;</span><br><span class="line">        <span class="keyword">if</span> (op == <span class="number">1</span>) &#123;</span><br><span class="line">            <span class="built_in">add</span>(s[<span class="number">0</span>]);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (op == <span class="number">2</span>) &#123;</span><br><span class="line">            <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line">            <span class="built_in">insert</span>(s);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="built_in">reverse</span>(s.<span class="built_in">begin</span>(), s.<span class="built_in">end</span>());</span><br><span class="line">            cout &lt;&lt; <span class="built_in">query</span>(s) &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">	cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="built_in">init</span>();</span><br><span class="line">	<span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//	cin &gt;&gt; _T;</span></span><br><span class="line">	<span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -356,8 +321,8 @@ while (q--) &#123;
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/po-xin-xi-cha/" rel="prev" title="【打破信息差】商师ACM专供精简版">
-                  <i class="fa fa-angle-left"></i> 【打破信息差】商师ACM专供精简版
+                <a href="/duipai/" rel="prev" title="对拍">
+                  <i class="fa fa-angle-left"></i> 对拍
                 </a>
             </div>
             <div class="post-nav-item">

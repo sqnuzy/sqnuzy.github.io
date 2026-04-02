@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sqnuzy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="待办清单        * { box-sizing: border-box; margin: 0; padding: 0; }     body {       font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, sans-">
+<meta property="og:type" content="website">
+<meta property="og:title" content="sqnuzy 的算法小站">
+<meta property="og:url" content="https://sqnuzy.github.io/todo/index.html">
+<meta property="og:site_name" content="sqnuzy 的算法小站">
+<meta property="og:description" content="待办清单        * { box-sizing: border-box; margin: 0; padding: 0; }     body {       font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;PingFang SC&quot;, &quot;Microsoft YaHei&quot;, sans-">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-02T02:33:23.176Z">
+<meta property="article:modified_time" content="2026-04-02T02:33:23.176Z">
+<meta property="article:author" content="zy">
+<meta property="article:tag" content="博客,算法,学习">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sqnuzy.github.io/todo/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":true,"permalink":"https://sqnuzy.github.io/todo/index.html","path":"todo/index.html","title":""}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title> | sqnuzy 的算法小站
+</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">sqnuzy 的算法小站</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录算法、比赛与成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-待办"><a href="/todo/" rel="section"><i class="fa fa-check-square fa-fw"></i>待办</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text">待办清单</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zy"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zy</p>
+  <div class="site-description" itemprop="description">这是我的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="zh-CN"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">
+</h1>
+
+<div class="post-meta-container">
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>待办清单</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: #f7f7f7;
+      color: #333;
+      padding: 30px 15px;
+    }
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 28px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .add-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .add-form input[type="text"] {
+      flex: 1;
+      min-width: 220px;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .add-form select,
+    .add-form input[type="date"],
+    .add-form input[type="time"] {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      background: #fff;
+    }
+    .add-form button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #222;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .add-form button:hover {
+      background: #444;
+    }
+    .options-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+      align-items: center;
+    }
+    .sort-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .sort-bar button {
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      background: #fff;
+      cursor: pointer;
+    }
+    .sort-bar button.active {
+      background: #222;
+      color: #fff;
+      border-color: #222;
+    }
+    .task-list {
+      list-style: none;
+    }
+    .task-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+      flex-wrap: wrap;
+    }
+    .status-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      font-size: 12px;
+      line-height: 1;
+    }
+    .status-btn.todo { border-color: #ccc; }
+    .status-btn.doing { border-color: #fb8c00; background: #fb8c00; color: #fff; }
+    .status-btn.done { border-color: #43a047; background: #43a047; color: #fff; }
+
+    .priority-tag {
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .p0 { background: #e53935; }
+    .p1 { background: #fb8c00; }
+    .p2 { background: #1e88e5; }
+    .p3 { background: #8e8e8e; }
+    .p4 { background: #bdbdbd; }
+
+    .task-title {
+      flex: 1;
+      min-width: 180px;
+      word-break: break-all;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    .task-item.done .task-title {
+      text-decoration: line-through;
+      color: #aaa;
+    }
+    .task-item.doing .task-title {
+      color: #e65100;
+    }
+
+    .task-title-input,
+    .progress-input {
+      padding: 4px 8px;
+      border: 1px solid #1e88e5;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+    }
+    .task-title-input {
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .task-meta,
+    .progress-note,
+    .recurrence-tag {
+      font-size: 12px;
+      flex-shrink: 0;
+    }
+    .task-meta {
+      color: #777;
+      cursor: pointer;
+    }
+    .task-meta:hover {
+      color: #1e88e5;
+    }
+    .progress-note {
+      color: #fb8c00;
+      cursor: pointer;
+      word-break: break-all;
+    }
+    .recurrence-tag {
+      color: #7b1fa2;
+      background: #f3e5f5;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+    .delete-btn {
+      border: none;
+      background: none;
+      color: #bbb;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+    .delete-btn:hover {
+      color: #e53935;
+    }
+    .empty-msg {
+      text-align: center;
+      color: #aaa;
+      padding: 24px 0;
+    }
+
+    .meta-edit {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+    .meta-edit select,
+    .meta-edit input,
+    .meta-edit button {
+      font-size: 12px;
+      padding: 4px 6px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: #fff;
+    }
+    .meta-edit button {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>待办清单</h1>
+
+    <div class="add-form">
+      <input type="text" id="titleInput" placeholder="添加新任务..." />
+      <select id="priorityInput">
+        <option value="0">P0</option>
+        <option value="1">P1</option>
+        <option value="2" selected>P2</option>
+        <option value="3">P3</option>
+        <option value="4">P4</option>
+      </select>
+      <input type="date" id="dateInput" />
+      <input type="time" id="timeInput" />
+      <button onclick="addTask()">添加</button>
+    </div>
+
+    <div class="options-row">
+      <select id="taskTypeInput" onchange="toggleTaskType()">
+        <option value="normal">普通任务</option>
+        <option value="longterm">长期任务</option>
+        <option value="recurring">周期任务</option>
+      </select>
+
+      <span id="recurrenceOptions" style="display:none; gap:6px; align-items:center;">
+        <select id="recurrenceType" onchange="toggleRecurrenceType()">
+          <option value="daily">每天</option>
+          <option value="weekly" selected>每周</option>
+          <option value="monthly">每月</option>
+        </select>
+        <select id="recurrenceDay">
+          <option value="1">周一</option>
+          <option value="2">周二</option>
+          <option value="3">周三</option>
+          <option value="4">周四</option>
+          <option value="5" selected>周五</option>
+          <option value="6">周六</option>
+          <option value="0">周日</option>
+        </select>
+      </span>
+    </div>
+
+    <div class="sort-bar">
+      <button id="sortPriority" class="active" onclick="setSortMode('priority')">按优先级</button>
+      <button id="sortTime" onclick="setSortMode('time')">按时间</button>
+    </div>
+
+    <ul class="task-list" id="taskList"></ul>
+  </div>
+
+  <script>
+    let tasks = [];
+    let sortMode = 'priority';
+    const STORAGE_KEY = 'sqnuzy_blog_todo_tasks';
+
+    function loadTasks() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        tasks = raw ? JSON.parse(raw) : [];
+      } catch (e) {
+        tasks = [];
+      }
+      render();
+    }
+
+    function saveTasks() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    }
+
+    function toggleTaskType() {
+      const type = document.getElementById('taskTypeInput').value;
+      const showDate = type === 'normal';
+      const showRecurrence = type === 'recurring';
+      document.getElementById('dateInput').style.display = showDate ? '' : 'none';
+      document.getElementById('timeInput').style.display = showDate ? '' : 'none';
+      document.getElementById('recurrenceOptions').style.display = showRecurrence ? 'flex' : 'none';
+      if (showRecurrence) toggleRecurrenceType();
+    }
+
+    function toggleRecurrenceType() {
+      const rType = document.getElementById('recurrenceType').value;
+      const daySelect = document.getElementById('recurrenceDay');
+      if (rType === 'daily') {
+        daySelect.style.display = 'none';
+      } else {
+        daySelect.style.display = '';
+        daySelect.innerHTML = rType === 'weekly'
+          ? '<option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5" selected>周五</option><option value="6">周六</option><option value="0">周日</option>'
+          : Array.from({length:31}, (_,i) => `<option value="${i+1}">${i+1}号</option>`).join('');
+      }
+    }
+
+    function formatDate(d) {
+      return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function getNextRecurrenceDate(recurrence, recurrenceDay) {
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      if (recurrence === 'daily') {
+        return formatDate(today);
+      } else if (recurrence === 'weekly') {
+        const day = parseInt(recurrenceDay);
+        const curr = today.getDay();
+        let diff = day - curr;
+        if (diff <= 0) diff += 7;
+        const next = new Date(today);
+        next.setDate(next.getDate() + diff);
+        return formatDate(next);
+      } else if (recurrence === 'monthly') {
+        const d = parseInt(recurrenceDay);
+        let next = new Date(today.getFullYear(), today.getMonth(), d);
+        if (next <= today) next = new Date(today.getFullYear(), today.getMonth() + 1, d);
+        return formatDate(next);
+      }
+      return null;
+    }
+
+    function advanceRecurrenceDate(t) {
+      const base = t.date ? new Date(t.date + 'T00:00:00') : new Date();
+      base.setHours(0,0,0,0);
+      if (t.recurrence === 'daily') {
+        base.setDate(base.getDate() + 1);
+      } else if (t.recurrence === 'weekly') {
+        base.setDate(base.getDate() + 7);
+      } else if (t.recurrence === 'monthly') {
+        base.setMonth(base.getMonth() + 1);
+      }
+      t.date = formatDate(base);
+    }
+
+    function addTask() {
+      const title = document.getElementById('titleInput').value.trim();
+      if (!title) return;
+
+      const taskType = document.getElementById('taskTypeInput').value;
+      const isLongTerm = taskType === 'longterm';
+      const isRecurring = taskType === 'recurring';
+      const recurrence = isRecurring ? document.getElementById('recurrenceType').value : 'none';
+      const recurrenceDay = isRecurring ? document.getElementById('recurrenceDay').value : null;
+
+      let date = null, time = null;
+      if (isRecurring) {
+        date = getNextRecurrenceDate(recurrence, recurrenceDay);
+      } else if (!isLongTerm) {
+        date = document.getElementById('dateInput').value || null;
+        time = document.getElementById('timeInput').value || null;
+      }
+
+      const task = {
+        id: Date.now().toString(36) + Math.random().toString(36).slice(2),
+        title,
+        priority: parseInt(document.getElementById('priorityInput').value),
+        date,
+        time,
+        is_long_term: isLongTerm,
+        recurrence,
+        recurrence_day: recurrenceDay,
+        status: 'todo',
+        progress: '',
+        created_at: new Date().toISOString()
+      };
+
+      tasks.push(task);
+      document.getElementById('titleInput').value = '';
+      saveTasks();
+      render();
+    }
+
+    function cycleStatus(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      const order = ['todo', 'doing', 'done'];
+      t.status = order[(order.indexOf(t.status) + 1) % 3];
+
+      if (t.status === 'doing' && !t.progress) {
+        const note = prompt('进度备注（可留空）：');
+        if (note !== null) t.progress = note.trim();
+      }
+
+      if (t.status === 'todo') t.progress = '';
+
+      if (t.status === 'done' && t.recurrence && t.recurrence !== 'none') {
+        setTimeout(() => {
+          t.status = 'todo';
+          t.progress = '';
+          advanceRecurrenceDate(t);
+          saveTasks();
+          render();
+        }, 800);
+      }
+
+      saveTasks();
+      render();
+    }
+
+    function deleteTask(id) {
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      render();
+    }
+
+    function startEdit(id) {
+      const span = document.getElementById('title-' + id);
+      const task = tasks.find(t => t.id === id);
+      if (!task || task.status === 'done') return;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'task-title-input';
+      input.value = task.title;
+
+      const finish = () => {
+        const val = input.value.trim();
+        if (val) task.title = val;
+        saveTasks();
+        render();
+      };
+
+      input.onblur = finish;
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') input.blur();
+        if (e.key === 'Escape') {
+          input.value = task.title;
+          input.blur();
+        }
+      };
+
+      span.replaceWith(input);
+      input.focus();
+    }
+
+    function editProgress(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t || t.status !== 'doing') return;
+      const el = document.getElementById('prog-' + id);
+      if (!el) return;
+
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'progress-input';
+      input.value = t.progress;
+
+      const finish = () => {
+        t.progress = input.value.trim();
+        saveTasks();
+        render();
+      };
+
+      input.onblur = finish;
+      input.onkeydown = (e) => {
+        if (e.key === 'Enter') input.blur();
+        if (e.key === 'Escape') {
+          input.value = t.progress;
+          input.blur();
+        }
+      };
+
+      el.replaceWith(input);
+      input.focus();
+    }
+
+    function editMeta(id) {
+      const t = tasks.find(x => x.id === id);
+      if (!t) return;
+      const el = document.getElementById('meta-' + id);
+      if (!el) return;
+
+      const container = document.createElement('span');
+      container.className = 'meta-edit';
+
+      const typeSelect = document.createElement('select');
+      typeSelect.innerHTML = '<option value="normal">普通</option><option value="longterm">长期</option><option value="recurring">周期</option>';
+      typeSelect.value = (t.recurrence && t.recurrence !== 'none') ? 'recurring' : (t.is_long_term ? 'longterm' : 'normal');
+
+      const dateIn = document.createElement('input');
+      dateIn.type = 'date';
+      dateIn.value = t.date || '';
+
+      const timeIn = document.createElement('input');
+      timeIn.type = 'time';
+      timeIn.value = t.time || '';
+
+      const recTypeSelect = document.createElement('select');
+      recTypeSelect.innerHTML = '<option value="daily">每天</option><option value="weekly">每周</option><option value="monthly">每月</option>';
+      recTypeSelect.value = t.recurrence && t.recurrence !== 'none' ? t.recurrence : 'weekly';
+
+      const recDaySelect = document.createElement('select');
+
+      function fillRecDayOptions() {
+        if (recTypeSelect.value === 'weekly') {
+          recDaySelect.innerHTML = '<option value="1">周一</option><option value="2">周二</option><option value="3">周三</option><option value="4">周四</option><option value="5">周五</option><option value="6">周六</option><option value="0">周日</option>';
+          recDaySelect.value = t.recurrence_day || '5';
+          recDaySelect.style.display = '';
+        } else if (recTypeSelect.value === 'monthly') {
+          recDaySelect.innerHTML = Array.from({length:31}, (_,i) => `<option value="${i+1}">${i+1}号</option>`).join('');
+          recDaySelect.value = t.recurrence_day || '1';
+          recDaySelect.style.display = '';
+        } else {
+          recDaySelect.style.display = 'none';
+        }
+      }
+
+      recTypeSelect.onchange = fillRecDayOptions;
+      fillRecDayOptions();
+
+      function updateVisibility() {
+        const v = typeSelect.value;
+        dateIn.style.display = v === 'normal' ? '' : 'none';
+        timeIn.style.display = v === 'normal' ? '' : 'none';
+        recTypeSelect.style.display = v === 'recurring' ? '' : 'none';
+        recDaySelect.style.display = v === 'recurring' && recTypeSelect.value !== 'daily' ? '' : 'none';
+      }
+
+      typeSelect.onchange = updateVisibility;
+      updateVisibility();
+
+      const okBtn = document.createElement('button');
+      okBtn.textContent = '确定';
+      okBtn.onclick = () => {
+        const v = typeSelect.value;
+        t.is_long_term = v === 'longterm';
+
+        if (v === 'longterm') {
+          t.date = null;
+          t.time = null;
+          t.recurrence = 'none';
+          t.recurrence_day = null;
+        } else if (v === 'recurring') {
+          t.recurrence = recTypeSelect.value;
+          t.recurrence_day = recTypeSelect.value !== 'daily' ? recDaySelect.value : null;
+          t.date = getNextRecurrenceDate(t.recurrence, t.recurrence_day);
+          t.time = null;
+        } else {
+          t.date = dateIn.value || null;
+          t.time = timeIn.value || null;
+          t.recurrence = 'none';
+          t.recurrence_day = null;
+        }
+
+        saveTasks();
+        render();
+      };
+
+      container.appendChild(typeSelect);
+      container.appendChild(dateIn);
+      container.appendChild(timeIn);
+      container.appendChild(recTypeSelect);
+      container.appendChild(recDaySelect);
+      container.appendChild(okBtn);
+
+      el.replaceWith(container);
+    }
+
+    function setSortMode(mode) {
+      sortMode = mode;
+      document.getElementById('sortPriority').className = mode === 'priority' ? 'active' : '';
+      document.getElementById('sortTime').className = mode === 'time' ? 'active' : '';
+      render();
+    }
+
+    function sortedTasks() {
+      const undone = tasks.filter(t => t.status !== 'done');
+      const done = tasks.filter(t => t.status === 'done');
+
+      const dateVal = (t) => {
+        if (t.is_long_term) return 1;
+        if (!t.date) return 2;
+        return 0;
+      };
+
+      if (sortMode === 'priority') {
+        undone.sort((a, b) => {
+          if (a.priority !== b.priority) return a.priority - b.priority;
+          const da = dateVal(a), db = dateVal(b);
+          if (da !== db) return da - db;
+          if (a.date && b.date) return a.date.localeCompare(b.date);
+          return 0;
+        });
+      } else {
+        undone.sort((a, b) => {
+          const da = dateVal(a), db = dateVal(b);
+          if (da !== db) return da - db;
+          if (a.date && b.date) {
+            const cmp = a.date.localeCompare(b.date);
+            if (cmp !== 0) return cmp;
+          }
+          return a.priority - b.priority;
+        });
+      }
+
+      return [...undone, ...done];
+    }
+
+    function formatRecurrence(t) {
+      if (!t.recurrence || t.recurrence === 'none') return '';
+      if (t.recurrence === 'daily') return '每天';
+      if (t.recurrence === 'weekly') {
+        const names = ['周日','周一','周二','周三','周四','周五','周六'];
+        return '每' + names[parseInt(t.recurrence_day)];
+      }
+      if (t.recurrence === 'monthly') return '每月' + t.recurrence_day + '号';
+      return '';
+    }
+
+    function formatMeta(t) {
+      if (t.is_long_term) return '长期';
+      if (!t.date) return '';
+      let s = t.date;
+      if (t.time) s += ' ' + t.time;
+      return s;
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function render() {
+      const list = document.getElementById('taskList');
+      const sorted = sortedTasks();
+
+      if (sorted.length === 0) {
+        list.innerHTML = '<li class="empty-msg">暂无任务</li>';
+        return;
+      }
+
+      list.innerHTML = sorted.map(t => {
+        const statusClass = t.status === 'done' ? ' done' : (t.status === 'doing' ? ' doing' : '');
+        const meta = formatMeta(t);
+        const statusIcon = t.status === 'done' ? '&#10003;' : (t.status === 'doing' ? '&#9654;' : '');
+        const progressHtml = t.status === 'doing' && t.progress
+          ? `<span class="progress-note" id="prog-${t.id}" onclick="editProgress('${t.id}')" title="${escapeHtml(t.progress)}">${escapeHtml(t.progress)}</span>`
+          : (t.status === 'doing' ? `<span class="progress-note" id="prog-${t.id}" onclick="editProgress('${t.id}')" style="color:#ccc">+备注</span>` : '');
+        const recLabel = formatRecurrence(t);
+        const recHtml = recLabel ? `<span class="recurrence-tag">${recLabel}</span>` : '';
+
+        return `<li class="task-item${statusClass}">
+          <button class="status-btn ${t.status}" onclick="cycleStatus('${t.id}')">${statusIcon}</button>
+          <span class="priority-tag p${t.priority}">P${t.priority}</span>
+          <span class="task-title" id="title-${t.id}" onclick="startEdit('${t.id}')">${escapeHtml(t.title)}</span>
+          ${progressHtml}
+          ${recHtml}
+          <span class="task-meta" id="meta-${t.id}" onclick="editMeta('${t.id}')" ${!meta ? 'style="color:#ccc"' : ''}>${meta || '+时间'}</span>
+          <button class="delete-btn" onclick="deleteTask('${t.id}')">&times;</button>
+        </li>`;
+      }).join('');
+    }
+
+    document.getElementById('titleInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') addTask();
+    });
+
+    toggleTaskType();
+    loadTasks();
+  </script>
+</body>
+</html>
+      </div>
+      
+      
+      
+    </div>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

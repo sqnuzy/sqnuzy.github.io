@@ -1252,7 +1252,7 @@ pre code {
     vertical-align: middle;
   }
   .links-of-author a::before {
-    background: #d4aaff;
+    background: #064483;
     display: inline-block;
     margin-right: 3px;
     transform: translateY(-2px);
@@ -2817,4 +2817,10 @@ header.header {
   .comments {
     padding: 10px 12px;
   }
+}
+.post-body a {
+  color: #2d8cf0 !important;
+}
+.post-body a:hover {
+  color: #1a73e8 !important;
 }

@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sqnuzy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="整理常用写题工具、浏览器脚本环境以及 VJudge 提交异常时的常见处理步骤。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="工具环境与 VJudge 提交问题排查">
+<meta property="og:url" content="https://sqnuzy.github.io/acm-tools-and-vjudge/index.html">
+<meta property="og:site_name" content="sqnuzy 的算法小站">
+<meta property="og:description" content="整理常用写题工具、浏览器脚本环境以及 VJudge 提交异常时的常见处理步骤。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-16T11:57:50.833Z">
+<meta property="article:author" content="zy">
+<meta property="article:tag" content="ACM">
+<meta property="article:tag" content="VJudge">
+<meta property="article:tag" content="Typora">
+<meta property="article:tag" content="工具">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sqnuzy.github.io/acm-tools-and-vjudge/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://sqnuzy.github.io/acm-tools-and-vjudge/","path":"acm-tools-and-vjudge/","title":"工具环境与 VJudge 提交问题排查"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>工具环境与 VJudge 提交问题排查 | sqnuzy 的算法小站</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">sqnuzy 的算法小站</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录算法、比赛与成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-待办"><a href="/todo/" rel="section"><i class="fa fa-check-square fa-fw"></i>待办</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80markdown-%E9%A2%98%E8%A7%A3%E5%B7%A5%E5%85%B7%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">一、Markdown 题解工具建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cscriptcat-%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">二、ScriptCat 插件安装思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89vjudge-%E6%8F%90%E4%BA%A4%E4%B8%8D%E6%88%90%E5%8A%9F%E6%97%B6%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5"><span class="nav-number">3.</span> <span class="nav-text">三、VJudge
+提交不成功时怎么排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%A4%84%E7%90%86%E8%84%9A%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">1. 先处理脚本文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%AF%B9%E5%BA%94-oj-%E9%A1%B5%E9%9D%A2%E5%AE%8C%E6%88%90%E6%8E%88%E6%9D%83"><span class="nav-number">3.2.</span> <span class="nav-text">2. 在对应 OJ 页面完成授权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E9%A1%B5%E9%9D%A2%E9%87%8C%E6%9C%89-report-%E6%88%96%E7%B1%BB%E4%BC%BC%E6%8C%89%E9%92%AE"><span class="nav-number">3.3.</span> <span class="nav-text">3. 如果页面里有
+report 或类似按钮</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%98%E4%B8%8D%E8%A1%8C%E6%97%B6%E9%87%8D%E7%82%B9%E6%A3%80%E6%9F%A5%E8%BF%99%E4%BA%9B%E5%9C%B0%E6%96%B9"><span class="nav-number">3.4.</span> <span class="nav-text">4. 还不行时重点检查这些地方</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E8%AE%AD%E7%BB%83%E7%8E%AF%E5%A2%83%E7%9A%84%E5%87%A0%E4%B8%AA%E5%B0%8F%E5%BB%BA%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text">四、训练环境的几个小建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zy"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zy</p>
+  <div class="site-description" itemprop="description">这是我的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sqnuzy.github.io/acm-tools-and-vjudge/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sqnuzy 的算法小站">
+      <meta itemprop="description" content="这是我的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="工具环境与 VJudge 提交问题排查 | sqnuzy 的算法小站">
+      <meta itemprop="description" content="整理常用写题工具、浏览器脚本环境以及 VJudge 提交异常时的常见处理步骤。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          工具环境与 VJudge 提交问题排查
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：19:57:50" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%B7%A5%E5%85%B7/" itemprop="url" rel="index"><span itemprop="name">工具</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">整理常用写题工具、浏览器脚本环境以及 VJudge 提交异常时的常见处理步骤。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这篇文章把原目录中的
+<code>ScriptCat 插件教程</code>、<code>typora修改字体</code>、<code>VJ提交不成功解决办法</code>
+合并成了一份统一的工具说明。</p>
+<span id="more"></span>
+<h2 id="一markdown-题解工具建议">一、Markdown 题解工具建议</h2>
+<p>平时写题解，直接用 Markdown 就够了。Typora
+这类编辑器的优势是上手快、写公式方便、导出也方便。</p>
+<p>如果你觉得代码字体不好看，可以在 Typora 主题的 CSS
+里加上下面这段：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">code</span>, pre, <span class="selector-class">.md-fences</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">&quot;Consolas&quot;</span>, <span class="string">&quot;Courier New&quot;</span>, monospace <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>保存后重启 Typora 即可。</p>
+<h2 id="二scriptcat-插件安装思路">二、ScriptCat 插件安装思路</h2>
+<p>原始资料里给的是截图版说明，这里改成文字步骤：</p>
+<ol type="1">
+<li>打开浏览器扩展管理页面。</li>
+<li>打开开发者模式。</li>
+<li>搜索并安装 <code>ScriptCat</code>。</li>
+<li>如果社团内部提供了脚本压缩包，先解压，再在 ScriptCat
+中选择导入。</li>
+<li>导入完成后，确认脚本状态已经启用。</li>
+</ol>
+<p>如果你后续需要用脚本辅助登录、同步或处理某些 OJ
+页面，记得优先确认：</p>
+<ul>
+<li>插件是否已经启用</li>
+<li>脚本是否已经加载</li>
+<li>浏览器是否拦截了对应权限</li>
+</ul>
+<h2 id="三vjudge-提交不成功时怎么排查">三、VJudge
+提交不成功时怎么排查</h2>
+<p>原始笔记的核心意思可以整理成下面几个步骤。</p>
+<h3 id="先处理脚本文件">1. 先处理脚本文件</h3>
+<ul>
+<li>如果拿到的是压缩包，先解压。</li>
+<li>确认里面是脚本或授权相关文件，而不是直接把压缩包原样导入。</li>
+</ul>
+<h3 id="在对应-oj-页面完成授权">2. 在对应 OJ 页面完成授权</h3>
+<p>原始资料里提到需要到对应站点页面完成设置，再回到 VJudge
+使用。实际操作时可以按下面顺序检查：</p>
+<ol type="1">
+<li>登录对应 OJ 账号。</li>
+<li>打开脚本或授权相关页面。</li>
+<li>导入脚本 / 打开扩展。</li>
+<li>根据页面提示完成一次授权或上报。</li>
+</ol>
+<h3 id="如果页面里有-report-或类似按钮">3. 如果页面里有
+<code>report</code> 或类似按钮</h3>
+<p>原资料特别提到了 <code>report</code>
+按钮。可以理解为：当脚本或授权状态已经变化后，需要主动刷新一次识别状态。</p>
+<p>如果你看到页面已经出现授权成功、钥匙图标或者已连接的提示，通常就可以回到
+VJudge 再次提交。</p>
+<h3 id="还不行时重点检查这些地方">4. 还不行时重点检查这些地方</h3>
+<ul>
+<li>OJ 账号是不是登录错了</li>
+<li>浏览器扩展是不是被禁用了</li>
+<li>脚本是不是没有真正启用</li>
+<li>导入的是不是错误文件</li>
+<li>页面改版后脚本是否已经失效</li>
+</ul>
+<h2 id="四训练环境的几个小建议">四、训练环境的几个小建议</h2>
+<ul>
+<li>比赛和训练时尽量使用固定的浏览器和固定的插件环境。</li>
+<li>输入法建议切回英文，避免全角符号影响代码。</li>
+<li>本地编译参数尽量固定，例如 <code>-std=c++17</code>
+或比赛要求的指定版本。</li>
+<li>题解图片尽量放在可长期访问的位置，不要继续使用本机临时路径。</li>
+</ul>
+<p>工具环境一旦稳定，平时写题和比赛时会省掉很多无意义的折腾时间。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ACM/" rel="tag"># ACM</a>
+              <a href="/tags/VJudge/" rel="tag"># VJudge</a>
+              <a href="/tags/Typora/" rel="tag"># Typora</a>
+              <a href="/tags/%E5%B7%A5%E5%85%B7/" rel="tag"># 工具</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/string-hash-and-vector-graph-notes/" rel="prev" title="字符串哈希与 vector 建图入门笔记">
+                  <i class="fa fa-angle-left"></i> 字符串哈希与 vector 建图入门笔记
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/acm-2025-learning-guide/" rel="next" title="25级 ACM 学习资料导航">
+                  25级 ACM 学习资料导航 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

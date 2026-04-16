@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"sqnuzy.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.json","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="从常见建图方式、DFS BFS 模板、lambda 写法到双哈希模板，整理一份更适合入门训练的笔记。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="字符串哈希与 vector 建图入门笔记">
+<meta property="og:url" content="https://sqnuzy.github.io/string-hash-and-vector-graph-notes/index.html">
+<meta property="og:site_name" content="sqnuzy 的算法小站">
+<meta property="og:description" content="从常见建图方式、DFS BFS 模板、lambda 写法到双哈希模板，整理一份更适合入门训练的笔记。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-04-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-04-16T11:57:50.834Z">
+<meta property="article:author" content="zy">
+<meta property="article:tag" content="ACM">
+<meta property="article:tag" content="模版">
+<meta property="article:tag" content="图论">
+<meta property="article:tag" content="字符串哈希">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://sqnuzy.github.io/string-hash-and-vector-graph-notes/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://sqnuzy.github.io/string-hash-and-vector-graph-notes/","path":"string-hash-and-vector-graph-notes/","title":"字符串哈希与 vector 建图入门笔记"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>字符串哈希与 vector 建图入门笔记 | sqnuzy 的算法小站</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"ams","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js" defer></script>
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">sqnuzy 的算法小站</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">记录算法、比赛与成长</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-待办"><a href="/todo/" rel="section"><i class="fa fa-check-square fa-fw"></i>待办</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="搜索..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-vector-%E5%BB%BA%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">一、什么时候用 vector 建图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">1. 邻接表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.</span> <span class="nav-text">2. 邻接矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E5%BC%8F%E5%89%8D%E5%90%91%E6%98%9F"><span class="nav-number">1.3.</span> <span class="nav-text">3. 链式前向星</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cdfs-%E4%B8%8E-bfs-%E7%9A%84%E5%B8%B8%E8%A7%81%E5%86%99%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">二、DFS 与 BFS 的常见写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89lambda-%E9%80%92%E5%BD%92%E5%86%99%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">三、lambda 递归写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E8%B4%9F%E6%95%B0%E5%8F%96%E6%A8%A1%E6%80%8E%E4%B9%88%E5%86%99%E6%9B%B4%E7%A8%B3"><span class="nav-number">4.</span> <span class="nav-text">四、负数取模怎么写更稳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C%E7%9A%84%E6%A0%B8%E5%BF%83%E7%90%86%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">五、字符串哈希的核心理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E5%8F%8C%E5%93%88%E5%B8%8C%E6%A8%A1%E6%9D%BF"><span class="nav-number">6.</span> <span class="nav-text">六、双哈希模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E5%87%A0%E4%B8%AA%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="nav-number">7.</span> <span class="nav-text">七、几个容易踩的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E5%AD%A6%E4%B9%A0%E5%BB%BA%E8%AE%AE"><span class="nav-number">8.</span> <span class="nav-text">八、学习建议</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="zy"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">zy</p>
+  <div class="site-description" itemprop="description">这是我的个人博客</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">26</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://sqnuzy.github.io/string-hash-and-vector-graph-notes/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="zy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="sqnuzy 的算法小站">
+      <meta itemprop="description" content="这是我的个人博客">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="字符串哈希与 vector 建图入门笔记 | sqnuzy 的算法小站">
+      <meta itemprop="description" content="从常见建图方式、DFS BFS 模板、lambda 写法到双哈希模板，整理一份更适合入门训练的笔记。">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          字符串哈希与 vector 建图入门笔记
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：19:57:50" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ACM/" itemprop="url" rel="index"><span itemprop="name">ACM</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+            <div class="post-description">从常见建图方式、DFS BFS 模板、lambda 写法到双哈希模板，整理一份更适合入门训练的笔记。</div>
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>这篇笔记整理自
+<code>字符串哈希、vector建图.md</code>，把原来比较跳跃的记录，重排成“适用场景
+-&gt; 模板 -&gt; 易错点”的形式。</p>
+<span id="more"></span>
+<h2 id="一什么时候用-vector-建图">一、什么时候用 vector 建图</h2>
+<p>在入门和大部分普通比赛场景里，<code>vector</code>
+邻接表已经够用了：</p>
+<ul>
+<li>写法直观</li>
+<li>维护方便</li>
+<li>支持多测时逐点清空</li>
+<li>修改边结构相对容易</li>
+</ul>
+<p>常见几种建图方式可以简单理解成：</p>
+<h3 id="邻接表">1. 邻接表</h3>
+<p>最常用，综合最均衡。多数题直接用它。</p>
+<h3 id="邻接矩阵">2. 邻接矩阵</h3>
+<p>适合点数很小、需要快速判断两点是否有边的场景。点数一大，空间会炸。</p>
+<h3 id="链式前向星">3. 链式前向星</h3>
+<p>更偏竞赛模板和卡常场景。一次建图、基本不改结构时很好用，但对新人来说可读性和维护成本都更高。</p>
+<h2 id="二dfs-与-bfs-的常见写法">二、DFS 与 BFS 的常见写法</h2>
+<p>下面给一个比较实用的 <code>vector</code> 邻接表模板。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n, m;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line"></span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">g</span>(n + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">        <span class="type">int</span> u, v;</span><br><span class="line">        cin &gt;&gt; u &gt;&gt; v;</span><br><span class="line">        g[u].<span class="built_in">push_back</span>(v);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="built_in">sort</span>(g[i].<span class="built_in">begin</span>(), g[i].<span class="built_in">end</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">vis_dfs</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span>, <span class="title">vis_bfs</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> dfs = [&amp;](<span class="keyword">auto</span>&amp;&amp; self, <span class="type">int</span> u) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (vis_dfs[u]) <span class="keyword">return</span>;</span><br><span class="line">        vis_dfs[u] = <span class="number">1</span>;</span><br><span class="line">        cout &lt;&lt; u &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> v : g[u]) <span class="built_in">self</span>(self, v);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> bfs = [&amp;](<span class="type">int</span> s) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">        queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">        q.<span class="built_in">push</span>(s);</span><br><span class="line">        vis_bfs[s] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (!q.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="type">int</span> u = q.<span class="built_in">front</span>();</span><br><span class="line">            q.<span class="built_in">pop</span>();</span><br><span class="line">            cout &lt;&lt; u &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> v : g[u]) &#123;</span><br><span class="line">                <span class="keyword">if</span> (vis_bfs[v]) <span class="keyword">continue</span>;</span><br><span class="line">                vis_bfs[v] = <span class="number">1</span>;</span><br><span class="line">                q.<span class="built_in">push</span>(v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dfs</span>(dfs, <span class="number">1</span>);</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="built_in">bfs</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="三lambda-递归写法">三、lambda 递归写法</h2>
+<p>现在很多题都可以直接用 lambda
+写递归，代码更集中，不一定非要开全局函数。</p>
+<p>推荐这种写法：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> dfs = [&amp;](<span class="keyword">auto</span>&amp;&amp; self, <span class="type">int</span> u) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="built_in">self</span>(self, v);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>几点注意：</p>
+<ul>
+<li>这种写法依赖 C++14 及以上。</li>
+<li>如果比赛环境支持 C++17，用它最省心。</li>
+<li>不建议为了递归去强行套
+<code>std::function</code>，通常会更慢一些。</li>
+</ul>
+<h2 id="四负数取模怎么写更稳">四、负数取模怎么写更稳</h2>
+<p>C++ 里直接 <code>%</code> 负数时，结果可能不是你想要的非负余数。</p>
+<p>比赛里更稳妥的写法一般是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = (x % mod + mod) % mod;</span><br></pre></td></tr></table></figure>
+<p>尤其是做哈希、前缀和、差分、DP 转移时，这个细节很常见。</p>
+<h2 id="五字符串哈希的核心理解">五、字符串哈希的核心理解</h2>
+<p>字符串哈希的本质，是把字符串映射成一个数值，从而快速比较两个子串是否相同。</p>
+<p>最常见的用法：</p>
+<ul>
+<li>预处理前缀哈希</li>
+<li><code>O(1)</code> 求任意子串哈希</li>
+<li>配合二分、枚举、前后缀判断使用</li>
+</ul>
+<p>为了尽量降低冲突风险，训练时建议直接双哈希。</p>
+<h2 id="六双哈希模板">六、双哈希模板</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100000</span> + <span class="number">10</span>;</span><br><span class="line"><span class="type">const</span> array&lt;ll, 2&gt; MOD = &#123;<span class="number">1000000007LL</span>, <span class="number">998244353LL</span>&#125;;</span><br><span class="line"><span class="type">const</span> array&lt;ll, 2&gt; BASE = &#123;<span class="number">131LL</span>, <span class="number">137LL</span>&#125;;</span><br><span class="line"></span><br><span class="line">array&lt;ll, 2&gt; pw[N], h[N];</span><br><span class="line"></span><br><span class="line"><span class="function">array&lt;ll, 2&gt; <span class="title">get_hash</span><span class="params">(<span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">    array&lt;ll, 2&gt; res&#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; <span class="number">2</span>; k++) &#123;</span><br><span class="line">        res[k] = (h[r][k] - h[l - <span class="number">1</span>][k] * pw[r - l + <span class="number">1</span>][k]) % MOD[k];</span><br><span class="line">        <span class="keyword">if</span> (res[k] &lt; <span class="number">0</span>) res[k] += MOD[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n, q;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; q;</span><br><span class="line">    string s;</span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line">    s = <span class="string">&quot; &quot;</span> + s;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; <span class="number">2</span>; k++) &#123;</span><br><span class="line">        pw[<span class="number">0</span>][k] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            pw[i][k] = pw[i - <span class="number">1</span>][k] * BASE[k] % MOD[k];</span><br><span class="line">            h[i][k] = (h[i - <span class="number">1</span>][k] * BASE[k] + s[i]) % MOD[k];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (q--) &#123;</span><br><span class="line">        <span class="type">int</span> l1, r1, l2, r2;</span><br><span class="line">        cin &gt;&gt; l1 &gt;&gt; r1 &gt;&gt; l2 &gt;&gt; r2;</span><br><span class="line">        cout &lt;&lt; (<span class="built_in">get_hash</span>(l1, r1) == <span class="built_in">get_hash</span>(l2, r2) ? <span class="string">&quot;Yes\n&quot;</span> : <span class="string">&quot;No\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="七几个容易踩的坑">七、几个容易踩的坑</h2>
+<ul>
+<li>多测时，全局 <code>vector</code> 不能只 <code>clear()</code>
+最外层，通常要按点清空。</li>
+<li>哈希数组下标从 <code>1</code> 开始时，记得给字符串前面补空格。</li>
+<li>只会背模板还不够，要知道自己比较的是“整串”还是“子串”。</li>
+<li>哈希相等通常表示“极大概率相等”，不是严格数学证明。</li>
+</ul>
+<h2 id="八学习建议">八、学习建议</h2>
+<p>如果你刚学到图论和哈希，不要急着把所有板子一次背完。更推荐的节奏是：</p>
+<ol type="1">
+<li>先能独立写出 <code>vector</code> 建图和 DFS BFS。</li>
+<li>再把 <code>lambda</code> 递归写顺手。</li>
+<li>然后做几道字符串哈希模板题。</li>
+<li>最后再去总结哪些题是“哈希 + 二分”“哈希 + 前缀后缀”。</li>
+</ol>
+<p>把这些基本功练熟之后，很多题会明显顺手很多。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ACM/" rel="tag"># ACM</a>
+              <a href="/tags/%E6%A8%A1%E7%89%88/" rel="tag"># 模版</a>
+              <a href="/tags/%E5%9B%BE%E8%AE%BA/" rel="tag"># 图论</a>
+              <a href="/tags/%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C/" rel="tag"># 字符串哈希</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/acm-2025-first-online-training/" rel="prev" title="25级第一次线上培训整理">
+                  <i class="fa fa-angle-left"></i> 25级第一次线上培训整理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/acm-tools-and-vjudge/" rel="next" title="工具环境与 VJudge 提交问题排查">
+                  工具环境与 VJudge 提交问题排查 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2026</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">zy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

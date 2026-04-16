@@ -27,7 +27,7 @@
 <meta property="og:description" content="整理常用写题工具、浏览器脚本环境以及 VJudge 提交异常时的常见处理步骤。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-04-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-04-16T11:57:50.833Z">
+<meta property="article:modified_time" content="2026-04-16T12:13:24.043Z">
 <meta property="article:author" content="zy">
 <meta property="article:tag" content="ACM">
 <meta property="article:tag" content="VJudge">
@@ -167,9 +167,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80markdown-%E9%A2%98%E8%A7%A3%E5%B7%A5%E5%85%B7%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">一、Markdown 题解工具建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cscriptcat-%E6%8F%92%E4%BB%B6%E5%AE%89%E8%A3%85%E6%80%9D%E8%B7%AF"><span class="nav-number">2.</span> <span class="nav-text">二、ScriptCat 插件安装思路</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89vjudge-%E6%8F%90%E4%BA%A4%E4%B8%8D%E6%88%90%E5%8A%9F%E6%97%B6%E6%80%8E%E4%B9%88%E6%8E%92%E6%9F%A5"><span class="nav-number">3.</span> <span class="nav-text">三、VJudge
-提交不成功时怎么排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E5%A4%84%E7%90%86%E8%84%9A%E6%9C%AC%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">1. 先处理脚本文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%AF%B9%E5%BA%94-oj-%E9%A1%B5%E9%9D%A2%E5%AE%8C%E6%88%90%E6%8E%88%E6%9D%83"><span class="nav-number">3.2.</span> <span class="nav-text">2. 在对应 OJ 页面完成授权</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E6%9E%9C%E9%A1%B5%E9%9D%A2%E9%87%8C%E6%9C%89-report-%E6%88%96%E7%B1%BB%E4%BC%BC%E6%8C%89%E9%92%AE"><span class="nav-number">3.3.</span> <span class="nav-text">3. 如果页面里有
-report 或类似按钮</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%98%E4%B8%8D%E8%A1%8C%E6%97%B6%E9%87%8D%E7%82%B9%E6%A3%80%E6%9F%A5%E8%BF%99%E4%BA%9B%E5%9C%B0%E6%96%B9"><span class="nav-number">3.4.</span> <span class="nav-text">4. 还不行时重点检查这些地方</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E8%AE%AD%E7%BB%83%E7%8E%AF%E5%A2%83%E7%9A%84%E5%87%A0%E4%B8%AA%E5%B0%8F%E5%BB%BA%E8%AE%AE"><span class="nav-number">4.</span> <span class="nav-text">四、训练环境的几个小建议</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#typora"><span class="nav-number">1.</span> <span class="nav-text">Typora</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scriptcat"><span class="nav-number">2.</span> <span class="nav-text">ScriptCat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#vjudge-%E6%8E%92%E6%9F%A5"><span class="nav-number">3.</span> <span class="nav-text">VJudge 排查</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">4.</span> <span class="nav-text">其他</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -256,7 +254,7 @@ report 或类似按钮</span></a></li><li class="nav-item nav-level-3"><a class=
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：19:57:50" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
+      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：20:13:24" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -278,19 +276,13 @@ report 或类似按钮</span></a></li><li class="nav-item nav-level-3"><a class=
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这篇文章把原目录中的
-<code>ScriptCat 插件教程</code>、<code>typora修改字体</code>、<code>VJ提交不成功解决办法</code>
-合并成了一份统一的工具说明。</p>
+    <div class="post-body" itemprop="articleBody"><p>工具环境精简版。</p>
 <span id="more"></span>
-<h2 id="一markdown-题解工具建议">一、Markdown 题解工具建议</h2>
-<p>平时写题解，直接用 Markdown 就够了。Typora
-这类编辑器的优势是上手快、写公式方便、导出也方便。</p>
-<p>如果你觉得代码字体不好看，可以在 Typora 主题的 CSS
-里加上下面这段：</p>
+<h2 id="typora">Typora</h2>
+<p>如果代码字体不好看，可以在主题 CSS 里加入：</p>
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">code</span>, pre, <span class="selector-class">.md-fences</span> &#123;</span><br><span class="line">  <span class="attribute">font-family</span>: <span class="string">&quot;Consolas&quot;</span>, <span class="string">&quot;Courier New&quot;</span>, monospace <span class="meta">!important</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>保存后重启 Typora 即可。</p>
-<h2 id="二scriptcat-插件安装思路">二、ScriptCat 插件安装思路</h2>
-<p>原始资料里给的是截图版说明，这里改成文字步骤：</p>
+<p>保存后重启。</p>
+<h2 id="scriptcat">ScriptCat</h2>
 <ol type="1">
 <li>打开浏览器扩展管理页面。</li>
 <li>打开开发者模式。</li>
@@ -299,53 +291,34 @@ report 或类似按钮</span></a></li><li class="nav-item nav-level-3"><a class=
 中选择导入。</li>
 <li>导入完成后，确认脚本状态已经启用。</li>
 </ol>
-<p>如果你后续需要用脚本辅助登录、同步或处理某些 OJ
-页面，记得优先确认：</p>
+<p>检查：</p>
 <ul>
-<li>插件是否已经启用</li>
-<li>脚本是否已经加载</li>
-<li>浏览器是否拦截了对应权限</li>
+<li>插件已启用</li>
+<li>脚本已加载</li>
+<li>浏览器权限正常</li>
 </ul>
-<h2 id="三vjudge-提交不成功时怎么排查">三、VJudge
-提交不成功时怎么排查</h2>
-<p>原始笔记的核心意思可以整理成下面几个步骤。</p>
-<h3 id="先处理脚本文件">1. 先处理脚本文件</h3>
-<ul>
-<li>如果拿到的是压缩包，先解压。</li>
-<li>确认里面是脚本或授权相关文件，而不是直接把压缩包原样导入。</li>
-</ul>
-<h3 id="在对应-oj-页面完成授权">2. 在对应 OJ 页面完成授权</h3>
-<p>原始资料里提到需要到对应站点页面完成设置，再回到 VJudge
-使用。实际操作时可以按下面顺序检查：</p>
+<h2 id="vjudge-排查">VJudge 排查</h2>
 <ol type="1">
+<li>压缩包先解压，不要直接导入压缩包。</li>
 <li>登录对应 OJ 账号。</li>
-<li>打开脚本或授权相关页面。</li>
-<li>导入脚本 / 打开扩展。</li>
-<li>根据页面提示完成一次授权或上报。</li>
+<li>在对应页面完成脚本导入和授权。</li>
+<li>如果有 <code>report</code> 按钮，点一次刷新状态。</li>
+<li>看到授权成功或钥匙图标后，再回 VJudge 提交。</li>
 </ol>
-<h3 id="如果页面里有-report-或类似按钮">3. 如果页面里有
-<code>report</code> 或类似按钮</h3>
-<p>原资料特别提到了 <code>report</code>
-按钮。可以理解为：当脚本或授权状态已经变化后，需要主动刷新一次识别状态。</p>
-<p>如果你看到页面已经出现授权成功、钥匙图标或者已连接的提示，通常就可以回到
-VJudge 再次提交。</p>
-<h3 id="还不行时重点检查这些地方">4. 还不行时重点检查这些地方</h3>
+<p>还不行时检查：</p>
 <ul>
-<li>OJ 账号是不是登录错了</li>
-<li>浏览器扩展是不是被禁用了</li>
-<li>脚本是不是没有真正启用</li>
-<li>导入的是不是错误文件</li>
-<li>页面改版后脚本是否已经失效</li>
+<li>账号是否登错</li>
+<li>扩展是否被禁用</li>
+<li>脚本是否启用</li>
+<li>导入文件是否正确</li>
+<li>脚本是否已失效</li>
 </ul>
-<h2 id="四训练环境的几个小建议">四、训练环境的几个小建议</h2>
+<h2 id="其他">其他</h2>
 <ul>
-<li>比赛和训练时尽量使用固定的浏览器和固定的插件环境。</li>
-<li>输入法建议切回英文，避免全角符号影响代码。</li>
-<li>本地编译参数尽量固定，例如 <code>-std=c++17</code>
-或比赛要求的指定版本。</li>
-<li>题解图片尽量放在可长期访问的位置，不要继续使用本机临时路径。</li>
+<li>输入法切英文。</li>
+<li>编译标准固定为比赛要求版本。</li>
+<li>尽量使用固定浏览器和固定插件环境。</li>
 </ul>
-<p>工具环境一旦稳定，平时写题和比赛时会省掉很多无意义的折腾时间。</p>
 
     </div>
 

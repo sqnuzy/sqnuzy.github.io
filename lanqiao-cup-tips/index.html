@@ -27,7 +27,7 @@
 <meta property="og:description" content="从赛前准备、读题策略、暴力得分到实现细节，整理一份更适合赛前复习的蓝桥杯技巧笔记。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-04-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-04-16T11:57:50.835Z">
+<meta property="article:modified_time" content="2026-04-16T12:13:24.044Z">
 <meta property="article:author" content="zy">
 <meta property="article:tag" content="算法竞赛">
 <meta property="article:tag" content="比赛规则">
@@ -167,8 +167,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E5%85%88%E7%90%86%E8%A7%A3%E6%AF%94%E8%B5%9B%E7%89%B9%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">一、先理解比赛特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E8%B5%9B%E5%89%8D%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">二、赛前准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E7%A1%AE%E8%AE%A4%E7%8E%AF%E5%A2%83"><span class="nav-number">2.1.</span> <span class="nav-text">1. 先确认环境</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E6%9D%BF%E4%B8%8D%E8%A6%81%E5%A4%AA%E8%8A%B1"><span class="nav-number">2.2.</span> <span class="nav-text">2. 模板不要太花</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%8C%83%E5%9B%B4%E8%A6%81%E6%95%8F%E6%84%9F"><span class="nav-number">2.3.</span> <span class="nav-text">3. 数据范围要敏感</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AF%94%E8%B5%9B%E4%B8%AD%E6%80%8E%E4%B9%88%E6%8B%BF%E5%88%86%E6%9B%B4%E7%A8%B3"><span class="nav-number">3.</span> <span class="nav-text">三、比赛中怎么拿分更稳</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E5%AE%9A%E8%AE%A4%E7%9C%9F%E8%AF%BB%E9%A2%98"><span class="nav-number">3.1.</span> <span class="nav-text">1. 一定认真读题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%88%E6%8B%BF%E7%A8%B3%E5%88%86%E5%86%8D%E5%86%B2%E9%AB%98%E5%88%86"><span class="nav-number">3.2.</span> <span class="nav-text">2. 先拿稳分，再冲高分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E6%8B%8D%E5%92%8C%E9%80%A0%E6%A0%B7%E4%BE%8B%E5%BE%88%E9%87%8D%E8%A6%81"><span class="nav-number">3.3.</span> <span class="nav-text">3. 对拍和造样例很重要</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%AE%9E%E7%8E%B0%E5%B1%82%E9%9D%A2%E7%9A%84%E6%8F%90%E9%86%92"><span class="nav-number">4.</span> <span class="nav-text">四、实现层面的提醒</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%B0%E5%BE%97%E5%BC%80-long-long"><span class="nav-number">4.1.</span> <span class="nav-text">1. 记得开 long long</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%AE%97%E6%B3%95%E8%A6%81%E7%86%9F"><span class="nav-number">4.2.</span> <span class="nav-text">2. 基础算法要熟</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#return-0%E6%A0%87%E5%87%86%E5%92%8C%E7%BB%86%E8%8A%82%E5%88%AB%E4%B8%A2"><span class="nav-number">4.3.</span> <span class="nav-text">3.
-return 0、标准和细节别丢</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E9%80%82%E5%90%88%E8%B5%9B%E5%89%8D%E5%86%8D%E7%9C%8B%E4%B8%80%E9%81%8D%E7%9A%84%E6%8F%90%E9%86%92"><span class="nav-number">5.</span> <span class="nav-text">五、适合赛前再看一遍的提醒</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%B5%9B%E7%89%B9%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">比赛特点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B5%9B%E5%89%8D"><span class="nav-number">2.</span> <span class="nav-text">赛前</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%B5%9B%E4%B8%AD"><span class="nav-number">3.</span> <span class="nav-text">比赛中</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%8F%90%E9%86%92"><span class="nav-number">4.</span> <span class="nav-text">实现提醒</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -255,7 +254,7 @@ return 0、标准和细节别丢</span></a></li></ol></li><li class="nav-item na
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：19:57:50" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
+      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：20:13:24" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -277,119 +276,34 @@ return 0、标准和细节别丢</span></a></li></ol></li><li class="nav-item na
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这篇文章整理自原始的
-<code>蓝桥杯技巧.md</code>，重点保留比赛里真正会影响得分的那些提醒。</p>
+    <div class="post-body" itemprop="articleBody"><p>蓝桥杯赛前精简提醒。</p>
 <span id="more"></span>
-<h2 id="一先理解比赛特点">一、先理解比赛特点</h2>
-<p>蓝桥杯和很多实时反馈的 OJ 不一样，做题节奏需要主动调整。</p>
-<p>原笔记里提到的几个关键词非常重要：</p>
+<h2 id="比赛特点">比赛特点</h2>
 <ul>
-<li><code>OI 赛制</code></li>
-<li><code>没有即时评测结果</code></li>
-<li><code>可以拿部分分</code></li>
-<li><code>暴力也很有价值</code></li>
+<li><code>OI</code> 赛制。</li>
+<li>没有即时评测结果。</li>
+<li>能拿部分分。</li>
+<li>暴力有价值。</li>
 </ul>
-<p>这意味着蓝桥杯里，很多时候“先写能得分的版本”比死磕正解更重要。</p>
-<h2 id="二赛前准备">二、赛前准备</h2>
-<h3 id="先确认环境">1. 先确认环境</h3>
-<p>比赛开始前，建议优先检查这些问题：</p>
+<h2 id="赛前">赛前</h2>
 <ul>
-<li>键盘有没有坏键</li>
-<li>输入法是不是英文状态</li>
-<li>半角 / 全角是否正常</li>
-<li>编译语言是否选对</li>
-<li>编译标准是否正确，例如 <code>C++11</code></li>
+<li>检查键盘、输入法、半角全角、编译语言、编译标准。</li>
+<li>模板用熟悉的短模板。</li>
+<li>对数据范围和复杂度敏感。</li>
 </ul>
-<h3 id="模板不要太花">2. 模板不要太花</h3>
-<p>如果你平时习惯写自己的模板，蓝桥杯时尽量用熟悉、稳定、短一点的版本。比赛现场最怕的是模板太复杂，自己反而调不动。</p>
-<h3 id="数据范围要敏感">3. 数据范围要敏感</h3>
-<p>原资料里提到的经验同样适用：</p>
+<h2 id="比赛中">比赛中</h2>
 <ul>
-<li><code>1e8</code> 级别操作通常已经比较危险</li>
-<li>看到大数据时要立刻判断是否需要更优复杂度</li>
-<li>同时也别忘了很多题可以先写暴力拿步骤分</li>
+<li>认真读题。</li>
+<li>先拿稳会做的题。</li>
+<li>难题先写部分分和暴力。</li>
+<li>多造样例，必要时对拍。</li>
 </ul>
-<h2 id="三比赛中怎么拿分更稳">三、比赛中怎么拿分更稳</h2>
-<h3 id="一定认真读题">1. 一定认真读题</h3>
-<p>蓝桥杯非常容易因为读题不仔细丢分，比如：</p>
+<h2 id="实现提醒">实现提醒</h2>
 <ul>
-<li>输入输出格式理解错</li>
-<li>边界情况漏掉</li>
-<li>是否允许空方案看错</li>
-<li>部分分条件没看清</li>
+<li>记得开 <code>long long</code>。</li>
+<li>常见内容要熟：STL、前缀和、二分、DFS、Dijkstra、DP、数学、组合数。</li>
+<li>最后检查边界、初始化、输出格式。</li>
 </ul>
-<p>很多时候不是不会做，而是题意理解错了。</p>
-<h3 id="先拿稳分再冲高分">2. 先拿稳分，再冲高分</h3>
-<p>原始笔记里有一个很实用的思路：</p>
-<ul>
-<li>先做最容易拿分的题</li>
-<li>对难题先写部分分和暴力</li>
-<li>留出足够时间做补强</li>
-</ul>
-<p>如果一道题正解短时间想不出来，可以先看看能不能做到：</p>
-<ul>
-<li>枚举</li>
-<li>搜索</li>
-<li>分块</li>
-<li>特判</li>
-<li>小数据暴力</li>
-</ul>
-<p>在 OI 赛制下，这些分数经常很关键。</p>
-<h3 id="对拍和造样例很重要">3. 对拍和造样例很重要</h3>
-<p>没有实时评测反馈时，更要靠自己检查。</p>
-<p>建议至少做这几类样例：</p>
-<ul>
-<li>最小数据</li>
-<li>最大数据</li>
-<li>全相同</li>
-<li>全不同</li>
-<li>单点边界</li>
-<li>随机数据</li>
-</ul>
-<p>如果你平时会写对拍程序，蓝桥杯前把这项能力练出来会很值。</p>
-<h2 id="四实现层面的提醒">四、实现层面的提醒</h2>
-<h3 id="记得开-long-long">1. 记得开 <code>long long</code></h3>
-<p>尤其是：</p>
-<ul>
-<li>乘法</li>
-<li>前缀和</li>
-<li>组合数</li>
-<li>图上路径计数</li>
-<li>DP 状态值</li>
-</ul>
-<p>不要等到最后发现是整型溢出。</p>
-<h3 id="基础算法要熟">2. 基础算法要熟</h3>
-<p>原始资料里提到的方向，基本都是蓝桥杯常见内容：</p>
-<ul>
-<li>STL</li>
-<li>前缀和</li>
-<li>二分</li>
-<li>DFS</li>
-<li>树上 DFS</li>
-<li>Dijkstra</li>
-<li>DP</li>
-<li>数学</li>
-<li>组合数</li>
-</ul>
-<p>如果这些内容只是一知半解，比赛里会非常容易卡实现。</p>
-<h3 id="return-0标准和细节别丢">3.
-<code>return 0</code>、标准和细节别丢</h3>
-<p>这些看起来很小，但比赛紧张时最容易漏：</p>
-<ul>
-<li>主函数完整</li>
-<li>头文件别缺</li>
-<li>编译标准别选错</li>
-<li>数组大小别开小</li>
-</ul>
-<h2 id="五适合赛前再看一遍的提醒">五、适合赛前再看一遍的提醒</h2>
-<ul>
-<li>题目先通读一遍再开写。</li>
-<li>会做的题先稳稳拿下。</li>
-<li>难题优先考虑部分分和暴力。</li>
-<li>多造样例，不要只相信肉眼。</li>
-<li>最后留时间检查变量范围、清空、边界和输出格式。</li>
-</ul>
-<p>蓝桥杯不是单纯比谁会的知识更多，很多时候更像是在比谁能把会的东西稳定地转成分数。</p>
 
     </div>
 

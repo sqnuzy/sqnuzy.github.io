@@ -27,7 +27,7 @@
 <meta property="og:description" content="从常见建图方式、DFS BFS 模板、lambda 写法到双哈希模板，整理一份更适合入门训练的笔记。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2026-04-15T16:00:00.000Z">
-<meta property="article:modified_time" content="2026-04-16T11:57:50.834Z">
+<meta property="article:modified_time" content="2026-04-16T12:13:24.043Z">
 <meta property="article:author" content="zy">
 <meta property="article:tag" content="ACM">
 <meta property="article:tag" content="模版">
@@ -167,7 +167,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8-vector-%E5%BB%BA%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">一、什么时候用 vector 建图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">1. 邻接表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E6%8E%A5%E7%9F%A9%E9%98%B5"><span class="nav-number">1.2.</span> <span class="nav-text">2. 邻接矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%93%BE%E5%BC%8F%E5%89%8D%E5%90%91%E6%98%9F"><span class="nav-number">1.3.</span> <span class="nav-text">3. 链式前向星</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cdfs-%E4%B8%8E-bfs-%E7%9A%84%E5%B8%B8%E8%A7%81%E5%86%99%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">二、DFS 与 BFS 的常见写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89lambda-%E9%80%92%E5%BD%92%E5%86%99%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">三、lambda 递归写法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E8%B4%9F%E6%95%B0%E5%8F%96%E6%A8%A1%E6%80%8E%E4%B9%88%E5%86%99%E6%9B%B4%E7%A8%B3"><span class="nav-number">4.</span> <span class="nav-text">四、负数取模怎么写更稳</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C%E7%9A%84%E6%A0%B8%E5%BF%83%E7%90%86%E8%A7%A3"><span class="nav-number">5.</span> <span class="nav-text">五、字符串哈希的核心理解</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E5%8F%8C%E5%93%88%E5%B8%8C%E6%A8%A1%E6%9D%BF"><span class="nav-number">6.</span> <span class="nav-text">六、双哈希模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E5%87%A0%E4%B8%AA%E5%AE%B9%E6%98%93%E8%B8%A9%E7%9A%84%E5%9D%91"><span class="nav-number">7.</span> <span class="nav-text">七、几个容易踩的坑</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E5%AD%A6%E4%B9%A0%E5%BB%BA%E8%AE%AE"><span class="nav-number">8.</span> <span class="nav-text">八、学习建议</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">建图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dfs-bfs-%E6%A8%A1%E6%9D%BF"><span class="nav-number">2.</span> <span class="nav-text">DFS &#x2F; BFS 模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lambda-%E9%80%92%E5%BD%92"><span class="nav-number">3.</span> <span class="nav-text">lambda 递归</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E6%95%B0%E5%8F%96%E6%A8%A1"><span class="nav-number">4.</span> <span class="nav-text">负数取模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%93%88%E5%B8%8C"><span class="nav-number">5.</span> <span class="nav-text">字符串哈希</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E5%93%88%E5%B8%8C%E6%A8%A1%E6%9D%BF"><span class="nav-number">6.</span> <span class="nav-text">双哈希模板</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%98%93%E9%94%99%E7%82%B9"><span class="nav-number">7.</span> <span class="nav-text">易错点</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -254,7 +254,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：19:57:50" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
+      <time title="创建时间：2026-04-16 00:00:00 / 修改时间：20:13:24" itemprop="dateCreated datePublished" datetime="2026-04-16T00:00:00+08:00">2026-04-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,74 +276,41 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>这篇笔记整理自
-<code>字符串哈希、vector建图.md</code>，把原来比较跳跃的记录，重排成“适用场景
--&gt; 模板 -&gt; 易错点”的形式。</p>
+    <div class="post-body" itemprop="articleBody"><p><code>vector</code> 建图和字符串哈希精简版。</p>
 <span id="more"></span>
-<h2 id="一什么时候用-vector-建图">一、什么时候用 vector 建图</h2>
-<p>在入门和大部分普通比赛场景里，<code>vector</code>
-邻接表已经够用了：</p>
+<h2 id="建图">建图</h2>
 <ul>
-<li>写法直观</li>
-<li>维护方便</li>
-<li>支持多测时逐点清空</li>
-<li>修改边结构相对容易</li>
+<li>大部分题直接用 <code>vector</code> 邻接表。</li>
+<li>邻接矩阵只适合点很少的题。</li>
+<li>链式前向星适合卡常或固定结构题。</li>
 </ul>
-<p>常见几种建图方式可以简单理解成：</p>
-<h3 id="邻接表">1. 邻接表</h3>
-<p>最常用，综合最均衡。多数题直接用它。</p>
-<h3 id="邻接矩阵">2. 邻接矩阵</h3>
-<p>适合点数很小、需要快速判断两点是否有边的场景。点数一大，空间会炸。</p>
-<h3 id="链式前向星">3. 链式前向星</h3>
-<p>更偏竞赛模板和卡常场景。一次建图、基本不改结构时很好用，但对新人来说可读性和维护成本都更高。</p>
-<h2 id="二dfs-与-bfs-的常见写法">二、DFS 与 BFS 的常见写法</h2>
-<p>下面给一个比较实用的 <code>vector</code> 邻接表模板。</p>
+<h2 id="dfs-bfs-模板">DFS / BFS 模板</h2>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n, m;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line"></span><br><span class="line">    vector&lt;vector&lt;<span class="type">int</span>&gt;&gt; <span class="built_in">g</span>(n + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; m; i++) &#123;</span><br><span class="line">        <span class="type">int</span> u, v;</span><br><span class="line">        cin &gt;&gt; u &gt;&gt; v;</span><br><span class="line">        g[u].<span class="built_in">push_back</span>(v);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="built_in">sort</span>(g[i].<span class="built_in">begin</span>(), g[i].<span class="built_in">end</span>());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">vis_dfs</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span>, <span class="title">vis_bfs</span><span class="params">(n + <span class="number">1</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> dfs = [&amp;](<span class="keyword">auto</span>&amp;&amp; self, <span class="type">int</span> u) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (vis_dfs[u]) <span class="keyword">return</span>;</span><br><span class="line">        vis_dfs[u] = <span class="number">1</span>;</span><br><span class="line">        cout &lt;&lt; u &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> v : g[u]) <span class="built_in">self</span>(self, v);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> bfs = [&amp;](<span class="type">int</span> s) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">        queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">        q.<span class="built_in">push</span>(s);</span><br><span class="line">        vis_bfs[s] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (!q.<span class="built_in">empty</span>()) &#123;</span><br><span class="line">            <span class="type">int</span> u = q.<span class="built_in">front</span>();</span><br><span class="line">            q.<span class="built_in">pop</span>();</span><br><span class="line">            cout &lt;&lt; u &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> v : g[u]) &#123;</span><br><span class="line">                <span class="keyword">if</span> (vis_bfs[v]) <span class="keyword">continue</span>;</span><br><span class="line">                vis_bfs[v] = <span class="number">1</span>;</span><br><span class="line">                q.<span class="built_in">push</span>(v);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">dfs</span>(dfs, <span class="number">1</span>);</span><br><span class="line">    cout &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">    <span class="built_in">bfs</span>(<span class="number">1</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="三lambda-递归写法">三、lambda 递归写法</h2>
-<p>现在很多题都可以直接用 lambda
-写递归，代码更集中，不一定非要开全局函数。</p>
-<p>推荐这种写法：</p>
+<h2 id="lambda-递归">lambda 递归</h2>
+<p>推荐写法：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> dfs = [&amp;](<span class="keyword">auto</span>&amp;&amp; self, <span class="type">int</span> u) -&gt; <span class="type">void</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="built_in">self</span>(self, v);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>几点注意：</p>
+<p>注意：</p>
 <ul>
-<li>这种写法依赖 C++14 及以上。</li>
-<li>如果比赛环境支持 C++17，用它最省心。</li>
-<li>不建议为了递归去强行套
-<code>std::function</code>，通常会更慢一些。</li>
+<li>需要 C++14 及以上。</li>
+<li>不建议递归套 <code>std::function</code>。</li>
 </ul>
-<h2 id="四负数取模怎么写更稳">四、负数取模怎么写更稳</h2>
-<p>C++ 里直接 <code>%</code> 负数时，结果可能不是你想要的非负余数。</p>
-<p>比赛里更稳妥的写法一般是：</p>
+<h2 id="负数取模">负数取模</h2>
+<p>统一写成：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">x = (x % mod + mod) % mod;</span><br></pre></td></tr></table></figure>
-<p>尤其是做哈希、前缀和、差分、DP 转移时，这个细节很常见。</p>
-<h2 id="五字符串哈希的核心理解">五、字符串哈希的核心理解</h2>
-<p>字符串哈希的本质，是把字符串映射成一个数值，从而快速比较两个子串是否相同。</p>
-<p>最常见的用法：</p>
+<h2 id="字符串哈希">字符串哈希</h2>
 <ul>
-<li>预处理前缀哈希</li>
-<li><code>O(1)</code> 求任意子串哈希</li>
-<li>配合二分、枚举、前后缀判断使用</li>
+<li>预处理前缀哈希。</li>
+<li><code>O(1)</code> 求子串哈希。</li>
+<li>建议直接双哈希。</li>
 </ul>
-<p>为了尽量降低冲突风险，训练时建议直接双哈希。</p>
-<h2 id="六双哈希模板">六、双哈希模板</h2>
+<h2 id="双哈希模板">双哈希模板</h2>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">100000</span> + <span class="number">10</span>;</span><br><span class="line"><span class="type">const</span> array&lt;ll, 2&gt; MOD = &#123;<span class="number">1000000007LL</span>, <span class="number">998244353LL</span>&#125;;</span><br><span class="line"><span class="type">const</span> array&lt;ll, 2&gt; BASE = &#123;<span class="number">131LL</span>, <span class="number">137LL</span>&#125;;</span><br><span class="line"></span><br><span class="line">array&lt;ll, 2&gt; pw[N], h[N];</span><br><span class="line"></span><br><span class="line"><span class="function">array&lt;ll, 2&gt; <span class="title">get_hash</span><span class="params">(<span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123;</span><br><span class="line">    array&lt;ll, 2&gt; res&#123;&#125;;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; <span class="number">2</span>; k++) &#123;</span><br><span class="line">        res[k] = (h[r][k] - h[l - <span class="number">1</span>][k] * pw[r - l + <span class="number">1</span>][k]) % MOD[k];</span><br><span class="line">        <span class="keyword">if</span> (res[k] &lt; <span class="number">0</span>) res[k] += MOD[k];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n, q;</span><br><span class="line">    cin &gt;&gt; n &gt;&gt; q;</span><br><span class="line">    string s;</span><br><span class="line">    cin &gt;&gt; s;</span><br><span class="line">    s = <span class="string">&quot; &quot;</span> + s;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> k = <span class="number">0</span>; k &lt; <span class="number">2</span>; k++) &#123;</span><br><span class="line">        pw[<span class="number">0</span>][k] = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            pw[i][k] = pw[i - <span class="number">1</span>][k] * BASE[k] % MOD[k];</span><br><span class="line">            h[i][k] = (h[i - <span class="number">1</span>][k] * BASE[k] + s[i]) % MOD[k];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> (q--) &#123;</span><br><span class="line">        <span class="type">int</span> l1, r1, l2, r2;</span><br><span class="line">        cin &gt;&gt; l1 &gt;&gt; r1 &gt;&gt; l2 &gt;&gt; r2;</span><br><span class="line">        cout &lt;&lt; (<span class="built_in">get_hash</span>(l1, r1) == <span class="built_in">get_hash</span>(l2, r2) ? <span class="string">&quot;Yes\n&quot;</span> : <span class="string">&quot;No\n&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h2 id="七几个容易踩的坑">七、几个容易踩的坑</h2>
+<h2 id="易错点">易错点</h2>
 <ul>
-<li>多测时，全局 <code>vector</code> 不能只 <code>clear()</code>
-最外层，通常要按点清空。</li>
-<li>哈希数组下标从 <code>1</code> 开始时，记得给字符串前面补空格。</li>
-<li>只会背模板还不够，要知道自己比较的是“整串”还是“子串”。</li>
-<li>哈希相等通常表示“极大概率相等”，不是严格数学证明。</li>
+<li>多测时按点清空 <code>vector</code>。</li>
+<li>哈希下标从 <code>1</code> 开始时，字符串前面补空格。</li>
+<li>哈希相等只表示高概率相等。</li>
 </ul>
-<h2 id="八学习建议">八、学习建议</h2>
-<p>如果你刚学到图论和哈希，不要急着把所有板子一次背完。更推荐的节奏是：</p>
-<ol type="1">
-<li>先能独立写出 <code>vector</code> 建图和 DFS BFS。</li>
-<li>再把 <code>lambda</code> 递归写顺手。</li>
-<li>然后做几道字符串哈希模板题。</li>
-<li>最后再去总结哪些题是“哈希 + 二分”“哈希 + 前缀后缀”。</li>
-</ol>
-<p>把这些基本功练熟之后，很多题会明显顺手很多。</p>
 
     </div>
 

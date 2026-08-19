@@ -410,6 +410,10 @@ body:has(.article-grid) .site-main {
   overflow: visible;
 }
 
+.post-grid {
+  grid-template-columns: minmax(0, 998px) 230px;
+}
+
 .article-grid > .sidebar,
 .article-grid > .article {
   height: auto;

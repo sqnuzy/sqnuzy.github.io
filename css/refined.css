@@ -414,11 +414,23 @@ body:has(.article-grid) .site-main {
   grid-template-columns: minmax(0, 998px) 230px;
 }
 
+.article-grid.page-grid {
+  grid-template-columns: minmax(0, 998px);
+}
+
 .article-grid > .sidebar,
 .article-grid > .article {
   height: auto;
   max-height: none;
   overflow: visible;
+}
+
+.post-grid > .right-sidebar {
+  position: sticky;
+  top: 92px;
+  max-height: calc(100vh - 112px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .post-list {
@@ -777,6 +789,12 @@ body:has(.article-grid) .site-main {
 
   .article-grid > .right-sidebar {
     order: -1;
+  }
+
+  .post-grid > .right-sidebar {
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 }
 

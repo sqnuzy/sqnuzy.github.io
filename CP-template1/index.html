@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>搜索 | sqnuzy 的算法小站</title>
+  <title>sqnuzy的算法竞赛模版 | sqnuzy 的算法小站</title>
   
-  <meta name="description" content="这是我的个人博客">
+  <meta name="description" content="sqnuzy的算法竞赛模版">
   <meta name="theme-color" content="#f4f6f2">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css">
@@ -149,7 +149,7 @@
   <div class="site-shell">
     
     <main class="site-main">
-      <section class="article-grid page-grid">
+      <section class="article-grid">
   <aside class="left-sidebar sidebar">
   <section class="about-panel">
     <p class="sidebar-kicker">PROFILE</p>
@@ -195,18 +195,43 @@
 
   <article class="article">
     <header class="article-header">
-      <h1>搜索</h1>
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      <p class="article-kicker">CONTEST NOTES</p>
+      <h1>sqnuzy的算法竞赛模版</h1>
+      <div class="post-meta">
+        
+          <span>模版</span>
+        
+        
+          <span>#算法竞赛 #模版</span>
+        
+      </div>
     </header>
     <div class="article-body">
-      
-        <div class="search-panel">
-          <input id="search-input" type="search" placeholder="搜索文章标题、分类、标签或正文" autocomplete="off">
-          <div id="search-results"></div>
-        </div>
-      
+      <span id="more"></span>
+<h1 id="图论">图论</h1>
+<h2 id="spfa-判负环">SPFA 判负环</h2>
+<h3 id="差分约束">差分约束</h3>
+<p><strong>思想</strong></p>
+<p>反向建图，得到每个边的边权，建立超级源点，到各点的距离为<span
+class="math inline">\(0\)</span>，对超级源点进行最短路，最后如果存在负环的话该题目要求的等式不存在</p>
+<p><strong>注意点</strong></p>
+<p><strong>模版</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> pii = pair&lt;<span class="type">int</span>, <span class="type">int</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n, m;</span><br><span class="line">	cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line">	vector&lt;vector&lt;pii&gt;&gt; <span class="built_in">es</span>(n + <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= m; i ++) &#123;</span><br><span class="line">		<span class="type">int</span> u, v, w;</span><br><span class="line">		cin &gt;&gt; u &gt;&gt; v &gt;&gt; w;</span><br><span class="line">		es[v].<span class="built_in">push_back</span>(&#123;u, w&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">vis</span><span class="params">(n + <span class="number">10</span>, <span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dist</span><span class="params">(n + <span class="number">10</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">cnt</span><span class="params">(n + <span class="number">10</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">	queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		q.<span class="built_in">push</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span> (q.<span class="built_in">size</span>()) &#123;</span><br><span class="line">		<span class="type">int</span> u = q.<span class="built_in">front</span>();</span><br><span class="line">		q.<span class="built_in">pop</span>();</span><br><span class="line">		vis[u] = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">auto</span> [v, w] : es[u]) &#123;</span><br><span class="line">			<span class="keyword">if</span> (dist[v] &gt; dist[u] + w) &#123;</span><br><span class="line">				dist[v] = dist[u] + w;</span><br><span class="line">				cnt[v] = cnt[u] + <span class="number">1</span>;</span><br><span class="line">				<span class="keyword">if</span> (cnt[v] &gt;= n) &#123;</span><br><span class="line">					cout &lt;&lt; <span class="string">&quot;NO\n&quot;</span>;</span><br><span class="line">					<span class="keyword">return</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (!vis[v]) &#123;</span><br><span class="line">					q.<span class="built_in">push</span>(v);</span><br><span class="line">					vis[v] = <span class="number">1</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		cout &lt;&lt; dist[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">	cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//	cin &gt;&gt; _T;</span></span><br><span class="line">	<span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
     </div>
   </article>
   <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+      </section>
+    
   
 </aside>
 

@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XCPC 近四年补题汇总（2023-2026） | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="汇总 2023 至 2026 年 XCPC 邀请赛、省赛的补题入口与实时榜单。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css">
+  <link rel="stylesheet" href="/css/refined.css?v=4">
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-mark">萤</span>
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/archives/">归档</a>
+    
+      <a href="/categories/">分类</a>
+    
+      <a href="/tags/">标签</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+    <button class="tool-btn" type="button" data-panel-toggle="style" aria-label="显示设置">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="13.5" cy="6.5" r="2.5"></circle>
+        <circle cx="17.5" cy="12" r="2.5"></circle>
+        <circle cx="8.5" cy="12.5" r="2.5"></circle>
+        <path d="M12 3a9 9 0 0 0 0 18h1.2a2 2 0 0 0 1.55-3.27 1.5 1.5 0 0 1 1.15-2.48H17a4 4 0 0 0 4-4A8.25 8.25 0 0 0 12 3Z"></path>
+      </svg>
+    </button>
+    <button class="tool-btn" type="button" data-panel-toggle="theme" aria-label="亮暗色">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="9" cy="12" r="3"></circle>
+        <path d="M9 2v2M9 20v2M2 12h2M14 12h2M4.05 7.05l1.42 1.42M12.53 15.53l1.42 1.42M4.05 16.95l1.42-1.42M12.53 8.47l1.42-1.42"></path>
+        <path d="M15.5 18H18a3 3 0 0 0 .38-5.98A4.5 4.5 0 0 0 10.6 10"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel style-panel" data-panel="style" hidden>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>主题色相</h2>
+        <span data-hue-value>78</span>
+      </div>
+      <div class="range-wrap">
+        <input class="hue-range" type="range" min="0" max="360" step="5" value="78" data-hue-range>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>壁纸模式</h2>
+      </div>
+      <div class="setting-list">
+        <button type="button" class="setting-row active">
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="m4 15 5-5 4 4 2-2 5 5"></path></svg>
+          </span>
+          <span>横幅</span>
+        </button>
+        <button type="button" class="setting-row" disabled>
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z"></path><path d="M8 5v14M16 5v14"></path></svg>
+          </span>
+          <span>跟随当前主题</span>
+        </button>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>文章布局</h2>
+      </div>
+      <div class="panel-grid">
+        <button type="button" data-post-layout="list">列表</button>
+        <button type="button" data-post-layout="grid">网格</button>
+      </div>
+    </section>
+  </div>
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-08-19T16:00:00.000Z">2026-08-20</time>
+      <p class="article-kicker">CONTEST NOTES</p>
+      <h1>XCPC 近四年补题汇总（2023-2026）</h1>
+      <div class="post-meta">
+        
+          <span>比赛资料</span>
+        
+        
+          <span>#算法竞赛 #XCPC #补题</span>
+        
+      </div>
+    </header>
+    <div class="article-body">
+      <p>整理 2023 至 2026 年 XCPC
+邀请赛与省赛的补题入口、备用入口和实时榜单，共收录 95 场比赛。</p>
+<span id="more"></span>
+<h2 id="使用说明">使用说明</h2>
+<ul>
+<li>“补题”链接通常指向 Codeforces Gym、QOJ、牛客或 PTA 等比赛平台。</li>
+<li>“榜单”链接通常指向 XCPC Board、RankLand 或原比赛平台。</li>
+<li>标记为“补题待补充”的比赛暂未找到公开补题入口，但仍保留榜单供查询。</li>
+<li>部分记录的比赛平台同时承担榜单功能，因此补题与榜单可能指向同一页面。</li>
+<li>本文根据原表整理，原表生成时间为 2026-04-20
+16:18:49；后续链接可能失效或发生变更。</li>
+</ul>
+<h2 id="汇总概览">汇总概览</h2>
+<table>
+<thead>
+<tr>
+<th>年份</th>
+<th style="text-align: right;">比赛数</th>
+<th style="text-align: right;">缺少补题入口</th>
+<th style="text-align: right;">榜单收录</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026</td>
+<td style="text-align: right;">24</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr>
+<td>2025</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">24</td>
+</tr>
+<tr>
+<td>2024</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">27</td>
+</tr>
+<tr>
+<td>2023</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">19</td>
+</tr>
+<tr>
+<td><strong>合计</strong></td>
+<td style="text-align: right;"><strong>95</strong></td>
+<td style="text-align: right;"><strong>10</strong></td>
+<td style="text-align: right;"><strong>94</strong></td>
+</tr>
+</tbody>
+</table>
+<h2 id="年">2026 年</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>日期</th>
+<th>比赛</th>
+<th>系列 / 类型</th>
+<th>资源</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-04-11</td>
+<td><strong>深圳邀请赛</strong><br>2026 年 ICPC
+国际大学生程序设计竞赛全国邀请赛（深圳）</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3588?v=1">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/51st/shenzhen-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-04-25</td>
+<td><strong>浙江省赛</strong><br>「睿琪杯」浙江省第 23
+届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3749?v=1">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/zhejiang?group=undergraduate">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-02</td>
+<td><strong>西安邀请赛</strong><br>第 51 届 ICPC
+国际大学生程序设计竞赛邀请赛西安站</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3766">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/51st/xian-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-10</td>
+<td><strong>北京市赛</strong><br>2026 年北京市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/2048682058783719424">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-10</td>
+<td><strong>CCPC河南省赛</strong><br>第 8 届 CCPC
+河南省大学生程序设计竞赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106551">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/henan">榜单</a></td>
+<td>原表链接文字为 QOJ，实际地址为 Codeforces Gym</td>
+</tr>
+<tr>
+<td>2026-05-10</td>
+<td><strong>黑龙江省赛</strong><br>第二十一届黑龙江省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106534">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3756">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/2049414294076952576">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-16</td>
+<td><strong>陕西省赛</strong><br>第 14
+届陕西省国际大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106532">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3753">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/shaanxi">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-17</td>
+<td><strong>ICPC南昌邀请赛</strong><br>2026 年 ICPC
+国际大学生程序设计竞赛全国邀请赛（南昌）暨江西省赛</td>
+<td>ICPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106551">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/51st/jiangxi-invitational">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-17</td>
+<td><strong>武汉邀请赛</strong><br>2026 年 ICPC
+国际大学生程序设计竞赛全国邀请赛（武汉）暨湖北省赛</td>
+<td>ICPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3799?v=1">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/51st/wuhan-invitational">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-17</td>
+<td><strong>江苏省赛/广东省赛</strong><br>2026
+年江苏省大学生程序设计竞赛 / 广东省第二十三届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106550">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3756">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/jiangsu?group=official">江苏榜单</a>
+· <a
+target="_blank" rel="noopener" href="https://cpc.csgrandeur.cn/outrank/rank?outrank_uuid=89a893b3-0bf8-4686-a848-6adcbe8053ba">广东榜单</a></td>
+<td>两场比赛共用补题入口</td>
+</tr>
+<tr>
+<td>2026-05-23</td>
+<td><strong>吉林省赛</strong><br>第 19 届吉林省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106567">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3786">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/jilin">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-24</td>
+<td><strong>秦皇岛邀请赛</strong><br>CCPC2026-秦皇岛全国邀请赛暨河北省赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://cpc.csgrandeur.cn/outrank/rank?outrank_uuid=88998553-ce66-46ec-a062-1beb357d774c">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-24</td>
+<td><strong>东北地区赛</strong><br>第二十届东北地区大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106551">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/northeastern?group=official">榜单</a></td>
+<td>原表链接文字为 QOJ，实际地址为 Codeforces Gym</td>
+</tr>
+<tr>
+<td>2026-05-24</td>
+<td><strong>CCPC南昌邀请赛</strong><br>2026 CCPC
+中国大学生程序设计竞赛全国邀请赛（南昌）</td>
+<td>CCPC / 邀请赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/ccpc/12th/nanchang-invitational">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-24</td>
+<td><strong>ICPC河南省赛</strong><br>第 17 届 ICPC
+河南省大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/henan-icpc?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-24</td>
+<td><strong>山东省赛</strong><br>2026 年山东省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3767">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/shandong?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-30</td>
+<td><strong>福州邀请赛</strong><br>第十三届福建省大学生程序设计竞赛暨
+2026 年 CCPC 全国邀请赛（福州）</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106565">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3784">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/2056635464310784000">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-31</td>
+<td><strong>四川省赛</strong><br>第十八届四川省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106570">Gym</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/3789">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/sichuan?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-31</td>
+<td><strong>广西邀请赛</strong><br>第九届广西大学生程序设计大赛暨 2026
+邀请赛</td>
+<td>省赛 / 邀请赛/省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/136164#question">牛客</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/136164#rank">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-05-31</td>
+<td><strong>内蒙古区赛</strong><br>“绿盟杯”内蒙古自治区第十九届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/2061646727891632128">PTA</a>
+· <a target="_blank" rel="noopener" href="https://pintia.cn/rankings/2057393074358124544">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-06-07</td>
+<td><strong>贵州邀请赛</strong><br>2026 CCPC
+中国大学生程序设计竞赛全国邀请赛（贵州）暨贵州省赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://codeforces.com/contestInvitation/2919d45a0ae75648522364b156cf255a705da788">Gym</a>
+· <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/ccpc/12th/guizhou-invitational?group=official">榜单</a></td>
+<td>补题链接为 Codeforces 邀请地址</td>
+</tr>
+<tr>
+<td>2026-06-14</td>
+<td><strong>重庆市赛</strong><br>重庆市第十四届大学生程序设计大赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106589">Gym</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/2064240000901931008">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-07-26</td>
+<td><strong>上海市赛</strong><br>“华为智联杯”无线程序设计大赛暨 2026
+年上海市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3944">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2026/shanghai">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2026-07-29</td>
+<td><strong>沈阳邀请赛</strong><br>2026 年 ICPC
+国际大学生程序设计竞赛全国邀请赛（沈阳）</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/3945">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/51st/shenyang-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="年-1">2025 年</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>日期</th>
+<th>比赛</th>
+<th>系列 / 类型</th>
+<th>资源</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2025-04-20</td>
+<td><strong>北京市赛/小米邀请赛</strong><br>2025
+年北京市大学生程序设计竞赛暨“小米杯”全国邀请赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105851">Gym</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/1911705434392723456">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-04-26</td>
+<td><strong>浙江省赛</strong><br>「睿琪杯」浙江省第 22
+届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/2021?v=1">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/zhejiang?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-04-27</td>
+<td><strong>武汉邀请赛</strong><br>第 50 届 ICPC
+国际大学生程序设计竞赛邀请赛武汉站</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105901">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/50th/wuhan-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-04</td>
+<td><strong>西安邀请赛</strong><br>第 50 届 ICPC
+国际大学生程序设计竞赛邀请赛西安站</td>
+<td>ICPC / 邀请赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/collection/official?rankId=icpc2025invitational-xi_an">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-10</td>
+<td><strong>重庆市赛</strong><br>第十三届重庆市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105887">Gym</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/1917126683478355968">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-10</td>
+<td><strong>陕西省赛</strong><br>第十三届陕西省国际大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105891">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/shaanxi?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-10</td>
+<td><strong>河南省赛</strong><br>2025 ICPC 河南省大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/110308">牛客</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/henan?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-11</td>
+<td><strong>黑龙江省赛</strong><br>第二十届黑龙江省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/1939947583086477312">PTA</a>
+· <a target="_blank" rel="noopener" href="https://pintia.cn/rankings/1915280742287147008">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-17</td>
+<td><strong>河北省赛</strong><br>第九届河北省大学生程序设计竞赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105909">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/hebei?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-17</td>
+<td><strong>新疆省赛</strong><br>2025 年 ICPC
+新疆维吾尔自治区大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/109791#question">牛客</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/109791#rank">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-18</td>
+<td><strong>南昌邀请赛/江西省赛</strong><br>第 50 届 ICPC
+国际大学生程序设计竞赛邀请赛南昌站暨 ICPC 江西省大学生程序设计竞赛</td>
+<td>ICPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105911">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/50th/nanchang-invitational?group=icpc">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-24</td>
+<td><strong>吉林省赛</strong><br>第 18 届吉林省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105922">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/jilin?group=A">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-25</td>
+<td><strong>东北邀请赛/东北省赛</strong><br>2025 年 CCPC
+全国邀请赛（东北）暨第十九届 CCPC 东北地区大学生程序设计竞赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105924">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/ccpc/11th/northeastern?group=NE-A">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-25</td>
+<td><strong>山东省赛</strong><br>2025 年山东省大学生程序设计竞赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105930">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/shandong?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-05-25</td>
+<td><strong>广西邀请赛暨省赛</strong><br>第八届广西大学生程序设计大赛暨
+2025 邀请赛</td>
+<td>省赛 / 邀请赛/省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/110811#question">牛客</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/110811#rank">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-06-02</td>
+<td><strong>江苏省赛/广东省赛</strong><br>「华为杯」2025
+年江苏省大学生程序设计竞赛 / 2025 年广东省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105945">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/jiangsu?group=official">榜单</a></td>
+<td>两场比赛共用补题入口；原表仅提供江苏榜单</td>
+</tr>
+<tr>
+<td>2025-06-02</td>
+<td><strong>郑州邀请赛/CCPC河南省赛</strong><br>2025 CCPC
+全国邀请赛（郑州）暨第七届 CCPC 河南省赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105941">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/ccpc/11st/zhengzhou-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-06-08</td>
+<td><strong>四川省赛</strong><br>2025 四川省大学生程序设计竞赛</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105949">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/sichuan?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-06-08</td>
+<td><strong>贵州省赛</strong><br>2025-2026 ICPC
+国际大学生程序设计竞赛贵州省赛</td>
+<td>ICPC / 省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://codeforces.com/contestInvitation/09f6ea8e6f4ea5b80a8c4eade945ba4a91769177">Gym</a>
+· 榜单待补充</td>
+<td>补题链接为 Codeforces 邀请地址</td>
+</tr>
+<tr>
+<td>2025-06-21</td>
+<td><strong>福建邀请赛暨省赛</strong><br>第十二届福建省大学生程序设计竞赛暨
+2025 年 CCPC 福建邀请赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105977">Gym</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/rankings/1934898936967766016">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-06-22</td>
+<td><strong>内蒙古区赛</strong><br>“华讯杯”内蒙古自治区第十八届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/1939950898541187072">PTA</a>
+· <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/collection/official?rankId=nmcpc18th">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-07-05</td>
+<td><strong>上海市赛</strong><br>「华为智联杯」无线程序设计竞赛暨 2025
+年上海市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105992">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/shanghai?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-09-13</td>
+<td><strong>CCPC南昌邀请赛/江西省赛</strong><br>2025 CCPC
+全国邀请赛（南昌）暨第二届江西省赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/2521">QOJ</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/ccpc/11th/nanchang-invitational?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2025-10-12</td>
+<td><strong>湖南省赛</strong><br>湖南省第二十一届大学生计算机程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106139">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/hunan">榜单</a></td>
+<td>榜单链接沿用原 Excel 汇总</td>
+</tr>
+<tr>
+<td>2025-11-15</td>
+<td><strong>辽宁省赛</strong><br>第六届辽宁省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/106380">Gym</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2025/liaoning?group=official">榜单</a></td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h2 id="年-2">2024 年</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>日期</th>
+<th>比赛</th>
+<th>系列 / 类型</th>
+<th>资源</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2024-04-13</td>
+<td><strong>浙江</strong><br>“睿琪杯” 浙江省第 21
+届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/zhejiang">榜单</a></td>
+<td>公开汇总源标注为待补充</td>
+</tr>
+<tr>
+<td>2024-04-14</td>
+<td><strong>黑龙江</strong><br>第十九届黑龙江省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/1793901564338823168">补题</a>
+· <a
+target="_blank" rel="noopener" href="https://pintia.cn/market/item/1793901564338823168">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2024-04-27</td>
+<td><strong>湖北邀请赛</strong><br>The 2024 International Collegiate
+Programming Contest in Hubei Province, China</td>
+<td>省赛 / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105139">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/hubei">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-05-02</td>
+<td><strong>武汉邀请赛</strong><br>2024 ICPC National Invitational
+Collegiate Programming Contest, Wuhan Site</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105143">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/49th/wuhan-invitational">榜单</a></td>
+<td>2024 ICPC National Invitational Wuhan / ICPC 武汉邀请赛</td>
+</tr>
+<tr>
+<td>2024-05-12</td>
+<td><strong>河南邀请赛</strong><br>2024 National Invitational of CCPC
+(Zhengzhou) / 同时也被称呼为 / 2024 CCPC Henan Provincial Collegiate
+Programming Contest</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105158">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/category/379">备用</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/henan">榜单</a></td>
+<td>CCPC 2024 专区：qoj.ac/category/379 / CCPC 郑州邀请赛暨河南省赛 / 与
+CCPC 郑州邀请赛合办 / CCPC 河南省赛</td>
+</tr>
+<tr>
+<td>2024-05-12</td>
+<td><strong>内蒙古</strong><br>“华讯杯”内蒙古自治区第十七届大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/1793842121618161664">补题</a>
+· <a
+target="_blank" rel="noopener" href="https://pintia.cn/market/item/1793842121618161664">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2024-05-12</td>
+<td><strong>江苏</strong><br>“华为杯” 2024 Jiangsu Collegiate
+Programming Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105161">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/jiangsu">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-05-18</td>
+<td><strong>吉林邀请赛</strong><br>The 2024 CCPC National Invitational
+Contest (Changchun) / 同时也被称呼为 / The 17th Jilin Provincial
+Collegiate Programming Contest</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105170">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/category/379">备用</a> · <a
+target="_blank" rel="noopener" href="https://codeforces.com/gym/105170">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页 / CSDN：2024 年第 17 届 CCPC
+全国邀请赛长春 / CCPC 长春邀请赛暨吉林省赛 / 与 CCPC 长春邀请赛合办 /
+CCPC 吉林省赛</td>
+</tr>
+<tr>
+<td>2024-05-18</td>
+<td><strong>新疆</strong><br>2024年国际大学生程序设计竞赛（ACM-ICPC）新疆赛区大赛</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/82345">补题</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/82345">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2024-05-19</td>
+<td><strong>东北四省邀请赛</strong><br>The 2024 CCPC National
+Invitational Contest (Northeast) / 同时也被称呼为 / The 18th Northeast
+Collegiate Programming Contest</td>
+<td>CCPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105173">补题</a> · <a
+target="_blank" rel="noopener" href="https://codeforces.com/gym/105173">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2024-05-19</td>
+<td><strong>西安邀请赛</strong><br>第 49 届 ICPC
+国际大学生程序设计竞赛邀请赛西安站</td>
+<td>ICPC / 邀请赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/49th/xian-invitational">榜单</a></td>
+<td>公开汇总源标注为待补充 / 可在 xcpcio.com 导航查看 / ICPC
+陕西邀请赛</td>
+</tr>
+<tr>
+<td>2024-05-19</td>
+<td><strong>北京</strong><br>2024 北京市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1668">补题 1</a> · <a
+target="_blank" rel="noopener" href="https://pintia.cn/market/item/1794312172238471168">补题 2</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/beijing">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-05-19</td>
+<td><strong>广西</strong><br>第七届广西大学生程序设计大赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://pintia.cn/market/item/1793821896168361984">补题</a>
+· <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/guangxi">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-05-26</td>
+<td><strong>山东</strong><br>2024 CCPC
+全国邀请赛（山东）暨山东省大学生程序设计竞赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/shandong">榜单</a></td>
+<td>公开汇总源标注为待补充 / CSDN：nobkin/article/details/147955216 /
+CCPC 山东邀请赛暨山东省赛 / CCPC 2024 专区：qoj.ac/category/379 / CCPC
+济南邀请赛 / 与 CCPC 山东邀请赛合办 / CCPC 山东省赛</td>
+</tr>
+<tr>
+<td>2024-05-26</td>
+<td><strong>昆明</strong><br>第 49 届 ICPC
+国际大学生程序设计竞赛邀请赛昆明站</td>
+<td>ICPC / 邀请赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/49th/kunming-invitational">榜单</a></td>
+<td>公开汇总源标注为待补充 / 可在 xcpcio.com 导航查看 / ICPC
+云南邀请赛</td>
+</tr>
+<tr>
+<td>2024-05-26</td>
+<td><strong>广东</strong><br>第二十一届广东省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1692">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/guangdong">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-05-26</td>
+<td><strong>河北</strong><br>The 8th Hebei Collegiate Programming
+Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105184">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/hebei">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-06-02</td>
+<td><strong>江西</strong><br>2024 (ICPC) Jiangxi Provincial Contest –
+Official Contest</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105231">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contests?tab=icpc">备用</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/jiangxi">榜单</a></td>
+<td>博客园：WIDA/p/18335582 / ICPC 江西省赛</td>
+</tr>
+<tr>
+<td>2024-06-02</td>
+<td><strong>陕西</strong><br>第 12 届陕西省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/shaanxi">榜单</a></td>
+<td>公开汇总源标注为待补充</td>
+</tr>
+<tr>
+<td>2024-06-16</td>
+<td><strong>上海</strong><br>“华为智联杯” The 2024 Shanghai Collegiate
+Programming Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105229">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/shanghai">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024-06-16</td>
+<td><strong>四川</strong><br>The 2024 Sichuan Provincial Collegiate
+Programming Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/105222">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2024/sichuan">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2024年</td>
+<td><strong>四川</strong><br>CCPC 四川省赛 (SCCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/sccpc2024">榜单</a></td>
+<td>搜索 Sichuan Provincial 2024</td>
+</tr>
+<tr>
+<td>2024年</td>
+<td><strong>广东</strong><br>CCPC 广东省赛 (GDCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/vip-index">补题</a> ·
+<a target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/gdcpc2024">榜单</a></td>
+<td>牛客 OJ 搜索 GDCPC 2024</td>
+</tr>
+<tr>
+<td>2024年</td>
+<td><strong>浙江</strong><br>CCPC 浙江省赛 (ZJCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/zjcpc2024">榜单</a></td>
+<td>搜索 Zhejiang Provincial 2024</td>
+</tr>
+<tr>
+<td>2024年</td>
+<td><strong>湖北</strong><br>CCPC 湖北省赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/hbcpc2024">榜单</a></td>
+<td>搜索 Hubei Provincial 2024</td>
+</tr>
+<tr>
+<td>2024年下半年</td>
+<td><strong>辽宁</strong><br>CCPC 辽宁省赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/lncpc2024">榜单</a></td>
+<td>CSDN 补题：ABCEGJL（nobkin/148110673）</td>
+</tr>
+<tr>
+<td>2024年</td>
+<td><strong>陕西</strong><br>CCPC 陕西省赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/379">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/sncpc2024">榜单</a></td>
+<td>搜索 Shaanxi Provincial 2024</td>
+</tr>
+</tbody>
+</table>
+<h2 id="年-3">2023 年</h2>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+<col style="width: 20%" />
+</colgroup>
+<thead>
+<tr>
+<th>日期</th>
+<th>比赛</th>
+<th>系列 / 类型</th>
+<th>资源</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2023-04-15</td>
+<td><strong>浙江</strong><br>The 20th Zhejiang Provincial Collegiate
+Programming Contest / 同时也被称呼为 / The 1st Universal Cup. Stage 15:
+Hangzhou</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1221">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/zhejiang">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-04-30</td>
+<td><strong>湖北</strong><br>2023 Hubei Provincial Collegiate
+Programming Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/104337">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/hubei">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-05-05</td>
+<td><strong>河南</strong><br>2023 CCPC Henan Provincial Collegiate
+Programming Contest</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/104354">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/category/275">备用</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/henan">榜单</a></td>
+<td>CCPC 2023 专区：qoj.ac/category/275 / CCPC 郑州邀请赛暨河南省赛 /
+CCPC 2023 专区；与郑州邀请赛合办 / CCPC 河南省赛</td>
+</tr>
+<tr>
+<td>2023-05-14</td>
+<td><strong>西安邀请赛</strong><br>The 2023 ICPC Xi’an Invitational
+Programming Contest</td>
+<td>ICPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1291">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/icpc/48th/xian-invitational">榜单</a></td>
+<td>The 2023 ICPC Xi’an Invitational / ICPC 西安邀请赛</td>
+</tr>
+<tr>
+<td>2023-05-14</td>
+<td><strong>广东</strong><br>The 2023 Guangdong Provincial Collegiate
+Programming Contest</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1247">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/guangdong">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-05-20</td>
+<td><strong>新疆1</strong><br>2023年国际大学生程序设计竞赛（ACM-ICPC）新疆赛区</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/57840">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/xinjiang">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-05-21</td>
+<td><strong>河北</strong><br>2023 年 CCPC 河北省大学生程序设计竞赛</td>
+<td>CCPC / 省赛</td>
+<td>补题待补充 · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/hebei">榜单</a></td>
+<td>公开汇总源标注为待补充</td>
+</tr>
+<tr>
+<td>2023-05-21</td>
+<td><strong>江西</strong><br>2023 (ICPC) Jiangxi Provincial Contest –
+Official Contest</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/104385">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contests?tab=icpc">备用</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/jiangxi">榜单</a></td>
+<td>搜索 Jiangxi Provincial 2023 / ICPC 江西省赛</td>
+</tr>
+<tr>
+<td>2023-05-28</td>
+<td><strong>湖南邀请赛（湘潭）</strong><br>2023
+年中国大学生程序设计竞赛全国邀请赛（湖南）（湘潭大学） / 2023 Jiangsu
+Collegiate Programming Contest / The 13th Xiangtan Collegiate
+Programming Contest</td>
+<td>CCPC / 邀请赛</td>
+<td><a target="_blank" rel="noopener" href="https://codeforces.com/gym/104396">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/collection/official?rankId=ccpc2023invitational-xiangtan">榜单</a></td>
+<td>RankLand 标注该榜单为“2023
+年中国大学生程序设计竞赛全国邀请赛（湖南）（湘潭大学）”；页面备注说明相同赛题关联榜单为
+2023 年江苏省大学生程序设计竞赛（jscpc8th）</td>
+</tr>
+<tr>
+<td>2023-06-04</td>
+<td><strong>山东</strong><br>The 2023 ICPC China Shandong Provincial
+Programming Contest</td>
+<td>ICPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1280">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/shandong">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-06-04</td>
+<td><strong>广西</strong><br>2023 年第六届广西大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/59040">补题</a> · <a
+target="_blank" rel="noopener" href="https://board.xcpcio.com/provincial-contest/2023/guangxi">榜单</a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>2023-10-29</td>
+<td><strong>辽宁</strong><br>第四届辽宁省大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/68504">补题</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/68504">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2023-11-18</td>
+<td><strong>新疆2</strong><br>2023
+中国大学生程序设计竞赛（CCPC）新疆赛区</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/69555">补题</a> · <a
+target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/69555">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2023-12-23</td>
+<td><strong>北京</strong><br>2023 北京市大学生程序设计竞赛</td>
+<td>省赛 / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contest/1464">补题</a> · <a
+target="_blank" rel="noopener" href="https://qoj.ac/contest/1464">榜单</a></td>
+<td>榜单链接缺失时回退为补题平台页</td>
+</tr>
+<tr>
+<td>2023年</td>
+<td><strong>四川</strong><br>CCPC 四川省赛 (SCCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a
+target="_blank" rel="noopener" href="https://xcpcio.com/info/provincial-contest/2023/sccpc/">补题</a> ·
+<a target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/sccpc2023">榜单</a></td>
+<td>xcpcio.com 有专属信息页</td>
+</tr>
+<tr>
+<td>2023年</td>
+<td><strong>广东</strong><br>CCPC 广东省赛 (GDCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://ac.nowcoder.com/acm/contest/vip-index">补题</a> ·
+<a target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/gdcpc2023">榜单</a></td>
+<td>牛客 OJ 搜索 GDCPC 2023</td>
+</tr>
+<tr>
+<td>2023年</td>
+<td><strong>浙江</strong><br>CCPC 浙江省赛 (ZJCPC)</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/contests?tab=icpc">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/zjcpc2023">榜单</a></td>
+<td>搜索 Zhejiang Provincial 2023</td>
+</tr>
+<tr>
+<td>2023年上半年</td>
+<td><strong>长春邀请赛暨吉林省赛</strong><br>CCPC
+长春邀请赛暨吉林省赛</td>
+<td>CCPC / 邀请赛/省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/275">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/ccpc2023invitational-changchun">榜单</a></td>
+<td>CCPC 2023 专区：qoj.ac/category/275 / CCPC 2023
+专区；与长春邀请赛合办 / CCPC 吉林省赛</td>
+</tr>
+<tr>
+<td>2023年</td>
+<td><strong>黑龙江</strong><br>CCPC 黑龙江省赛</td>
+<td>CCPC / 省赛</td>
+<td><a target="_blank" rel="noopener" href="https://qoj.ac/category/275">补题</a> · <a
+target="_blank" rel="noopener" href="https://rl.algoux.cn/ranklist/ccpc2023heilongjiang">榜单</a></td>
+<td>CCPC 2023 专区可查找</td>
+</tr>
+</tbody>
+</table>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js"></script>
+</body>
+</html>

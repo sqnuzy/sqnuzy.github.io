@@ -167,6 +167,7 @@
     <div class="article-body">
       <p>这篇文章整理常用的算法竞赛模版1</p>
 <span id="more"></span>
+<p>[TOC]</p>
 <h1 id="图论">图论</h1>
 <h2 id="spfa-判负环">SPFA 判负环</h2>
 <h3 id="差分约束">差分约束</h3>
@@ -176,6 +177,256 @@ class="math inline">\(0\)</span>，对超级源点进行最短路，最后如果
 <p><strong>注意点</strong></p>
 <p><strong>模版</strong></p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> pii = pair&lt;<span class="type">int</span>, <span class="type">int</span>&gt;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n, m;</span><br><span class="line">	cin &gt;&gt; n &gt;&gt; m;</span><br><span class="line">	vector&lt;vector&lt;pii&gt;&gt; <span class="built_in">es</span>(n + <span class="number">1</span>);</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= m; i ++) &#123;</span><br><span class="line">		<span class="type">int</span> u, v, w;</span><br><span class="line">		cin &gt;&gt; u &gt;&gt; v &gt;&gt; w;</span><br><span class="line">		es[v].<span class="built_in">push_back</span>(&#123;u, w&#125;);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">vis</span><span class="params">(n + <span class="number">10</span>, <span class="number">1</span>)</span></span>;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">dist</span><span class="params">(n + <span class="number">10</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">	<span class="function">vector&lt;<span class="type">int</span>&gt; <span class="title">cnt</span><span class="params">(n + <span class="number">10</span>, <span class="number">0</span>)</span></span>;</span><br><span class="line">	queue&lt;<span class="type">int</span>&gt; q;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		q.<span class="built_in">push</span>(i);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">while</span> (q.<span class="built_in">size</span>()) &#123;</span><br><span class="line">		<span class="type">int</span> u = q.<span class="built_in">front</span>();</span><br><span class="line">		q.<span class="built_in">pop</span>();</span><br><span class="line">		vis[u] = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">auto</span> [v, w] : es[u]) &#123;</span><br><span class="line">			<span class="keyword">if</span> (dist[v] &gt; dist[u] + w) &#123;</span><br><span class="line">				dist[v] = dist[u] + w;</span><br><span class="line">				cnt[v] = cnt[u] + <span class="number">1</span>;</span><br><span class="line">				<span class="keyword">if</span> (cnt[v] &gt;= n) &#123;</span><br><span class="line">					cout &lt;&lt; <span class="string">&quot;NO\n&quot;</span>;</span><br><span class="line">					<span class="keyword">return</span>;</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (!vis[v]) &#123;</span><br><span class="line">					q.<span class="built_in">push</span>(v);</span><br><span class="line">					vis[v] = <span class="number">1</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		cout &lt;&lt; dist[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">	cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line"><span class="comment">//	cin &gt;&gt; _T;</span></span><br><span class="line">	<span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="数学">数学</h1>
+<h2 id="矩阵快速幂">矩阵快速幂</h2>
+<h3 id="核心理解">1. 核心理解</h3>
+<p>矩阵快速幂通常用于：状态数较少，转移次数 <span
+class="math inline">\(k\)</span>
+很大，并且每一轮使用相同转移规则的问题。</p>
+<p>若矩阵 <span class="math inline">\(A\)</span>
+表示进行一次转移，那么：</p>
+<p><span class="math display">\[
+(A^k)_{i,j}
+\]</span></p>
+<p>通常表示从状态 <span class="math inline">\(i\)</span> 出发，恰好进行
+<span class="math inline">\(k\)</span> 次转移后到达状态 <span
+class="math inline">\(j\)</span> 的答案。</p>
+<p>本文所有快速幂模板都要求 <span class="math inline">\(k \ge
+0\)</span>。如果没有“恰好 <span class="math inline">\(k\)</span>
+次转移”或其他大次数重复转移的限制，普通最短路、最长路或瓶颈路通常应使用对应的图论算法，不需要矩阵快速幂。</p>
+<p>矩阵乘法可以统一理解为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = <span class="built_in">choose</span>(t.c[i][j], <span class="built_in">merge</span>(x.c[i][p], y.c[p][j]));</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>merge</code>：经过中间状态 <span
+class="math inline">\(p\)</span> 时，怎样拼接前后两段路径。</li>
+<li><code>choose</code>：有多个中间状态或多种路径时，怎样选择答案。</li>
+</ul>
+<p>因此不需要死记多套模板，只需要判断两个问题：</p>
+<ol type="1">
+<li>两段路径拼起来，信息怎样合并？</li>
+<li>多条路径都能到达终点，答案怎样选择？</li>
+</ol>
+<p>所有模板的时间复杂度均为：</p>
+<p><span class="math display">\[
+O(n^3 \log k)
+\]</span></p>
+<p>空间复杂度为：</p>
+<p><span class="math display">\[
+O(n^2)
+\]</span></p>
+<h3 id="常见类型对照">2. 常见类型对照</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 17%" />
+<col style="width: 20%" />
+<col style="width: 8%" />
+<col style="width: 15%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>类型</th>
+<th>路径拼接 <code>merge</code></th>
+<th>多方案选择 <code>choose</code></th>
+<th>普通位置</th>
+<th>单位矩阵对角线</th>
+<th>常见用途</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>普通矩阵</td>
+<td><code>x * y</code></td>
+<td><code>+</code></td>
+<td><code>0</code></td>
+<td><code>1</code></td>
+<td>线性递推、方案计数</td>
+</tr>
+<tr>
+<td>min-plus</td>
+<td><code>x + y</code></td>
+<td><code>min</code></td>
+<td><code>INF</code></td>
+<td><code>0</code></td>
+<td>恰好 <span class="math inline">\(k\)</span> 步最短路、最小代价</td>
+</tr>
+<tr>
+<td>max-plus</td>
+<td><code>x + y</code></td>
+<td><code>max</code></td>
+<td><code>-INF</code></td>
+<td><code>0</code></td>
+<td>恰好 <span class="math inline">\(k\)</span> 步最大收益</td>
+</tr>
+<tr>
+<td>min-max</td>
+<td><code>max(x, y)</code></td>
+<td><code>min</code></td>
+<td><code>INF</code></td>
+<td><code>-INF</code></td>
+<td>最小化路径上的最大值</td>
+</tr>
+<tr>
+<td>max-min</td>
+<td><code>min(x, y)</code></td>
+<td><code>max</code></td>
+<td><code>-INF</code></td>
+<td><code>INF</code></td>
+<td>最大化路径上的最小值</td>
+</tr>
+<tr>
+<td>布尔矩阵</td>
+<td><code>x &amp;&amp; y</code></td>
+<td><code>||</code></td>
+<td><code>false</code></td>
+<td><code>true</code></td>
+<td>恰好 <span class="math inline">\(k\)</span> 步可达性</td>
+</tr>
+</tbody>
+</table>
+<p>单位矩阵对角线应当放 <code>merge</code> 运算的单位元：</p>
+<ul>
+<li>乘法的单位元是 <code>1</code>。</li>
+<li>加法的单位元是 <code>0</code>。</li>
+<li><code>max</code> 的单位元是 <code>-INF</code>。</li>
+<li><code>min</code> 的单位元是 <code>INF</code>。</li>
+<li>逻辑与的单位元是 <code>true</code>。</li>
+</ul>
+<p>矩阵其他位置应当放 <code>choose</code> 运算的无效值：</p>
+<ul>
+<li>求和时放 <code>0</code>。</li>
+<li>取最小时放 <code>INF</code>。</li>
+<li>取最大时放 <code>-INF</code>。</li>
+<li>逻辑或时放 <code>false</code>。</li>
+</ul>
+<h3 id="普通矩阵快速幂">3. 普通矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>线性递推。</li>
+<li>斐波那契等递推数列。</li>
+<li>长度恰好为 <span class="math inline">\(k\)</span> 的路径数量。</li>
+<li>自动机上恰好进行 <span class="math inline">\(k\)</span>
+次转移的方案数。</li>
+</ul>
+<p>若 <code>A.c[u][v]</code> 表示从 <span
+class="math inline">\(u\)</span> 到 <span
+class="math inline">\(v\)</span> 一步转移的方案数，则
+<code>(A^k).c[u][v]</code> 表示恰好进行 <span
+class="math inline">\(k\)</span> 次转移的方案数。</p>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> <span class="type">int</span> mod = <span class="number">1e9</span> + <span class="number">7</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    ll c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123; <span class="built_in">memset</span>(c, <span class="number">0</span>, <span class="keyword">sizeof</span> c); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++)</span><br><span class="line">                t.c[i][j] = (t.c[i][j] + x.c[i][p] * y.c[p][j]) % mod;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 u 到 v 有一条一步转移。</span></span><br><span class="line">A.c[u][v]++;</span><br><span class="line">A.c[u][v] %= mod;</span><br></pre></td></tr></table></figure>
+<p>如果题目要求无向图，两边都要加入：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">A.c[u][v]++;</span><br><span class="line">A.c[v][u]++;</span><br><span class="line">A.c[u][v] %= mod;</span><br><span class="line">A.c[v][u] %= mod;</span><br></pre></td></tr></table></figure>
+<h3 id="min-plus-矩阵快速幂">4. min-plus 矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>恰好走 <span class="math inline">\(k\)</span> 条边的最短路。</li>
+<li>恰好进行 <span class="math inline">\(k\)</span>
+次操作的最小代价。</li>
+<li>状态机运行 <span class="math inline">\(k\)</span>
+步的最小费用。</li>
+</ul>
+<p>运算规则为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = <span class="built_in">min</span>(t.c[i][j], x.c[i][p] + y.c[p][j]);</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>+</code> 表示拼接两段路径后费用相加。</li>
+<li><code>min</code> 表示从所有走法中选择费用最小的一条。</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> ll INF = (<span class="number">1LL</span> &lt;&lt; <span class="number">60</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    ll c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">                c[i][j] = INF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (x.c[i][p] == INF) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (y.c[p][j] == INF) <span class="keyword">continue</span>;</span><br><span class="line">                t.c[i][j] = <span class="built_in">min</span>(t.c[i][j], x.c[i][p] + y.c[p][j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 u 到 v 有一条权值为 w 的边。</span></span><br><span class="line">A.c[u][v] = <span class="built_in">min</span>(A.c[u][v], w);</span><br></pre></td></tr></table></figure>
+<p>存在重边时必须取最小边权。</p>
+<h3 id="max-plus-矩阵快速幂">5. max-plus 矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>恰好走 <span class="math inline">\(k\)</span>
+条边的最大权路径。</li>
+<li>恰好进行 <span class="math inline">\(k\)</span>
+次操作的最大收益。</li>
+<li>状态机运行 <span class="math inline">\(k\)</span>
+步的最高得分。</li>
+</ul>
+<p>运算规则为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = <span class="built_in">max</span>(t.c[i][j], x.c[i][p] + y.c[p][j]);</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>+</code> 表示拼接两段路径后收益相加。</li>
+<li><code>max</code> 表示从所有方案中选择收益最大的一种。</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> ll INF = (<span class="number">1LL</span> &lt;&lt; <span class="number">60</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    ll c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">                c[i][j] = -INF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (x.c[i][p] == -INF) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (y.c[p][j] == -INF) <span class="keyword">continue</span>;</span><br><span class="line">                t.c[i][j] = <span class="built_in">max</span>(t.c[i][j], x.c[i][p] + y.c[p][j]);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 u 到 v 有一条收益为 w 的转移。</span></span><br><span class="line">A.c[u][v] = <span class="built_in">max</span>(A.c[u][v], w);</span><br></pre></td></tr></table></figure>
+<p>存在重边时必须取最大收益。</p>
+<h3 id="min-max-矩阵快速幂">6. min-max 矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>在所有长度恰好为 <span class="math inline">\(k\)</span>
+的路径中，最小化路径上的最大边权。</li>
+<li>每条边有开放时间，求一条路径最早何时全部可用。</li>
+<li>最小化完成整条路径所需的最晚时刻。</li>
+</ul>
+<p>运算规则为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = <span class="built_in">min</span>(t.c[i][j], <span class="built_in">max</span>(x.c[i][p], y.c[p][j]));</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>max</code> 表示拼接两段路径后，整条路径的最大边权。</li>
+<li><code>min</code> 表示从所有路径中选择最大边权最小的一条。</li>
+</ul>
+<p>例如一条路径上的边分别在第 <span class="math inline">\(2,5,3\)</span>
+天建成，那么整条路径最早在第：</p>
+<p><span class="math display">\[
+\max(2,5,3)=5
+\]</span></p>
+<p>天可用。</p>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> ll INF = (<span class="number">1LL</span> &lt;&lt; <span class="number">60</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    ll c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">                c[i][j] = INF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (x.c[i][p] == INF) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (y.c[p][j] == INF) <span class="keyword">continue</span>;</span><br><span class="line">                t.c[i][j] = <span class="built_in">min</span>(t.c[i][j], <span class="built_in">max</span>(x.c[i][p], y.c[p][j]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = -INF;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 u 到 v 的边权为 w。</span></span><br><span class="line">A.c[u][v] = <span class="built_in">min</span>(A.c[u][v], w);</span><br></pre></td></tr></table></figure>
+<p>如果所有边权均非负，单位矩阵对角线也可以写成
+<code>0</code>，因为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">max</span>(<span class="number">0</span>, x) == x;  <span class="comment">// x &gt;= 0</span></span><br></pre></td></tr></table></figure>
+<p>一般情况下仍建议写成 <code>-INF</code>，它才是 <code>max</code>
+运算真正的单位元。</p>
+<h3 id="max-min-矩阵快速幂">7. max-min 矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>在所有长度恰好为 <span class="math inline">\(k\)</span>
+的路径中，最大化路径上的最小边权。</li>
+<li>最大瓶颈路径。</li>
+<li>每条边有容量时，最大化路径能够承受的最小容量。</li>
+</ul>
+<p>运算规则为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = <span class="built_in">max</span>(t.c[i][j], <span class="built_in">min</span>(x.c[i][p], y.c[p][j]));</span><br></pre></td></tr></table></figure>
+<p>其中：</p>
+<ul>
+<li><code>min</code> 表示拼接两段路径后，整条路径的瓶颈值。</li>
+<li><code>max</code> 表示从所有路径中选择瓶颈值最大的一条。</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"><span class="type">const</span> ll INF = (<span class="number">1LL</span> &lt;&lt; <span class="number">60</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    ll c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; N; i++)</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; N; j++)</span><br><span class="line">                c[i][j] = -INF;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (x.c[i][p] == -INF) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++) &#123;</span><br><span class="line">                <span class="keyword">if</span> (y.c[p][j] == -INF) <span class="keyword">continue</span>;</span><br><span class="line">                t.c[i][j] = <span class="built_in">max</span>(t.c[i][j], <span class="built_in">min</span>(x.c[i][p], y.c[p][j]));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = INF;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 从 u 到 v 的容量为 w。</span></span><br><span class="line">A.c[u][v] = <span class="built_in">max</span>(A.c[u][v], w);</span><br></pre></td></tr></table></figure>
+<h3 id="布尔矩阵快速幂">8. 布尔矩阵快速幂</h3>
+<p><strong>用途</strong></p>
+<ul>
+<li>判断恰好走 <span class="math inline">\(k\)</span>
+条边后能否到达。</li>
+<li>自动机恰好运行 <span class="math inline">\(k\)</span>
+步后的可达状态。</li>
+<li>只关心是否存在方案，不关心方案数量。</li>
+</ul>
+<p>运算规则为：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t.c[i][j] = t.c[i][j] || (x.c[i][p] &amp;&amp; y.c[p][j]);</span><br></pre></td></tr></table></figure>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">110</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Matrix</span> &#123;</span><br><span class="line">    <span class="type">bool</span> c[N][N];</span><br><span class="line">    <span class="built_in">Matrix</span>() &#123; <span class="built_in">memset</span>(c, <span class="literal">false</span>, <span class="keyword">sizeof</span> c); &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">Matrix A, res;</span><br><span class="line"><span class="type">int</span> n;</span><br><span class="line">ll k;</span><br><span class="line"></span><br><span class="line">Matrix <span class="keyword">operator</span> * (<span class="type">const</span> Matrix &amp;x, <span class="type">const</span> Matrix &amp;y) &#123;</span><br><span class="line">    Matrix t;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> p = <span class="number">1</span>; p &lt;= n; p++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (!x.c[i][p]) <span class="keyword">continue</span>;</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt;= n; j++)</span><br><span class="line">                t.c[i][j] = t.c[i][j] || y.c[p][j];</span><br><span class="line">        &#125;</span><br><span class="line">    <span class="keyword">return</span> t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">quickpow</span><span class="params">(ll k)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) res.c[i][i] = <span class="literal">true</span>;</span><br><span class="line">    <span class="keyword">while</span> (k) &#123;</span><br><span class="line">        <span class="keyword">if</span> (k &amp; <span class="number">1</span>) res = res * A;</span><br><span class="line">        A = A * A;</span><br><span class="line">        k &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>建图初始化</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 存在从 u 到 v 的一步转移。</span></span><br><span class="line">A.c[u][v] = <span class="literal">true</span>;</span><br></pre></td></tr></table></figure>
 
     </div>
   </article>

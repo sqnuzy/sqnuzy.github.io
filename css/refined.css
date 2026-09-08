@@ -734,6 +734,12 @@ body:has(.article-grid) .site-main {
   }
 }
 
+@media (max-width: 1180px) {
+  .article-grid > .right-sidebar {
+    display: grid;
+  }
+}
+
 @media (max-width: 860px) {
   .site-header {
     display: flex;

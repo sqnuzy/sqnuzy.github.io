@@ -180,6 +180,7 @@
   // Keep a compact toggle next to the back-to-top control so the outline can
   // be dismissed whenever it gets in the way, especially on phone screens.
   if (tocCard && headings.length) {
+    var postGrid = tocCard.closest('.post-grid');
     var tocToggle = document.createElement('button');
     tocToggle.className = 'toc-toggle';
     tocToggle.type = 'button';
@@ -189,8 +190,8 @@
     document.body.appendChild(tocToggle);
     tocToggle.addEventListener('click', function () {
       var collapsed = tocCard.classList.toggle('is-collapsed');
+      if (postGrid) postGrid.classList.toggle('toc-collapsed', collapsed);
       tocToggle.setAttribute('aria-expanded', String(!collapsed));
-      tocToggle.textContent = collapsed ? '目录' : '收起';
     });
   }
 

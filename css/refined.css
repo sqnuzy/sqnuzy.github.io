@@ -747,6 +747,11 @@ body:has(.article-grid) .site-main {
   display: none !important;
 }
 
+/* Once the outline is hidden, let the article reclaim the right-column space. */
+.post-grid.toc-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 @media (max-width: 1080px) {
   .home-grid {
     grid-template-columns: minmax(0, 1fr) 250px;

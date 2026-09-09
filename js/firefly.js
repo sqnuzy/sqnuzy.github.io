@@ -159,16 +159,28 @@
       link.href = '#' + heading.id;
       link.textContent = heading.textContent;
       link.className = heading.tagName.toLowerCase();
+      // Jump immediately instead of starting a long smooth-scroll animation;
+      // wheel input remains responsive right after selecting an entry.
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        heading.scrollIntoView({ behavior: 'auto', block: 'start' });
+        if (history.replaceState) history.replaceState(null, '', link.hash);
+      });
       toc.appendChild(link);
     });
     var tocLinks = Array.prototype.slice.call(toc.querySelectorAll('a'));
+    var activeTick = 0;
     var setActiveToc = function () {
+      if (activeTick) return;
+      activeTick = window.requestAnimationFrame(function () {
+        activeTick = 0;
       var activeIndex = 0;
       headings.forEach(function (heading, index) {
         if (heading.getBoundingClientRect().top < 150) activeIndex = index;
       });
       tocLinks.forEach(function (link, index) {
         link.classList.toggle('active', index === activeIndex);
+      });
       });
     };
     setActiveToc();

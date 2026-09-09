@@ -143,7 +143,13 @@
   });
 
   var toc = document.querySelector('[data-toc]');
-  var headings = Array.prototype.slice.call(document.querySelectorAll('.article-body h2, .article-body h3'));
+  // Hexo does not expand the Markdown `[TOC]` marker by itself. Remove the
+  // marker so it cannot appear as stray text, then build the outline from the
+  // headings that were rendered in the article body.
+  document.querySelectorAll('.article-body p').forEach(function (paragraph) {
+    if (paragraph.textContent.trim() === '[TOC]') paragraph.remove();
+  });
+  var headings = Array.prototype.slice.call(document.querySelectorAll('.article-body h1, .article-body h2, .article-body h3, .article-body h4'));
   if (toc && headings.length) {
     toc.innerHTML = '';
     headings.forEach(function (heading, index) {

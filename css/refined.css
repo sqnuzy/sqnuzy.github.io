@@ -726,21 +726,7 @@ body:has(.article-grid) .site-main {
   }
 
   .article-grid {
-    grid-template-columns: minmax(0, 760px) 230px;
-  }
-
-  /* The post outline must not sit outside a narrow viewport. Stack the
-   * article and its outline before the phone breakpoint so small tablets and
-   * high-DPI phones can both reach it. */
-  .article-grid.post-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .post-grid > .right-sidebar {
-    position: static;
-    max-height: none;
-    overflow: visible;
-    order: -1;
+    grid-template-columns: minmax(0, 1fr) 220px;
   }
 
   .article-grid > .left-sidebar {
@@ -748,8 +734,7 @@ body:has(.article-grid) .site-main {
   }
 }
 
-/* Keep the article outline available when the desktop side column collapses.
- * On phones it becomes a normal, full-width block above the article. */
+/* Keep the article outline available when the desktop side column collapses. */
 @media (max-width: 1180px) {
   .article-grid > .right-sidebar {
     display: grid !important;
@@ -810,16 +795,19 @@ body:has(.article-grid) .site-main {
   }
 
   .article-grid > .right-sidebar {
-    order: -1;
+    order: initial;
   }
 
   .post-grid > .right-sidebar {
-    position: static;
-    max-height: none;
-    overflow: visible;
+    position: fixed;
+    top: 76px;
+    right: 10px;
+    width: min(220px, calc(100vw - 20px));
+    max-height: calc(100vh - 96px);
+    overflow-y: auto;
     display: block !important;
-    order: -1;
-    margin-bottom: 16px;
+    order: initial;
+    z-index: 20;
   }
 
   .post-grid > .right-sidebar .toc-card {

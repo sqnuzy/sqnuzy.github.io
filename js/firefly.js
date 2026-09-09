@@ -143,6 +143,7 @@
   });
 
   var toc = document.querySelector('[data-toc]');
+  var tocCard = toc ? toc.closest('.toc-card') : null;
   // Hexo does not expand the Markdown `[TOC]` marker by itself. Remove the
   // marker so it cannot appear as stray text, then build the outline from the
   // headings that were rendered in the article body.
@@ -172,9 +173,25 @@
     };
     setActiveToc();
     window.addEventListener('scroll', setActiveToc, { passive: true });
-  } else if (toc) {
-    var tocCard = toc.closest('.toc-card');
+  } else if (tocCard) {
     if (tocCard) tocCard.hidden = true;
+  }
+
+  // Keep a compact toggle next to the back-to-top control so the outline can
+  // be dismissed whenever it gets in the way, especially on phone screens.
+  if (tocCard && headings.length) {
+    var tocToggle = document.createElement('button');
+    tocToggle.className = 'toc-toggle';
+    tocToggle.type = 'button';
+    tocToggle.textContent = '目录';
+    tocToggle.setAttribute('aria-label', '收起或展开文章目录');
+    tocToggle.setAttribute('aria-expanded', 'true');
+    document.body.appendChild(tocToggle);
+    tocToggle.addEventListener('click', function () {
+      var collapsed = tocCard.classList.toggle('is-collapsed');
+      tocToggle.setAttribute('aria-expanded', String(!collapsed));
+      tocToggle.textContent = collapsed ? '目录' : '收起';
+    });
   }
 
   var backTop = document.createElement('button');

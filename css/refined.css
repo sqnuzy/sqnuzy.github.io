@@ -719,6 +719,34 @@ body:has(.article-grid) .site-main {
   box-shadow: none;
 }
 
+/* The outline toggle sits directly above the return-to-top button. */
+.toc-toggle {
+  position: fixed;
+  right: 22px;
+  bottom: 72px;
+  z-index: 30;
+  min-width: 42px;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid color-mix(in srgb, var(--ref-accent) 72%, #1f271d);
+  border-radius: 4px;
+  color: var(--ref-accent-ink);
+  background: var(--ref-accent);
+  box-shadow: none;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.toc-toggle:hover,
+.toc-toggle:focus-visible {
+  filter: brightness(0.95);
+}
+
+.toc-card.is-collapsed {
+  display: none !important;
+}
+
 @media (max-width: 1080px) {
   .home-grid {
     grid-template-columns: minmax(0, 1fr) 250px;
@@ -811,7 +839,12 @@ body:has(.article-grid) .site-main {
   }
 
   .post-grid > .right-sidebar .toc-card {
-    display: block !important;
+    display: block;
+  }
+
+  .toc-toggle {
+    right: 10px;
+    bottom: 68px;
   }
 }
 

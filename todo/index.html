@@ -356,6 +356,13 @@
       border-radius: 12px;
       background: #fff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      cursor: grab;
+    }
+    .timer-card:active {
+      cursor: grabbing;
+    }
+    .timer-card.dragging {
+      opacity: 0.45;
     }
     .timer-head {
       display: flex;
@@ -478,9 +485,9 @@
   </div>
 
   <aside class="timer-sidebar" aria-label="时间记录">
-    <section class="timer-card" data-timer="elapsed">
+    <section class="timer-card" data-timer="elapsed" draggable="true">
       <div class="timer-head">
-        <span class="timer-kind">已经开始</span>
+        <span class="timer-kind">倒计时</span>
         <button class="timer-action" type="button" onclick="toggleTimerEdit('elapsed')">设置</button>
       </div>
       <h2 id="elapsedTitle">学习计划</h2>
@@ -492,7 +499,7 @@
       </div>
     </section>
 
-    <section class="timer-card" data-timer="countdown">
+    <section class="timer-card" data-timer="countdown" draggable="true">
       <div class="timer-head">
         <span class="timer-kind">倒计时</span>
         <button class="timer-action" type="button" onclick="toggleTimerEdit('countdown')">设置</button>
@@ -505,6 +512,20 @@
         <button type="button" onclick="saveTimer('countdown')">保存</button>
       </div>
     </section>
+
+    <section class="timer-card" data-timer="countdown2" draggable="true">
+      <div class="timer-head">
+        <span class="timer-kind">倒计时</span>
+        <button class="timer-action" type="button" onclick="toggleTimerEdit('countdown2')">设置</button>
+      </div>
+      <h2 id="countdown2Title">新的目标</h2>
+      <div class="timer-value" id="countdown2Value">--天 --:--:--</div>
+      <div class="timer-edit" id="countdown2Edit">
+        <input id="countdown2Name" type="text" placeholder="名称">
+        <input id="countdown2Time" type="datetime-local">
+        <button type="button" onclick="saveTimer('countdown2')">保存</button>
+      </div>
+    </section>
   </aside>
   </div>
 
@@ -513,9 +534,11 @@
     let sortMode = 'priority';
     const STORAGE_KEY = 'sqnuzy_blog_todo_tasks';
     const TIMER_STORAGE_KEY = 'sqnuzy_blog_timers';
+    const TIMER_ORDER_KEY = 'sqnuzy_blog_timer_order';
     let timers = {
       elapsed: { name: '学习计划', time: '' },
-      countdown: { name: '目标日期', time: '' }
+      countdown: { name: '目标日期', time: '' },
+      countdown2: { name: '新的目标', time: '' }
     };
 
     function loadTimers() {
@@ -523,11 +546,47 @@
         const saved = JSON.parse(localStorage.getItem(TIMER_STORAGE_KEY));
         if (saved) timers = { ...timers, ...saved };
       } catch (e) {}
-      ['elapsed', 'countdown'].forEach(type => {
+      const sidebar = document.querySelector('.timer-sidebar');
+      try {
+        const order = JSON.parse(localStorage.getItem(TIMER_ORDER_KEY)) || [];
+        order.forEach(type => {
+          const card = sidebar.querySelector(`[data-timer="${type}"]`);
+          if (card) sidebar.appendChild(card);
+        });
+      } catch (e) {}
+      ['elapsed', 'countdown', 'countdown2'].forEach(type => {
         document.getElementById(type + 'Name').value = timers[type].name;
         document.getElementById(type + 'Time').value = timers[type].time;
       });
       updateTimers();
+    }
+
+    function enableTimerSorting() {
+      const sidebar = document.querySelector('.timer-sidebar');
+      let dragged = null;
+
+      sidebar.querySelectorAll('.timer-card').forEach(card => {
+        card.addEventListener('dragstart', event => {
+          if (event.target.closest('button, input')) {
+            event.preventDefault();
+            return;
+          }
+          dragged = card;
+          card.classList.add('dragging');
+        });
+        card.addEventListener('dragend', () => {
+          card.classList.remove('dragging');
+          dragged = null;
+          const order = [...sidebar.querySelectorAll('.timer-card')].map(item => item.dataset.timer);
+          localStorage.setItem(TIMER_ORDER_KEY, JSON.stringify(order));
+        });
+        card.addEventListener('dragover', event => {
+          event.preventDefault();
+          if (!dragged || dragged === card) return;
+          const rect = card.getBoundingClientRect();
+          sidebar.insertBefore(dragged, event.clientY < rect.top + rect.height / 2 ? card : card.nextSibling);
+        });
+      });
     }
 
     function toggleTimerEdit(type) {
@@ -555,7 +614,7 @@
 
     function updateTimers() {
       const now = Date.now();
-      ['elapsed', 'countdown'].forEach(type => {
+      ['elapsed', 'countdown', 'countdown2'].forEach(type => {
         const timer = timers[type];
         document.getElementById(type + 'Title').textContent = timer.name;
         const target = timer.time ? new Date(timer.time).getTime() : NaN;
@@ -944,6 +1003,7 @@
     toggleTaskType();
     loadTasks();
     loadTimers();
+    enableTimerSorting();
     setInterval(updateTimers, 1000);
   </script>
 

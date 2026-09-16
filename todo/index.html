@@ -356,10 +356,6 @@
       border-radius: 12px;
       background: #fff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      cursor: grab;
-    }
-    .timer-card:active {
-      cursor: grabbing;
     }
     .timer-card.dragging {
       opacity: 0.45;
@@ -393,8 +389,11 @@
       border-radius: 6px;
       color: #666;
       background: #fff;
-      cursor: pointer;
+      cursor: grab;
       font-size: 12px;
+    }
+    .timer-action:active {
+      cursor: grabbing;
     }
     .timer-edit {
       display: none;
@@ -410,6 +409,21 @@
       border: 1px solid #ddd;
       border-radius: 7px;
       font: inherit;
+    }
+    .duration-inputs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+    }
+    .duration-inputs label {
+      display: grid;
+      gap: 4px;
+      color: #888;
+      font-size: 11px;
+    }
+    .duration-inputs input {
+      min-width: 0;
+      text-align: center;
     }
     .timer-edit button {
       padding: 8px;
@@ -485,10 +499,10 @@
   </div>
 
   <aside class="timer-sidebar" aria-label="时间记录">
-    <section class="timer-card" data-timer="elapsed" draggable="true">
+    <section class="timer-card" data-timer="elapsed">
       <div class="timer-head">
         <span class="timer-kind">倒计时</span>
-        <button class="timer-action" type="button" onclick="toggleTimerEdit('elapsed')">设置</button>
+        <button class="timer-action" type="button" draggable="true" onclick="handleTimerAction(event, 'elapsed')">设置</button>
       </div>
       <h2 id="elapsedTitle">学习计划</h2>
       <div class="timer-value" id="elapsedValue">--天 --:--:--</div>
@@ -499,30 +513,38 @@
       </div>
     </section>
 
-    <section class="timer-card" data-timer="countdown" draggable="true">
+    <section class="timer-card" data-timer="countdown">
       <div class="timer-head">
         <span class="timer-kind">倒计时</span>
-        <button class="timer-action" type="button" onclick="toggleTimerEdit('countdown')">设置</button>
+        <button class="timer-action" type="button" draggable="true" onclick="handleTimerAction(event, 'countdown')">设置</button>
       </div>
       <h2 id="countdownTitle">目标日期</h2>
       <div class="timer-value" id="countdownValue">--天 --:--:--</div>
       <div class="timer-edit" id="countdownEdit">
         <input id="countdownName" type="text" placeholder="名称">
-        <input id="countdownTime" type="datetime-local">
+        <div class="duration-inputs">
+          <label>天<input id="countdownDays" type="number" min="0" step="1" value="0"></label>
+          <label>小时<input id="countdownHours" type="number" min="0" max="23" step="1" value="0"></label>
+          <label>分钟<input id="countdownMinutes" type="number" min="0" max="59" step="1" value="0"></label>
+        </div>
         <button type="button" onclick="saveTimer('countdown')">保存</button>
       </div>
     </section>
 
-    <section class="timer-card" data-timer="countdown2" draggable="true">
+    <section class="timer-card" data-timer="countdown2">
       <div class="timer-head">
         <span class="timer-kind">倒计时</span>
-        <button class="timer-action" type="button" onclick="toggleTimerEdit('countdown2')">设置</button>
+        <button class="timer-action" type="button" draggable="true" onclick="handleTimerAction(event, 'countdown2')">设置</button>
       </div>
       <h2 id="countdown2Title">新的目标</h2>
       <div class="timer-value" id="countdown2Value">--天 --:--:--</div>
       <div class="timer-edit" id="countdown2Edit">
         <input id="countdown2Name" type="text" placeholder="名称">
-        <input id="countdown2Time" type="datetime-local">
+        <div class="duration-inputs">
+          <label>天<input id="countdown2Days" type="number" min="0" step="1" value="0"></label>
+          <label>小时<input id="countdown2Hours" type="number" min="0" max="23" step="1" value="0"></label>
+          <label>分钟<input id="countdown2Minutes" type="number" min="0" max="59" step="1" value="0"></label>
+        </div>
         <button type="button" onclick="saveTimer('countdown2')">保存</button>
       </div>
     </section>
@@ -556,7 +578,11 @@
       } catch (e) {}
       ['elapsed', 'countdown', 'countdown2'].forEach(type => {
         document.getElementById(type + 'Name').value = timers[type].name;
-        document.getElementById(type + 'Time').value = timers[type].time;
+        if (type === 'elapsed') {
+          document.getElementById(type + 'Time').value = timers[type].time;
+        } else {
+          fillDurationInputs(type, timers[type].time);
+        }
       });
       updateTimers();
     }
@@ -565,21 +591,28 @@
       const sidebar = document.querySelector('.timer-sidebar');
       let dragged = null;
 
-      sidebar.querySelectorAll('.timer-card').forEach(card => {
-        card.addEventListener('dragstart', event => {
-          if (event.target.closest('button, input')) {
-            event.preventDefault();
-            return;
-          }
+      sidebar.querySelectorAll('.timer-action').forEach(handle => {
+        handle.addEventListener('dragstart', event => {
+          const card = handle.closest('.timer-card');
           dragged = card;
+          window.timerWasDragged = true;
+          event.dataTransfer.effectAllowed = 'move';
           card.classList.add('dragging');
         });
-        card.addEventListener('dragend', () => {
+        handle.addEventListener('dragend', () => {
+          if (!dragged) return;
+          const card = dragged;
           card.classList.remove('dragging');
           dragged = null;
           const order = [...sidebar.querySelectorAll('.timer-card')].map(item => item.dataset.timer);
           localStorage.setItem(TIMER_ORDER_KEY, JSON.stringify(order));
+          setTimeout(() => {
+            window.timerWasDragged = false;
+          }, 0);
         });
+      });
+
+      sidebar.querySelectorAll('.timer-card').forEach(card => {
         card.addEventListener('dragover', event => {
           event.preventDefault();
           if (!dragged || dragged === card) return;
@@ -589,18 +622,51 @@
       });
     }
 
+    function handleTimerAction(event, type) {
+      if (window.timerWasDragged) {
+        event.preventDefault();
+        return;
+      }
+      toggleTimerEdit(type);
+    }
+
     function toggleTimerEdit(type) {
-      document.getElementById(type + 'Edit').classList.toggle('open');
+      const editor = document.getElementById(type + 'Edit');
+      if (!editor.classList.contains('open') && type !== 'elapsed') {
+        fillDurationInputs(type, timers[type].time);
+      }
+      editor.classList.toggle('open');
     }
 
     function saveTimer(type) {
       const name = document.getElementById(type + 'Name').value.trim();
-      const time = document.getElementById(type + 'Time').value;
-      if (!time) return;
+      let time;
+      if (type === 'elapsed') {
+        time = document.getElementById(type + 'Time').value;
+        if (!time) return;
+      } else {
+        const days = Math.max(0, parseInt(document.getElementById(type + 'Days').value) || 0);
+        const hours = Math.min(23, Math.max(0, parseInt(document.getElementById(type + 'Hours').value) || 0));
+        const minutes = Math.min(59, Math.max(0, parseInt(document.getElementById(type + 'Minutes').value) || 0));
+        const duration = ((days * 24 + hours) * 60 + minutes) * 60000;
+        time = new Date(Date.now() + duration).toISOString();
+      }
       timers[type] = { name: name || (type === 'elapsed' ? '已经开始' : '目标日期'), time };
       localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(timers));
       document.getElementById(type + 'Edit').classList.remove('open');
       updateTimers();
+    }
+
+    function fillDurationInputs(type, targetTime) {
+      const target = targetTime ? new Date(targetTime).getTime() : NaN;
+      let totalMinutes = Number.isFinite(target) ? Math.max(0, Math.ceil((target - Date.now()) / 60000)) : 0;
+      const days = Math.floor(totalMinutes / 1440);
+      totalMinutes %= 1440;
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      document.getElementById(type + 'Days').value = days;
+      document.getElementById(type + 'Hours').value = hours;
+      document.getElementById(type + 'Minutes').value = minutes;
     }
 
     function formatDuration(milliseconds) {
@@ -624,7 +690,7 @@
         } else if (type === 'elapsed') {
           value.textContent = target > now ? '尚未开始' : formatDuration(now - target);
         } else {
-          value.textContent = target <= now ? '已到时间' : formatDuration(target - now);
+          value.textContent = formatDuration(target - now);
         }
       });
     }

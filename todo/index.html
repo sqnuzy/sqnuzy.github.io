@@ -153,9 +153,16 @@
   	color: #333;
   	padding: 0 15px 30px;
      }
-    .container {
-      max-width: 900px;
+    .todo-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 900px) 280px;
+      gap: 18px;
+      max-width: 1200px;
       margin: 0 auto;
+      align-items: start;
+    }
+    .container {
+      width: 100%;
       background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -340,7 +347,86 @@
     .meta-edit button {
       cursor: pointer;
     }
+    .timer-sidebar {
+      display: grid;
+      gap: 14px;
+    }
+    .timer-card {
+      padding: 18px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .timer-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .timer-kind {
+      color: #888;
+      font-size: 12px;
+    }
+    .timer-card h2 {
+      margin-top: 8px;
+      font-size: 17px;
+      font-weight: 700;
+      word-break: break-all;
+    }
+    .timer-value {
+      margin-top: 16px;
+      font-size: 24px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+    .timer-action {
+      padding: 4px 7px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      color: #666;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .timer-edit {
+      display: none;
+      gap: 8px;
+      margin-top: 14px;
+    }
+    .timer-edit.open {
+      display: grid;
+    }
+    .timer-edit input {
+      width: 100%;
+      padding: 8px 9px;
+      border: 1px solid #ddd;
+      border-radius: 7px;
+      font: inherit;
+    }
+    .timer-edit button {
+      padding: 8px;
+      border: 0;
+      border-radius: 7px;
+      color: #fff;
+      background: #222;
+      cursor: pointer;
+    }
+    @media (max-width: 980px) {
+      .todo-layout {
+        grid-template-columns: 1fr;
+      }
+      .timer-sidebar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+    @media (max-width: 620px) {
+      .timer-sidebar {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
+  <div class="todo-layout">
   <div class="container">
     <h1>待办清单</h1>
 
@@ -391,10 +477,98 @@
     <ul class="task-list" id="taskList"></ul>
   </div>
 
+  <aside class="timer-sidebar" aria-label="时间记录">
+    <section class="timer-card" data-timer="elapsed">
+      <div class="timer-head">
+        <span class="timer-kind">已经开始</span>
+        <button class="timer-action" type="button" onclick="toggleTimerEdit('elapsed')">设置</button>
+      </div>
+      <h2 id="elapsedTitle">学习计划</h2>
+      <div class="timer-value" id="elapsedValue">--天 --:--:--</div>
+      <div class="timer-edit" id="elapsedEdit">
+        <input id="elapsedName" type="text" placeholder="名称">
+        <input id="elapsedTime" type="datetime-local">
+        <button type="button" onclick="saveTimer('elapsed')">保存</button>
+      </div>
+    </section>
+
+    <section class="timer-card" data-timer="countdown">
+      <div class="timer-head">
+        <span class="timer-kind">倒计时</span>
+        <button class="timer-action" type="button" onclick="toggleTimerEdit('countdown')">设置</button>
+      </div>
+      <h2 id="countdownTitle">目标日期</h2>
+      <div class="timer-value" id="countdownValue">--天 --:--:--</div>
+      <div class="timer-edit" id="countdownEdit">
+        <input id="countdownName" type="text" placeholder="名称">
+        <input id="countdownTime" type="datetime-local">
+        <button type="button" onclick="saveTimer('countdown')">保存</button>
+      </div>
+    </section>
+  </aside>
+  </div>
+
   <script>
     let tasks = [];
     let sortMode = 'priority';
     const STORAGE_KEY = 'sqnuzy_blog_todo_tasks';
+    const TIMER_STORAGE_KEY = 'sqnuzy_blog_timers';
+    let timers = {
+      elapsed: { name: '学习计划', time: '' },
+      countdown: { name: '目标日期', time: '' }
+    };
+
+    function loadTimers() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(TIMER_STORAGE_KEY));
+        if (saved) timers = { ...timers, ...saved };
+      } catch (e) {}
+      ['elapsed', 'countdown'].forEach(type => {
+        document.getElementById(type + 'Name').value = timers[type].name;
+        document.getElementById(type + 'Time').value = timers[type].time;
+      });
+      updateTimers();
+    }
+
+    function toggleTimerEdit(type) {
+      document.getElementById(type + 'Edit').classList.toggle('open');
+    }
+
+    function saveTimer(type) {
+      const name = document.getElementById(type + 'Name').value.trim();
+      const time = document.getElementById(type + 'Time').value;
+      if (!time) return;
+      timers[type] = { name: name || (type === 'elapsed' ? '已经开始' : '目标日期'), time };
+      localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(timers));
+      document.getElementById(type + 'Edit').classList.remove('open');
+      updateTimers();
+    }
+
+    function formatDuration(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const days = Math.floor(totalSeconds / 86400);
+      const hours = Math.floor(totalSeconds % 86400 / 3600);
+      const minutes = Math.floor(totalSeconds % 3600 / 60);
+      const seconds = totalSeconds % 60;
+      return days + '天 ' + [hours, minutes, seconds].map(n => String(n).padStart(2, '0')).join(':');
+    }
+
+    function updateTimers() {
+      const now = Date.now();
+      ['elapsed', 'countdown'].forEach(type => {
+        const timer = timers[type];
+        document.getElementById(type + 'Title').textContent = timer.name;
+        const target = timer.time ? new Date(timer.time).getTime() : NaN;
+        const value = document.getElementById(type + 'Value');
+        if (!Number.isFinite(target)) {
+          value.textContent = '尚未设置';
+        } else if (type === 'elapsed') {
+          value.textContent = target > now ? '尚未开始' : formatDuration(now - target);
+        } else {
+          value.textContent = target <= now ? '已到时间' : formatDuration(target - now);
+        }
+      });
+    }
 
     function loadTasks() {
       try {
@@ -769,6 +943,8 @@
     setCurrentDateTime();
     toggleTaskType();
     loadTasks();
+    loadTimers();
+    setInterval(updateTimers, 1000);
   </script>
 
 </section>

@@ -936,3 +936,123 @@ body:has(.article-grid) .site-main {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Homepage profile cover -------------------------------------------------- */
+body.home-layout {
+  --home-page-width: 1500px;
+  background: #eef1f5;
+}
+
+:root[data-theme="dark"] body.home-layout {
+  background: var(--ref-bg);
+}
+
+.home-layout .site-shell {
+  width: min(var(--home-page-width), calc(100% - 32px));
+}
+
+.home-layout .home-banner {
+  position: relative;
+  min-height: 420px;
+  margin: 18px 0 0;
+  overflow: hidden;
+  border-radius: 10px;
+  color: #fff;
+  background-image:
+    linear-gradient(180deg, rgba(10, 18, 28, 0.08) 0%, rgba(10, 18, 28, 0.16) 44%, rgba(7, 15, 24, 0.82) 100%),
+    var(--home-background-image, linear-gradient(135deg, #7799b5 0%, #dba983 52%, #34485a 100%));
+  background-position: center;
+  background-size: cover;
+  box-shadow: 0 18px 45px rgba(24, 35, 48, 0.18);
+}
+
+.home-layout .home-banner::after {
+  display: none;
+}
+
+.home-layout .site-main {
+  padding-top: 30px;
+}
+
+.home-layout .post-list {
+  gap: 20px;
+}
+
+.home-layout .feed-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row;
+  border: 0;
+}
+
+.home-layout .section-title h2 {
+  margin: 0;
+}
+
+.home-layout .post-feed,
+.home-layout .post-feed[data-layout="list"] {
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  gap: 12px;
+}
+
+.home-layout .post-feed[data-layout="grid"] {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 24px;
+}
+
+.home-layout .post-card {
+  min-width: 0;
+  border-color: var(--ref-line);
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+.home-layout .post-card-link {
+  height: 100%;
+}
+
+.home-layout .post-card h2 {
+  font-size: 26px;
+  line-height: 1.3;
+}
+
+.home-layout .post-card p {
+  display: block;
+  overflow: visible;
+}
+
+.home-layout .post-feed[data-layout="grid"] .post-card p {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 8;
+}
+
+.home-layout .post-feed[data-layout="grid"] .post-card {
+  border-color: transparent;
+  border-radius: 9px;
+  box-shadow: 0 12px 32px rgba(24, 35, 48, 0.1);
+}
+
+@media (max-width: 700px) {
+  .home-layout .site-shell {
+    width: min(100% - 20px, 680px);
+  }
+
+  .home-layout .home-banner {
+    min-height: 280px;
+  }
+
+  .home-layout .post-card h2 {
+    font-size: 22px;
+  }
+
+  .home-layout .post-feed[data-layout="grid"] {
+    grid-template-columns: 1fr;
+  }
+}

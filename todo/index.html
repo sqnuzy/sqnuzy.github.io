@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f4f6f2">
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css">
-  <link rel="stylesheet" href="/css/refined.css?v=5">
+  <link rel="stylesheet" href="/css/refined.css?v=6">
   <script>
     window.MathJax = {
       tex: {
@@ -248,7 +248,6 @@
       line-height: 1;
     }
     .status-btn.todo { border-color: #ccc; }
-    .status-btn.doing { border-color: #fb8c00; background: #fb8c00; color: #fff; }
     .status-btn.done { border-color: #43a047; background: #43a047; color: #fff; }
 
     .priority-tag {
@@ -276,12 +275,7 @@
       text-decoration: line-through;
       color: #aaa;
     }
-    .task-item.doing .task-title {
-      color: #e65100;
-    }
-
-    .task-title-input,
-    .progress-input {
+    .task-title-input {
       padding: 4px 8px;
       border: 1px solid #1e88e5;
       border-radius: 6px;
@@ -294,7 +288,6 @@
     }
 
     .task-meta,
-    .progress-note,
     .recurrence-tag {
       font-size: 12px;
       flex-shrink: 0;
@@ -305,11 +298,6 @@
     }
     .task-meta:hover {
       color: #1e88e5;
-    }
-    .progress-note {
-      color: #fb8c00;
-      cursor: pointer;
-      word-break: break-all;
     }
     .recurrence-tag {
       color: #7b1fa2;
@@ -412,6 +400,10 @@
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         tasks = raw ? JSON.parse(raw) : [];
+        tasks.forEach(t => {
+          if (t.status === 'doing') t.status = 'todo';
+          t.progress = '';
+        });
       } catch (e) {
         tasks = [];
       }
@@ -447,6 +439,12 @@
 
     function formatDate(d) {
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    }
+
+    function setCurrentDateTime() {
+      const now = new Date();
+      document.getElementById('dateInput').value = formatDate(now);
+      document.getElementById('timeInput').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
     }
 
     function getNextRecurrenceDate(recurrence, recurrenceDay) {
@@ -519,6 +517,7 @@
 
       tasks.push(task);
       document.getElementById('titleInput').value = '';
+      setCurrentDateTime();
       saveTasks();
       render();
     }
@@ -526,15 +525,8 @@
     function cycleStatus(id) {
       const t = tasks.find(x => x.id === id);
       if (!t) return;
-      const order = ['todo', 'doing', 'done'];
-      t.status = order[(order.indexOf(t.status) + 1) % 3];
-
-      if (t.status === 'doing' && !t.progress) {
-        const note = prompt('进度备注（可留空）：');
-        if (note !== null) t.progress = note.trim();
-      }
-
-      if (t.status === 'todo') t.progress = '';
+      t.status = t.status === 'done' ? 'todo' : 'done';
+      t.progress = '';
 
       if (t.status === 'done' && t.recurrence && t.recurrence !== 'none') {
         setTimeout(() => {
@@ -583,36 +575,6 @@
       };
 
       span.replaceWith(input);
-      input.focus();
-    }
-
-    function editProgress(id) {
-      const t = tasks.find(x => x.id === id);
-      if (!t || t.status !== 'doing') return;
-      const el = document.getElementById('prog-' + id);
-      if (!el) return;
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.className = 'progress-input';
-      input.value = t.progress;
-
-      const finish = () => {
-        t.progress = input.value.trim();
-        saveTasks();
-        render();
-      };
-
-      input.onblur = finish;
-      input.onkeydown = (e) => {
-        if (e.key === 'Enter') input.blur();
-        if (e.key === 'Escape') {
-          input.value = t.progress;
-          input.blur();
-        }
-      };
-
-      el.replaceWith(input);
       input.focus();
     }
 
@@ -783,12 +745,9 @@
       }
 
       list.innerHTML = sorted.map(t => {
-        const statusClass = t.status === 'done' ? ' done' : (t.status === 'doing' ? ' doing' : '');
+        const statusClass = t.status === 'done' ? ' done' : '';
         const meta = formatMeta(t);
-        const statusIcon = t.status === 'done' ? '&#10003;' : (t.status === 'doing' ? '&#9654;' : '');
-        const progressHtml = t.status === 'doing' && t.progress
-          ? `<span class="progress-note" id="prog-${t.id}" onclick="editProgress('${t.id}')" title="${escapeHtml(t.progress)}">${escapeHtml(t.progress)}</span>`
-          : (t.status === 'doing' ? `<span class="progress-note" id="prog-${t.id}" onclick="editProgress('${t.id}')" style="color:#ccc">+备注</span>` : '');
+        const statusIcon = t.status === 'done' ? '&#10003;' : '';
         const recLabel = formatRecurrence(t);
         const recHtml = recLabel ? `<span class="recurrence-tag">${recLabel}</span>` : '';
 
@@ -796,7 +755,6 @@
           <button class="status-btn ${t.status}" onclick="cycleStatus('${t.id}')">${statusIcon}</button>
           <span class="priority-tag p${t.priority}">P${t.priority}</span>
           <span class="task-title" id="title-${t.id}" onclick="startEdit('${t.id}')">${escapeHtml(t.title)}</span>
-          ${progressHtml}
           ${recHtml}
           <span class="task-meta" id="meta-${t.id}" onclick="editMeta('${t.id}')" ${!meta ? 'style="color:#ccc"' : ''}>${meta || '+时间'}</span>
           <button class="delete-btn" onclick="deleteTask('${t.id}')">&times;</button>
@@ -808,6 +766,7 @@
       if (e.key === 'Enter') addTask();
     });
 
+    setCurrentDateTime();
     toggleTaskType();
     loadTasks();
   </script>

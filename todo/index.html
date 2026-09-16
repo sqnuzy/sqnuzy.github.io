@@ -410,18 +410,12 @@
       border-radius: 7px;
       font: inherit;
     }
-    .duration-inputs {
+    .timer-time-fields {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: minmax(0, 1fr) 58px 58px;
       gap: 6px;
     }
-    .duration-inputs label {
-      display: grid;
-      gap: 4px;
-      color: #888;
-      font-size: 11px;
-    }
-    .duration-inputs input {
+    .timer-time-fields input[type="number"] {
       min-width: 0;
       text-align: center;
     }
@@ -508,7 +502,11 @@
       <div class="timer-value" id="elapsedValue">--天 --:--:--</div>
       <div class="timer-edit" id="elapsedEdit">
         <input id="elapsedName" type="text" placeholder="名称">
-        <input id="elapsedTime" type="datetime-local">
+        <div class="timer-time-fields">
+          <input id="elapsedDate" type="date" aria-label="日期">
+          <input id="elapsedHour" type="number" min="0" max="23" step="1" aria-label="小时" placeholder="时">
+          <input id="elapsedMinute" type="number" min="0" max="59" step="1" aria-label="分钟" placeholder="分">
+        </div>
         <button type="button" onclick="saveTimer('elapsed')">保存</button>
       </div>
     </section>
@@ -522,10 +520,10 @@
       <div class="timer-value" id="countdownValue">--天 --:--:--</div>
       <div class="timer-edit" id="countdownEdit">
         <input id="countdownName" type="text" placeholder="名称">
-        <div class="duration-inputs">
-          <label>天<input id="countdownDays" type="number" min="0" step="1" value="0"></label>
-          <label>小时<input id="countdownHours" type="number" min="0" max="23" step="1" value="0"></label>
-          <label>分钟<input id="countdownMinutes" type="number" min="0" max="59" step="1" value="0"></label>
+        <div class="timer-time-fields">
+          <input id="countdownDate" type="date" aria-label="日期">
+          <input id="countdownHour" type="number" min="0" max="23" step="1" aria-label="小时" placeholder="时">
+          <input id="countdownMinute" type="number" min="0" max="59" step="1" aria-label="分钟" placeholder="分">
         </div>
         <button type="button" onclick="saveTimer('countdown')">保存</button>
       </div>
@@ -540,10 +538,10 @@
       <div class="timer-value" id="countdown2Value">--天 --:--:--</div>
       <div class="timer-edit" id="countdown2Edit">
         <input id="countdown2Name" type="text" placeholder="名称">
-        <div class="duration-inputs">
-          <label>天<input id="countdown2Days" type="number" min="0" step="1" value="0"></label>
-          <label>小时<input id="countdown2Hours" type="number" min="0" max="23" step="1" value="0"></label>
-          <label>分钟<input id="countdown2Minutes" type="number" min="0" max="59" step="1" value="0"></label>
+        <div class="timer-time-fields">
+          <input id="countdown2Date" type="date" aria-label="日期">
+          <input id="countdown2Hour" type="number" min="0" max="23" step="1" aria-label="小时" placeholder="时">
+          <input id="countdown2Minute" type="number" min="0" max="59" step="1" aria-label="分钟" placeholder="分">
         </div>
         <button type="button" onclick="saveTimer('countdown2')">保存</button>
       </div>
@@ -578,11 +576,7 @@
       } catch (e) {}
       ['elapsed', 'countdown', 'countdown2'].forEach(type => {
         document.getElementById(type + 'Name').value = timers[type].name;
-        if (type === 'elapsed') {
-          document.getElementById(type + 'Time').value = timers[type].time;
-        } else {
-          fillDurationInputs(type, timers[type].time);
-        }
+        fillTimerFields(type, timers[type].time);
       });
       updateTimers();
     }
@@ -631,42 +625,37 @@
     }
 
     function toggleTimerEdit(type) {
-      const editor = document.getElementById(type + 'Edit');
-      if (!editor.classList.contains('open') && type !== 'elapsed') {
-        fillDurationInputs(type, timers[type].time);
-      }
-      editor.classList.toggle('open');
+      document.getElementById(type + 'Edit').classList.toggle('open');
     }
 
     function saveTimer(type) {
       const name = document.getElementById(type + 'Name').value.trim();
-      let time;
-      if (type === 'elapsed') {
-        time = document.getElementById(type + 'Time').value;
-        if (!time) return;
-      } else {
-        const days = Math.max(0, parseInt(document.getElementById(type + 'Days').value) || 0);
-        const hours = Math.min(23, Math.max(0, parseInt(document.getElementById(type + 'Hours').value) || 0));
-        const minutes = Math.min(59, Math.max(0, parseInt(document.getElementById(type + 'Minutes').value) || 0));
-        const duration = ((days * 24 + hours) * 60 + minutes) * 60000;
-        time = new Date(Date.now() + duration).toISOString();
-      }
+      const time = readTimerFields(type);
+      if (!time) return;
       timers[type] = { name: name || (type === 'elapsed' ? '已经开始' : '目标日期'), time };
       localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify(timers));
       document.getElementById(type + 'Edit').classList.remove('open');
       updateTimers();
     }
 
-    function fillDurationInputs(type, targetTime) {
-      const target = targetTime ? new Date(targetTime).getTime() : NaN;
-      let totalMinutes = Number.isFinite(target) ? Math.max(0, Math.ceil((target - Date.now()) / 60000)) : 0;
-      const days = Math.floor(totalMinutes / 1440);
-      totalMinutes %= 1440;
-      const hours = Math.floor(totalMinutes / 60);
-      const minutes = totalMinutes % 60;
-      document.getElementById(type + 'Days').value = days;
-      document.getElementById(type + 'Hours').value = hours;
-      document.getElementById(type + 'Minutes').value = minutes;
+    function fillTimerFields(type, time) {
+      const parsed = time ? new Date(time) : new Date();
+      const value = Number.isNaN(parsed.getTime()) ? new Date() : parsed;
+      document.getElementById(type + 'Date').value = formatDate(value);
+      document.getElementById(type + 'Hour').value = value.getHours();
+      document.getElementById(type + 'Minute').value = value.getMinutes();
+    }
+
+    function readTimerFields(type) {
+      const date = document.getElementById(type + 'Date').value;
+      if (!date) return '';
+      const hourInput = document.getElementById(type + 'Hour');
+      const minuteInput = document.getElementById(type + 'Minute');
+      const hour = Math.min(23, Math.max(0, parseInt(hourInput.value) || 0));
+      const minute = Math.min(59, Math.max(0, parseInt(minuteInput.value) || 0));
+      hourInput.value = hour;
+      minuteInput.value = minute;
+      return date + 'T' + String(hour).padStart(2, '0') + ':' + String(minute).padStart(2, '0');
     }
 
     function formatDuration(milliseconds) {
@@ -690,7 +679,7 @@
         } else if (type === 'elapsed') {
           value.textContent = target > now ? '尚未开始' : formatDuration(now - target);
         } else {
-          value.textContent = formatDuration(target - now);
+          value.textContent = target <= now ? '已到时间' : formatDuration(target - now);
         }
       });
     }

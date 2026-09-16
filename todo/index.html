@@ -412,8 +412,11 @@
     }
     .timer-time-fields {
       display: grid;
-      grid-template-columns: minmax(0, 1fr) 58px 58px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 6px;
+    }
+    .timer-time-fields input[type="date"] {
+      grid-column: 1 / -1;
     }
     .timer-time-fields input[type="number"] {
       min-width: 0;

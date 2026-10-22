@@ -2,29 +2,29 @@
    番茄学习钟 · styles
    ========================================================== */
 :root {
-  --bg: #f4f0e8;
-  --bg-2: #ebe4d7;
-  --surface: #fffdf9;
-  --surface-2: #faf6ee;
-  --surface-3: #f2ebdf;
-  --line: #e7dfd1;
-  --line-strong: #d8cdba;
-  --ink: #24201c;
-  --ink-2: #5c5349;
-  --muted: #91887b;
+  --bg: #f6f6f4;
+  --bg-2: #f6f6f4;
+  --surface: #ffffff;
+  --surface-2: #fafafa;
+  --surface-3: #f1f1ef;
+  --line: #e9e8e4;
+  --line-strong: #dcdad5;
+  --ink: #1f1f1d;
+  --ink-2: #575752;
+  --muted: #91918a;
   --accent: #e8613c;
   --accent-2: #f2a03d;
   --accent-ink: #ffffff;
   --accent-soft: rgba(232, 97, 60, 0.11);
   --break: #2f9e8f;
   --break-soft: rgba(47, 158, 143, 0.12);
-  --shadow-sm: 0 1px 2px rgba(61, 46, 28, 0.05), 0 4px 14px rgba(61, 46, 28, 0.05);
-  --shadow-md: 0 2px 4px rgba(61, 46, 28, 0.04), 0 14px 40px rgba(61, 46, 28, 0.08);
+  --shadow-sm: none;
+  --shadow-md: none;
   --shadow-lg: 0 24px 70px rgba(45, 33, 18, 0.18);
-  --radius-lg: 26px;
+  --radius-lg: 16px;
   --radius-md: 16px;
   --radius-sm: 11px;
-  --ring-track: #ece4d6;
+  --ring-track: #efeeea;
   --font: "Inter", "PingFang SC", "HarmonyOS Sans SC", "MiSans", "Microsoft YaHei UI",
           "Microsoft YaHei", "Noto Sans CJK SC", system-ui, -apple-system, sans-serif;
   --mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
@@ -535,7 +535,8 @@ kbd {
 .card-head {
   display: flex; align-items: flex-start; justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
 }
 .card-head h2 { font-size: 15px; font-weight: 700; letter-spacing: .1px; }
 .card-head p { margin-top: 3px; }
@@ -549,57 +550,75 @@ kbd {
 }
 [data-theme="dark"] .badge { color: var(--accent-2); }
 
-.donut-wrap { position: relative; width: min(206px, 74%); margin: 4px auto 0; aspect-ratio: 1; }
-.donut { width: 100%; height: 100%; display: block; }
-.donut-seg { transition: opacity .18s, filter .18s; cursor: pointer; }
-.donut.seg-hover .donut-seg { opacity: .34; }
-.donut.seg-hover .donut-seg.on { opacity: 1; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.16)); }
-.donut-center {
-  position: absolute; inset: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  gap: 2px;
-  pointer-events: none;
-}
-.donut-center strong {
-  font-size: 17px;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.2px;
+/* 实心饼图 + 引线标签 */
+.pie-wrap { width: min(360px, 100%); margin: 0 auto; }
+.pie { width: 100%; height: auto; display: block; overflow: visible; }
+.pie-seg { transition: opacity .16s; cursor: pointer; }
+.pie.hovering .pie-seg { opacity: .38; }
+.pie.hovering .pie-seg.on { opacity: 1; }
+.pie-total {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin: 2px 0 12px;
   font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-  max-width: 100%;
-  display: flex; flex-direction: column; align-items: center;
 }
-.donut-center strong small { font-size: 10.5px; font-weight: 600; color: var(--muted); letter-spacing: 1px; margin-top: 3px; }
-.donut-center span { font-size: 10.5px; color: var(--muted); letter-spacing: .6px; line-height: 1.2; }
 
-.legend { margin-top: 10px; display: grid; gap: 2px; min-height: 34px; }
+.legend { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 20px; margin-top: 0; min-height: 0; }
 .legend li {
-  display: flex; align-items: center; gap: 9px;
-  padding: 7px 8px;
-  border-radius: 9px;
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 4px;
+  border-radius: 8px;
   font-size: 12.5px;
-  transition: background .15s;
-  cursor: default;
+  min-width: 0;
 }
-.legend li:hover { background: var(--surface-2); }
 .legend .sw { width: 9px; height: 9px; border-radius: 3px; flex: none; }
 .legend .name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-2); font-weight: 500; }
-.legend .val { font-variant-numeric: tabular-nums; font-weight: 600; font-size: 12px; }
-.legend .pct {
-  width: 38px; text-align: right;
-  color: var(--muted); font-size: 11.5px;
-  font-variant-numeric: tabular-nums;
-}
+.legend .lg-time { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.legend .lg-pct { width: 46px; text-align: right; font-weight: 600; font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .legend-empty {
+  grid-column: 1 / -1;
   padding: 10px 6px;
   font-size: 12.5px;
   color: var(--muted);
   text-align: center;
   line-height: 1.7;
 }
+@media (max-width: 620px) {
+  .legend { grid-template-columns: 1fr; gap: 0; }
+}
 
+
+/* 自选日期范围 */
+.range-custom {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.range-custom[hidden] { display: none; }
+.range-custom label { display: inline-flex; align-items: center; gap: 6px; }
+.range-custom input[type="date"] {
+  height: 34px;
+  border-radius: 9px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: 0 8px;
+  font-size: 12px;
+  font-family: inherit;
+}
+.range-custom input[type="date"]:focus { outline: 0; border-color: var(--line-strong); }
+.range-dash { color: var(--line-strong); }
+.range-hint { margin-left: auto; font-size: 11.5px; }
+@media (max-width: 620px) {
+  .range-hint { margin-left: 0; width: 100%; }
+  .segmented.sm .seg { padding: 5px 9px; }
+}
 /* 7 天柱状 */
 .bars {
   display: grid;
@@ -1040,3 +1059,21 @@ kbd {
   border-color: var(--line);
   color: var(--ink);
 }
+
+/* ---------------- 简约化 ---------------- */
+body { background: var(--bg); }
+body::before { display: none; }
+.card { border-radius: 16px; box-shadow: none; }
+.brand-mark { background: var(--accent); box-shadow: none; }
+.brand-mark svg { display: block; }
+.btn-primary { background: var(--accent); box-shadow: none; }
+.btn-primary:hover { box-shadow: none; transform: none; }
+.timer-card::after { display: none; }
+.segmented { border-color: transparent; background: var(--surface-3); }
+.timer-card, .stats-card, .chart-card, .bars-card { padding: 20px; }
+.goal-bar { background: var(--surface-3); }
+.kbd-hint kbd { box-shadow: none; background: var(--surface); }
+.ring-track, .ring-progress { stroke-width: 10; }
+.ring-flash { stroke-width: 10; }
+.icon-btn { background: var(--surface); }
+.pill { background: var(--surface); }

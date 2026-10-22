@@ -75,6 +75,8 @@
     sound: true,
     theme: 'light',
     range: 'today',
+    customFrom: '',
+    customTo: '',
     selected: 'math',
     note: ''
   });
@@ -134,7 +136,10 @@
     s.dailyGoal = clamp(Number(s.dailyGoal) || 0, 0, 1440);
     s.sound = s.sound !== false;
     s.theme = s.theme === 'dark' ? 'dark' : 'light';
-    if (!['today', 'week', 'month'].includes(s.range)) s.range = 'today';
+    if (!['today', 'week', 'month', 'custom'].includes(s.range)) s.range = 'today';
+    const isDate = v => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(parseKey(v).getTime());
+    if (!isDate(s.customFrom)) s.customFrom = '';
+    if (!isDate(s.customTo)) s.customTo = '';
     if (!data.subjects.some(x => x.id === s.selected)) s.selected = data.subjects[0].id;
     return data;
   }
@@ -244,8 +249,12 @@
     goalSub: $('#goalSub'),
     chartCaption: $('#chartCaption'),
     rangeTabs: $('#rangeTabs'),
+    rangeCustom: $('#rangeCustom'),
+    rangeFrom: $('#rangeFrom'),
+    rangeTo: $('#rangeTo'),
+    rangeHint: $('#rangeHint'),
     donut: $('#donut'),
-    donutTotal: $('#donutTotal'),
+    pieTotal: $('#pieTotal'),
     legend: $('#legend'),
     weekBars: $('#weekBars'),
     weekAvg: $('#weekAvg'),
@@ -704,12 +713,58 @@
       from = dayStart(addDays(now, -6));
       to = dayStart(addDays(now, 1));
       label = '最近 7 天各科目投入占比';
+    } else if (range === 'custom') {
+      const fromK = data.settings.customFrom || dayKey(addDays(now, -6));
+      const toK = data.settings.customTo || dayKey(now);
+      let a = parseKey(fromK);
+      let b = parseKey(toK);
+      if (a.getTime() > b.getTime()) { const t = a; a = b; b = t; }
+      from = a.getTime();
+      to = dayStart(addDays(b, 1));
+      const sameDay = a.getTime() === b.getTime();
+      label = sameDay
+        ? `${a.getMonth() + 1} 月 ${a.getDate()} 日 各科目投入占比`
+        : `${a.getMonth() + 1} 月 ${a.getDate()} 日 – ${b.getMonth() + 1} 月 ${b.getDate()} 日 各科目投入占比`;
     } else {
       from = dayStart(now);
       to = from + 86400000;
       label = '今天各科目投入占比';
     }
     return { list: sessionsBetween(from, to), label };
+  }
+
+  function paintRange() {
+    const custom = data.settings.range === 'custom';
+    el.rangeCustom.hidden = !custom;
+    if (!custom) return;
+    if (!data.settings.customFrom || !data.settings.customTo) {
+      data.settings.customFrom = data.settings.customFrom || dayKey(addDays(Date.now(), -6));
+      data.settings.customTo = data.settings.customTo || dayKey(Date.now());
+      save();
+    }
+    const fromK = data.settings.customFrom;
+    const toK = data.settings.customTo;
+    el.rangeFrom.value = fromK;
+    el.rangeTo.value = toK;
+    const days = Math.round((parseKey(toK).getTime() - parseKey(fromK).getTime()) / 86400000) + 1;
+    el.rangeHint.textContent = `共 ${Math.max(1, days)} 天`;
+  }
+
+  /** 自选日期：起止颠倒时自动交换，改完立即重算饼图 */
+  function applyCustomRange() {
+    let from = el.rangeFrom.value;
+    let to = el.rangeTo.value;
+    if (!from || !to) return;
+    if (from > to) { const t = from; from = to; to = t; }
+    data.settings.customFrom = from;
+    data.settings.customTo = to;
+    data.settings.range = 'custom';
+    save();
+    el.rangeFrom.value = from;
+    el.rangeTo.value = to;
+    $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b.dataset.range === 'custom' ? 'true' : 'false'));
+    paintRange();
+    renderChart();
   }
 
   const RING_R = 78;
@@ -730,8 +785,6 @@
     const { list, label } = rangeData(data.settings.range);
     el.chartCaption.textContent = label;
     const total = sumSec(list);
-    const css = getComputedStyle(document.documentElement);
-    const trackColor = (css.getPropertyValue('--ring-track') || '#ece4d6').trim() || '#ece4d6';
 
     const map = new Map();
     data.subjects.forEach(s => map.set(s.id, { id: s.id, name: s.name, color: s.color, sec: 0 }));
@@ -741,64 +794,73 @@
     });
     const rows = Array.from(map.values()).filter(v => v.sec > 0).sort((a, b) => b.sec - a.sec);
 
-    const cx = 110, cy = 110, r = RING_R;
+    const W = 380, H = 320, cx = 190, cy = 158, R = 104;
     let svg = '';
+    let hoverTitle = '';
+
     if (!rows.length) {
-      svg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${esc(trackColor)}" stroke-width="26" opacity=".55"/>`;
-      el.donutTotal.innerHTML = '<strong>0 分钟<small>总专注</small></strong>';
+      svg = `<circle cx="${cx}" cy="${cy}" r="${R}" fill="var(--surface-3)"/>
+        <text x="${cx}" y="${cy - 4}" text-anchor="middle" font-size="13" fill="var(--muted)">这段时间还没有记录</text>
+        <text x="${cx}" y="${cy + 18}" text-anchor="middle" font-size="12" fill="var(--muted)">开始计时后这里会显示占比</text>`;
+      el.pieTotal.textContent = '总计 0 分钟';
     } else {
-      if (rows.length === 1) {
-        svg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#donutGrad0)" stroke-width="26" class="donut-seg on" data-id="${esc(rows[0].id)}"/>`;
-      } else {
-        let acc = 0;
-        const gap = 0.6;
-        rows.forEach((row, i) => {
-          const span = row.sec / total * 360;
-          const a0 = acc + gap / 2;
-          const a1 = acc + span - gap / 2;
-          acc += span;
-          if (a1 <= a0) return;
-          svg += `<path class="donut-seg" data-id="${esc(row.id)}" d="${arcPath(cx, cy, r, a0, a1)}"
-                    fill="none" stroke="url(#donutGrad${i})" stroke-width="26" style="--i:${i}"/>`;
-        });
-      }
-        el.donutTotal.innerHTML = `<strong>${fmtHM(total)}<small>总专注</small></strong>`;
+      let acc = 0;
+      rows.forEach((row, i) => {
+        const span = row.sec / total * 360;
+        const a0 = acc;
+        const a1 = acc + span;
+        acc = a1;
+        if (span <= 0) return;
+        const s = polar(cx, cy, R, a0);
+        const e = polar(cx, cy, R, a1);
+        const large = span > 180 ? 1 : 0;
+        svg += `<path class="pie-seg" data-id="${esc(row.id)}" d="M ${cx} ${cy} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z"
+          fill="${esc(row.color)}" stroke="#fff" stroke-width="1.5"/>`;
+
+        // 标签与引线（小占比放到外面，避免盖住）
+        const mid = a0 + span / 2;
+        const p1 = polar(cx, cy, R + 4, mid);
+        const p2 = polar(cx, cy, R + 16, mid);
+        const p3 = polar(cx, cy, R + 30, mid);
+        const right = Math.cos((mid - 90) * Math.PI / 180) >= 0;
+        const anchor = right ? 'start' : 'end';
+        const dx = right ? 6 : -6;
+        if (span >= 8) {
+          svg += `<polyline points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}"
+            fill="none" stroke="${esc(row.color)}" stroke-width="1.4" stroke-linecap="round"/>`;
+          svg += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y - 3).toFixed(1)}" text-anchor="${anchor}" font-size="12.5" font-weight="600" fill="var(--ink-2)">${esc(row.name)}</text>`;
+          svg += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y + 13).toFixed(1)}" text-anchor="${anchor}" font-size="11" fill="var(--muted)">${fmtHM(row.sec)}</text>`;
+        }
+      });
+      el.pieTotal.textContent = `总计 ${fmtHM(total)}`;
     }
 
-    const defs = rows.map((row, i) => `
-      <linearGradient id="donutGrad${i}" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0%" stop-color="${esc(row.color)}"/>
-        <stop offset="100%" stop-color="${esc(shade(row.color, 18))}"/>
-      </linearGradient>`).join('');
-    el.donut.innerHTML = `<defs>${defs}</defs>${svg}`;
+    el.donut.innerHTML = svg;
     el.donut.setAttribute('aria-label', rows.length
       ? `总专注 ${fmtHM(total)}：` + rows.map(rr => `${rr.name} ${fmtHM(rr.sec)}`).join('，')
-      : '还没有学习记录');
+      : '这段时间还没有学习记录');
 
-    el.donut.classList.remove('seg-hover');
-    $$('.donut-seg', el.donut).forEach(seg => {
+    el.donut.classList.remove('hovering');
+    $$('.pie-seg', el.donut).forEach(seg => {
       seg.addEventListener('mouseenter', () => {
-        el.donut.classList.add('seg-hover');
-        $$('.donut-seg', el.donut).forEach(s => s.classList.toggle('on', s === seg));
-        const row = rows.find(rr => rr.id === seg.dataset.id);
-        if (row) el.donutTotal.innerHTML = `<strong style="color:${esc(row.color)}">${fmtHM(row.sec)}<small>${esc(row.name)} · ${((row.sec / total) * 100).toFixed(0)}%</small></strong>`;
+        el.donut.classList.add('hovering');
+        $$('.pie-seg', el.donut).forEach(s => s.classList.toggle('on', s === seg));
       });
       seg.addEventListener('mouseleave', () => {
-        el.donut.classList.remove('seg-hover');
-        $$('.donut-seg', el.donut).forEach(s => s.classList.add('on'));
-        el.donutTotal.innerHTML = `<strong>${fmtHM(total)}<small>总专注</small></strong>`;
+        el.donut.classList.remove('hovering');
+        $$('.pie-seg', el.donut).forEach(s => s.classList.remove('on'));
       });
     });
 
     if (!rows.length) {
-      el.legend.innerHTML = `<li class="legend-empty">今天还没有学习记录。<br>选中科目，按下「开始计时」，结束后这里就会出现占比。</li>`;
+      el.legend.innerHTML = "";
     } else {
       el.legend.innerHTML = rows.map(row => `
         <li>
           <span class="sw" style="background:${esc(row.color)}"></span>
           <span class="name">${esc(row.name)}</span>
-          <span class="val">${fmtHM(row.sec)}</span>
-          <span class="pct">${((row.sec / total) * 100).toFixed(0)}%</span>
+          <span class="lg-time">${fmtHM(row.sec)}</span>
+          <span class="lg-pct">${((row.sec / total) * 100).toFixed(1)}%</span>
         </li>`).join('');
     }
   }
@@ -1128,50 +1190,58 @@
     if (!rows.length) { toast('图表还是空的，先记录一点时间吧'); return; }
 
     const dark = document.documentElement.dataset.theme === 'dark';
-    const ink = dark ? '#f4ede2' : '#24201c';
-    const muted = dark ? '#8b8173' : '#91887b';
-    const bg = dark ? '#201c16' : '#fffdf9';
-    const line = dark ? '#332c23' : '#e7dfd1';
-    const W = 720, H = 420, CX = 210, CY = 214, R = 132, SW = 40;
+    const ink = dark ? '#f2f2ef' : '#1f1f1d';
+    const muted = dark ? '#9a9a92' : '#91918a';
+    const bg = dark ? '#1b1b19' : '#ffffff';
+    const line = dark ? '#33332e' : '#e9e8e4';
+    const W = 760, H = 520, CX = 240, CY = 248, R = 150;
     const fonts = `font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif"`;
 
     let arcs = '';
     let acc = 0;
-    const gap = 0.7;
     rows.forEach(row => {
       const span = row.sec / total * 360;
-      const a0 = acc + gap / 2;
-      const a1 = acc + span - gap / 2;
-      acc += span;
-      if (a1 <= a0) return;
-      if (rows.length === 1) {
-        arcs += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${row.color}" stroke-width="${SW}"/>`;
-      } else {
-        arcs += `<path d="${arcPath(CX, CY, R, a0, a1)}" fill="none" stroke="${row.color}" stroke-width="${SW}" stroke-linecap="butt"/>`;
+      const a0 = acc;
+      const a1 = acc + span;
+      acc = a1;
+      if (span <= 0) return;
+      const s = polar(CX, CY, R, a0);
+      const e = polar(CX, CY, R, a1);
+      const large = span > 180 ? 1 : 0;
+      arcs += `<path d="M ${CX} ${CY} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z" fill="${row.color}" stroke="${bg}" stroke-width="2"/>`;
+      const mid = a0 + span / 2;
+      if (span >= 8) {
+        const p1 = polar(CX, CY, R + 6, mid);
+        const p2 = polar(CX, CY, R + 22, mid);
+        const p3 = polar(CX, CY, R + 42, mid);
+        const right = Math.cos((mid - 90) * Math.PI / 180) >= 0;
+        const anchor = right ? 'start' : 'end';
+        const dx = right ? 8 : -8;
+        arcs += `<polyline points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}" fill="none" stroke="${row.color}" stroke-width="1.6" stroke-linecap="round"/>`;
+        arcs += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y - 2).toFixed(1)}" text-anchor="${anchor}" font-size="15" font-weight="600" fill="${ink}" ${fonts}>${esc(row.name)}</text>`;
+        arcs += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y + 18).toFixed(1)}" text-anchor="${anchor}" font-size="12.5" fill="${muted}" ${fonts}>${fmtHM(row.sec)}</text>`;
       }
     });
 
     let legend = '';
     rows.forEach((row, i) => {
-      const y = 132 + i * 44;
+      const y = 176 + i * 62;
       legend += `
-        <rect x="420" y="${y - 9}" width="12" height="12" rx="3" fill="${row.color}"/>
-        <text x="442" y="${y + 2}" font-size="15" fill="${ink}" ${fonts}>${esc(row.name)}</text>
-        <text x="640" y="${y + 2}" text-anchor="end" font-size="15" font-weight="700" fill="${ink}" ${fonts}>${fmtHM(row.sec)}</text>
-        <text x="640" y="${y + 21}" text-anchor="end" font-size="12" fill="${muted}" ${fonts}>${((row.sec / total) * 100).toFixed(0)}%</text>`;
+        <rect x="470" y="${y - 11}" width="11" height="11" rx="3" fill="${row.color}"/>
+        <text x="490" y="${y}" font-size="15" fill="${ink}" ${fonts}>${esc(row.name)}</text>
+        <text x="700" y="${y}" text-anchor="end" font-size="14" font-weight="700" fill="${ink}" ${fonts}>${((row.sec / total) * 100).toFixed(1)}%</text>
+        <text x="490" y="${y + 19}" font-size="12" fill="${muted}" ${fonts}>${fmtHM(row.sec)}</text>`;
     });
 
     const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
       <rect width="${W}" height="${H}" fill="${bg}"/>
-      <text x="36" y="46" font-size="19" font-weight="700" fill="${ink}" ${fonts}>学习时间分布</text>
+      <text x="36" y="46" font-size="19" font-weight="700" fill="${ink}" ${fonts}>时间分布</text>
       <text x="36" y="70" font-size="12.5" fill="${muted}" ${fonts}>${esc(label)}</text>
       <line x1="36" y1="88" x2="${W - 36}" y2="88" stroke="${line}"/>
-      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${dark ? '#2b251d' : '#ece4d6'}" stroke-width="${SW}"/>
       ${arcs}
-      <text x="${CX}" y="${CY - 8}" text-anchor="middle" font-size="30" font-weight="700" fill="${ink}" ${fonts}>${fmtHM(total)}</text>
-      <text x="${CX}" y="${CY + 18}" text-anchor="middle" font-size="12" fill="${muted}" ${fonts}>总专注</text>
+      <text x="${CX}" y="${CY + R + 42}" text-anchor="middle" font-size="16" font-weight="600" fill="${ink}" ${fonts}>总计 ${fmtHM(total)}</text>
       ${legend}
-      <text x="36" y="${H - 22}" font-size="11" fill="${muted}" ${fonts}>学习时长记录 · ${dayKey(Date.now())}</text>
+      <text x="36" y="${H - 24}" font-size="11" fill="${muted}" ${fonts}>学习时长记录 · ${dayKey(Date.now())}</text>
     </svg>`;
 
     const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
@@ -1639,8 +1709,12 @@
       data.settings.range = btn.dataset.range;
       save();
       $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+      paintRange();
       renderChart();
     });
+
+    el.rangeFrom.addEventListener('change', applyCustomRange);
+    el.rangeTo.addEventListener('change', applyCustomRange);
 
     el.noteInput.addEventListener('input', () => {
       state.sessionNote = el.noteInput.value.trim();
@@ -1737,6 +1811,7 @@
     paintAll();
     renderStats();
     renderChart();
+    paintRange();
     renderWeekBars();
     renderFlow();
     paintSync();

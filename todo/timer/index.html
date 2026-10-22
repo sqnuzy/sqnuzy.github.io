@@ -93,7 +93,7 @@
         <input id="noteInput" type="text" maxlength="60" placeholder="备注（选填）" autocomplete="off">
       </label>
 
-            <div class="short-notice" id="shortNotice" hidden>
+      <div class="short-notice" id="shortNotice" hidden>
         <p id="shortNoticeText">只学了 4 秒，不满 5 分钟不记账</p>
         <div class="short-actions">
           <button class="btn btn-ghost" id="shortDiscard" type="button">丢弃</button>
@@ -157,18 +157,24 @@
             <p class="muted" id="chartCaption">今天各科目投入占比</p>
           </div>
           <div class="segmented sm" id="rangeTabs" role="tablist" aria-label="统计范围">
-            <button class="seg" data-range="today" role="tab" aria-selected="true" type="button">今天</button>
-            <button class="seg" data-range="week" role="tab" aria-selected="false" type="button">7 天</button>
-            <button class="seg" data-range="month" role="tab" aria-selected="false" type="button">30 天</button>
+            <button class="seg" data-range="today" role="tab" aria-selected="true" type="button">日</button>
+            <button class="seg" data-range="week" role="tab" aria-selected="false" type="button">周</button>
+            <button class="seg" data-range="month" role="tab" aria-selected="false" type="button">月</button>
+            <button class="seg" data-range="custom" role="tab" aria-selected="false" type="button">自定义</button>
           </div>
         </div>
 
-        <div class="donut-wrap">
-          <svg class="donut" id="donut" viewBox="0 0 220 220" role="img" aria-label="各科目学习时间饼图"></svg>
-          <div class="donut-center">
-            <strong id="donutTotal">0 分钟<small>总专注</small></strong>
-          </div>
+        <div class="range-custom" id="rangeCustom" hidden>
+          <label><span>从</span><input type="date" id="rangeFrom" aria-label="开始日期"></label>
+          <span class="range-dash">—</span>
+          <label><span>到</span><input type="date" id="rangeTo" aria-label="结束日期"></label>
+          <span class="range-hint" id="rangeHint"></span>
         </div>
+
+        <div class="pie-wrap">
+          <svg class="pie" id="donut" viewBox="0 0 380 320" role="img" aria-label="各科目学习时间饼图"></svg>
+        </div>
+        <p class="pie-total" id="pieTotal">总计 0 分钟</p>
         <ul class="legend" id="legend"></ul>
       </section>
 
@@ -267,6 +273,7 @@
             <button class="btn btn-soft" id="btnSyncRecover" type="button">从其他 Gist 找回</button>
             <button class="btn btn-danger" id="btnSyncDisconnect" type="button">断开</button>
           </div>
+          <p class="muted small" style="margin-top:8px">如果另一台设备上有记录、这里却是空的，先点「立即同步」；还不行就点「从其他 Gist 找回」，会合并你账号里所有带 study-time.json 的 Gist。</p>
         </div>
       </div>
 

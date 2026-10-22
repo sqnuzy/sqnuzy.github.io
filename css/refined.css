@@ -1297,3 +1297,14 @@ body.home-layout:root[data-theme="dark"] {
 .home-actions a {
   border-radius: 999px !important;
 }
+
+/* 首页封面：手机用小图，减少首屏流量 */
+@media (max-width: 760px) {
+  .home-banner {
+    background-image:
+      linear-gradient(180deg, rgba(12, 22, 20, 0.02) 0%, rgba(12, 22, 20, 0.24) 100%),
+      url('/images/home-banner-mobile.webp') !important;
+    background-size: cover !important;
+    background-position: center !important;
+  }
+}

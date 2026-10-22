@@ -193,10 +193,14 @@
     deleted = Array.from(del).slice(-2000);
     writeDeleted();
 
-    if (Number(remote.timersUpdatedAt || 0) > timersUpdatedAt) {
-      timersUpdatedAt = Number(remote.timersUpdatedAt) || 0;
+    const remoteTimers = remote.timers || {};
+    const localTimers = store.getTimers() || {};
+    const localEmpty = ['elapsed', 'countdown', 'countdown2'].every(k => !(localTimers[k] && localTimers[k].time));
+    const remoteHas = ['elapsed', 'countdown', 'countdown2'].some(k => remoteTimers[k] && remoteTimers[k].time);
+    if (remoteHas && (Number(remote.timersUpdatedAt || 0) > timersUpdatedAt || localEmpty)) {
+      timersUpdatedAt = Math.max(timersUpdatedAt, Number(remote.timersUpdatedAt) || 0);
       try { localStorage.setItem(TIMERS_UPDATED_KEY, String(timersUpdatedAt)); } catch (err) { /* ignore */ }
-      store.setTimers(Object.assign({}, store.getTimers(), remote.timers || {}));
+      store.setTimers(Object.assign({}, store.getTimers(), remoteTimers));
     }
     dataUpdatedAt = Math.max(dataUpdatedAt, Number(remote.updatedAt) || 0);
     try { localStorage.setItem('sqnuzy_blog_todo_updated', String(dataUpdatedAt)); } catch (err) { /* ignore */ }
@@ -292,6 +296,11 @@
 
   function injectStyles() {
     const css = `
+      .sort-bar{flex-wrap:wrap;row-gap:8px}
+      @media (max-width:700px){
+        .sort-bar>a{margin-left:0!important}
+        .todo-sync-banner{font-size:12.5px;padding:9px 12px}
+      }
       .todo-sync-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#555;font-size:13px;font-family:inherit;cursor:pointer;line-height:1.2;white-space:nowrap}
       .todo-sync-btn:hover{border-color:#bbb;color:#222}
       .todo-sync-btn .dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex:none}

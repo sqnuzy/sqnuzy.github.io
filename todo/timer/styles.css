@@ -1077,3 +1077,260 @@ body::before { display: none; }
 .ring-flash { stroke-width: 10; }
 .icon-btn { background: var(--surface); }
 .pill { background: var(--surface); }
+
+/* ==========================================================
+   Liquid Glass 主题（覆盖层）
+   ========================================================== */
+:root {
+  --glass: rgba(255, 255, 255, 0.55);
+  --glass-strong: rgba(255, 255, 255, 0.72);
+  --glass-line: rgba(255, 255, 255, 0.65);
+  --glass-shadow: 0 24px 70px rgba(40, 48, 70, 0.14), 0 2px 8px rgba(40, 48, 70, 0.06);
+  --glass-inner: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(255, 255, 255, 0.25);
+  --bg: #eef1f6;
+  --surface: rgba(255, 255, 255, 0.6);
+  --surface-2: rgba(255, 255, 255, 0.45);
+  --surface-3: rgba(255, 255, 255, 0.35);
+  --line: rgba(255, 255, 255, 0.55);
+  --line-strong: rgba(255, 255, 255, 0.8);
+  --ring-track: rgba(255, 255, 255, 0.55);
+}
+
+body {
+  background:
+    radial-gradient(1000px 700px at 8% -8%, #ffd8c6 0%, rgba(255, 216, 198, 0) 58%),
+    radial-gradient(900px 700px at 96% 4%, #cddffe 0%, rgba(205, 223, 254, 0) 55%),
+    radial-gradient(800px 800px at 52% 108%, #ffe7c4 0%, rgba(255, 231, 196, 0) 60%),
+    linear-gradient(165deg, #f4f1ec 0%, #eef2f8 48%, #f6efe9 100%);
+  background-attachment: fixed;
+}
+body::before {
+  display: block;
+  content: "";
+  position: fixed;
+  inset: -10%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(420px 420px at 18% 24%, rgba(255, 180, 150, 0.55), transparent 65%),
+    radial-gradient(380px 380px at 82% 18%, rgba(160, 196, 255, 0.55), transparent 65%),
+    radial-gradient(460px 460px at 70% 82%, rgba(255, 214, 160, 0.5), transparent 65%);
+  filter: blur(40px);
+  opacity: 0.8;
+}
+
+/* 卡片：磨砂玻璃 */
+.card {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.46));
+  border: 1px solid var(--glass-line);
+  border-radius: 30px;
+  backdrop-filter: blur(30px) saturate(180%);
+  -webkit-backdrop-filter: blur(30px) saturate(180%);
+  box-shadow: var(--glass-shadow), var(--glass-inner);
+}
+
+/* 顶栏：悬浮玻璃条 */
+.topbar {
+  position: sticky;
+  top: 14px;
+  z-index: 30;
+  padding: 10px 16px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.42));
+  border: 1px solid var(--glass-line);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  box-shadow: 0 12px 40px rgba(40, 48, 70, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.brand-mark {
+  background: linear-gradient(160deg, #ff9a6b, #e8613c);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 8px 18px rgba(232, 97, 60, 0.28);
+}
+.icon-btn {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+.icon-btn:hover { background: rgba(255, 255, 255, 0.78); }
+
+/* 分段控件 */
+.segmented {
+  background: rgba(255, 255, 255, 0.34);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 1px 3px rgba(40, 48, 70, 0.06);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+.seg[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 3px 10px rgba(40, 48, 70, 0.1), inset 0 1px 0 #fff;
+}
+
+/* 按钮 */
+.btn-primary {
+  background: linear-gradient(180deg, #ff9066, #e8613c);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 0 12px 26px rgba(232, 97, 60, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+.btn-primary:hover { box-shadow: 0 16px 32px rgba(232, 97, 60, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+.btn-ghost, .btn-soft {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+}
+.btn-ghost:hover, .btn-soft:hover { background: rgba(255, 255, 255, 0.78); }
+
+/* 输入 / 备注 */
+.note-field, .sync-input input, .add-subject input[type="text"], .field, .range-custom input[type="date"] {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 2px rgba(40, 48, 70, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.note-field:focus-within { background: rgba(255, 255, 255, 0.78); border-color: rgba(255, 255, 255, 0.95); }
+
+/* 科目胶囊 */
+.pill {
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.pill[aria-pressed="true"] {
+  background: color-mix(in srgb, var(--c, var(--accent)) 16%, rgba(255, 255, 255, 0.72));
+  border-color: color-mix(in srgb, var(--c, var(--accent)) 40%, #fff);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--c, var(--accent)) 22%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+/* 计时环 */
+.ring-track { stroke: rgba(60, 64, 72, 0.10); }
+.ring-progress { filter: drop-shadow(0 4px 16px color-mix(in srgb, var(--subject-color, var(--accent)) 45%, transparent)); }
+.ring-time { font-family: -apple-system, "SF Pro Display", "PingFang SC", var(--mono); letter-spacing: -1.5px; }
+
+/* 统计 / 进度 */
+.goal-bar { background: rgba(255, 255, 255, 0.45); box-shadow: inset 0 1px 2px rgba(40, 48, 70, 0.06); }
+.goal-bar i { background: linear-gradient(90deg, #ffa46b, #e8613c); box-shadow: 0 0 12px rgba(232, 97, 60, 0.4); }
+
+/* 面板 */
+.sheet-panel {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow: 0 40px 120px rgba(30, 36, 54, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+.sheet-backdrop { background: rgba(30, 36, 52, 0.28); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.toast {
+  background: rgba(28, 30, 36, 0.72);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 20px 50px rgba(20, 24, 36, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* 饼图玻璃化 */
+.pie-seg { stroke: rgba(255, 255, 255, 0.75); }
+.pie-total { color: var(--ink); }
+
+@media (max-width: 620px) {
+  .topbar { top: 8px; padding: 8px 12px; border-radius: 18px; }
+  .card { border-radius: 24px; }
+}
+
+/* 深色玻璃 */
+[data-theme="dark"] {
+  --glass: rgba(28, 30, 36, 0.55);
+  --glass-strong: rgba(28, 30, 36, 0.75);
+  --glass-line: rgba(255, 255, 255, 0.12);
+  --surface: rgba(28, 30, 36, 0.55);
+  --surface-2: rgba(28, 30, 36, 0.45);
+  --surface-3: rgba(255, 255, 255, 0.06);
+  --line: rgba(255, 255, 255, 0.12);
+  --line-strong: rgba(255, 255, 255, 0.22);
+  --ring-track: rgba(255, 255, 255, 0.12);
+  --ink: #f5f5f2;
+  --ink-2: #c9c9c2;
+  --muted: #9a9a93;
+}
+[data-theme="dark"] body {
+  background:
+    radial-gradient(1000px 700px at 10% -10%, #3a2a44 0%, rgba(58, 42, 68, 0) 60%),
+    radial-gradient(900px 700px at 95% 0%, #1e3350 0%, rgba(30, 51, 80, 0) 58%),
+    linear-gradient(165deg, #15161a, #121318 55%, #16130f);
+}
+[data-theme="dark"] body::before { opacity: 0.35; }
+[data-theme="dark"] .ring-track { stroke: rgba(255, 255, 255, 0.10); }
+[data-theme="dark"] .card,
+[data-theme="dark"] .topbar,
+[data-theme="dark"] .sheet-panel {
+  background: linear-gradient(160deg, rgba(38, 40, 48, 0.78), rgba(26, 28, 34, 0.62));
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+[data-theme="dark"] .icon-btn,
+[data-theme="dark"] .btn-ghost,
+[data-theme="dark"] .btn-soft,
+[data-theme="dark"] .pill,
+[data-theme="dark"] .note-field,
+[data-theme="dark"] .seg[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* 玻璃主题细节 */
+.demo-banner {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(40, 48, 70, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(18px) saturate(160%);
+  -webkit-backdrop-filter: blur(18px) saturate(160%);
+}
+.btn-ghost:disabled, .btn-soft:disabled {
+  opacity: 0.55;
+  background: rgba(255, 255, 255, 0.32);
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.kbd-hint kbd {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 1px 0 #fff;
+}
+.flow-item, .session-row, .bar-stack {
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(255, 255, 255, 0.65);
+}
+.bar-stack { border: 1px solid rgba(255, 255, 255, 0.6); }
+.stats-top .stat + .stat { border-left-color: rgba(255, 255, 255, 0.7); }
+.today-flow { border-top-color: rgba(255, 255, 255, 0.7); }
+
+/* 深色玻璃细节修正 */
+[data-theme="dark"] .demo-banner {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ink-2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .demo-banner b { color: #ff9a6b; }
+[data-theme="dark"] .demo-banner button { background: #f5f5f2; color: #1b1b19; }
+[data-theme="dark"] .flow-item,
+[data-theme="dark"] .session-row {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+[data-theme="dark"] .bar-stack { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .stats-top .stat + .stat { border-left-color: rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .today-flow { border-top-color: rgba(255, 255, 255, 0.1); }
+[data-theme="dark"] .kbd-hint kbd { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.14); }
+[data-theme="dark"] .seg[aria-selected="true"] { background: rgba(255, 255, 255, 0.18); color: var(--ink); }
+[data-theme="dark"] .btn-ghost:disabled,
+[data-theme="dark"] .btn-soft:disabled { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); }
+[data-theme="dark"] .flow-empty { border-color: rgba(255, 255, 255, 0.12); }

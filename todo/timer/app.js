@@ -229,6 +229,10 @@
     startLabel: $('#startLabel'),
     startIcon: $('#startIcon'),
     btnFinish: $('#btnFinish'),
+    shortNotice: $('#shortNotice'),
+    shortNoticeText: $('#shortNoticeText'),
+    shortContinue: $('#shortContinue'),
+    shortDiscard: $('#shortDiscard'),
     flowList: $('#flowList'),
     btnFlowHistory: $('#btnFlowHistory'),
     statFocus: $('#statFocus'),
@@ -304,6 +308,7 @@
 
   function start() {
     if (state.running) return;
+    hideShortNotice();
     if (!state.sessionSubject || !subjectById(state.sessionSubject)) {
       state.sessionSubject = data.settings.selected;
     }
@@ -330,8 +335,19 @@
     unlockAudio();
   }
 
+  /** 不满 5 分钟时的卡片内提示（比底部 toast 好点） */
+  function showShortNotice(sec) {
+    el.shortNotice.hidden = false;
+    el.shortNoticeText.textContent = `只学了 ${fmtHM(sec)}，不满 ${fmtHM(MIN_RECORD_SEC)}不记账`;
+    el.shortNotice.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function hideShortNotice() {
+    el.shortNotice.hidden = true;
+  }
+
   /** 丢弃当前这一段（只在「不满 5 分钟」的提示里用） */
   function clearTimer() {
+    hideShortNotice();
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
     state.running = false;
@@ -349,7 +365,7 @@
     const sec = Math.round(elapsedSec());
     if (sec <= 0 && !state.running) { toast('还没有开始计时'); return; }
     if (sec < MIN_RECORD_SEC) {
-      // 不满 5 分钟：不自动记账，让用户决定丢弃还是接着学
+      // 不满 5 分钟：不自动记账，在计时卡里直接给两个大按钮，避免手机点不到
       cancelAnimationFrame(state.raf);
       clearInterval(state.ticker);
       state.running = false;
@@ -357,21 +373,8 @@
       state.runSince = 0;
       state.lastPaintSec = -1;
       paintAll();
-      const text = `只学了 ${fmtHM(sec)}，不满 ${fmtHM(MIN_RECORD_SEC)}不记账`;
-      toastAction(text, [
-        { label: '继续计时', primary: true, onClick: () => start() },
-        {
-          label: '丢弃', onClick: () => {
-            clearTimer();
-            el.noteInput.value = '';
-            data.settings.note = '';
-            state.sessionNote = '';
-            save();
-            paintAll();
-            toast('这一段已丢弃');
-          }
-        }
-      ]);      return;
+      showShortNotice(sec);
+      return;
     }
     const subjectId = state.sessionSubject || data.settings.selected;
     // 备注优先取输入框（可能暂停后还在编辑），其次取开始计时时记下的
@@ -1515,6 +1518,16 @@
     el.btnStart.addEventListener('click', toggle);
     el.btnFinish.addEventListener('click', finish);
     el.btnFlowHistory.addEventListener('click', openHistory);
+    el.shortContinue.addEventListener('click', () => { hideShortNotice(); start(); });
+    el.shortDiscard.addEventListener('click', () => {
+      clearTimer();
+      el.noteInput.value = '';
+      data.settings.note = '';
+      state.sessionNote = '';
+      save();
+      paintAll();
+      toast('这一段已丢弃');
+    });
 
     el.subjectPills.addEventListener('click', e => {
       const pill = e.target.closest('.pill');

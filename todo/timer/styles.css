@@ -476,6 +476,27 @@ kbd {
 }
 .flow-empty + .flow-item { margin-top: 6px; }
 
+/* 不满 5 分钟时的卡片内提示 */
+.short-notice {
+  margin-top: 14px;
+  padding: 13px 14px 12px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  animation: noticeIn .22s ease;
+}
+.short-notice[hidden] { display: none; }
+@keyframes noticeIn { from { opacity: 0; transform: translateY(-4px); } }
+.short-notice p {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: center;
+  margin-bottom: 10px;
+}
+.short-actions { display: flex; gap: 8px; }
+.short-actions .btn { flex: 1; height: 42px; font-size: 13.5px; min-width: 0; padding: 0 12px; }
+
 /* ---------------- 统计卡 ---------------- */
 .stats-card { padding: 18px 20px 16px; }
 .stats-top {

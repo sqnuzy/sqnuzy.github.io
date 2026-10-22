@@ -93,6 +93,14 @@
         <input id="noteInput" type="text" maxlength="60" placeholder="备注（选填）" autocomplete="off">
       </label>
 
+            <div class="short-notice" id="shortNotice" hidden>
+        <p id="shortNoticeText">只学了 4 秒，不满 5 分钟不记账</p>
+        <div class="short-actions">
+          <button class="btn btn-ghost" id="shortDiscard" type="button">丢弃</button>
+          <button class="btn btn-primary" id="shortContinue" type="button">继续计时</button>
+        </div>
+      </div>
+
       <div class="controls">
         <button class="btn btn-primary" id="btnStart" type="button">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" id="startIcon"><path d="M8 5.5v13l11-6.5z"/></svg>

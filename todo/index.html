@@ -490,7 +490,10 @@
     <div class="sort-bar">
       <button id="sortPriority" class="active" onclick="setSortMode('priority')">按优先级</button>
       <button id="sortTime" onclick="setSortMode('time')">按时间</button>
-    </div>
+          <a href="/todo/timer/" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid #222;background:#222;color:#fff;text-decoration:none;font-size:14px;font-family:inherit;line-height:1.2">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+        学习计时
+      </a></div>
 
     <ul class="task-list" id="taskList"></ul>
   </div>
@@ -562,6 +565,14 @@
       elapsed: { name: '学习计划', time: '' },
       countdown: { name: '目标日期', time: '' },
       countdown2: { name: '新的目标', time: '' }
+    };
+
+    // 暴露给 /todo/sync.js 读取与写回
+    window.todoStore = {
+      getTasks: () => tasks,
+      setTasks: v => { tasks = v; },
+      getTimers: () => timers,
+      setTimers: v => { timers = v; }
     };
 
     function loadTimers() {
@@ -1064,6 +1075,7 @@
     enableTimerSorting();
     setInterval(updateTimers, 1000);
   </script>
+  <script src="/todo/sync.js"></script>
 
 </section>
 

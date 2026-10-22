@@ -1,0 +1,1686 @@
+/* ==========================================================
+   学习时长记录 · app.js
+   正向计时（秒表）· 数据存 localStorage · 时间按本机时区
+   ========================================================== */
+(() => {
+  'use strict';
+
+  const STORE_KEY = 'kaoyan-study-timer-v2';
+  const OLD_KEYS = ['kaoyan-pomodoro-v1'];
+  const PALETTE = ['#E8613C', '#F2A03D', '#D9A404', '#7FB069', '#2F9E8F',
+                   '#3F8FBF', '#5A7BE0', '#8667D8', '#B25FC4', '#E1699E',
+                   '#C2534B', '#8A7A6A'];
+  const WEEK_CN = ['日', '一', '二', '三', '四', '五', '六'];
+  const MIN_RECORD_SEC = 5 * 60;   // 不满 5 分钟不记账
+
+  /* ---------------- 小工具 ---------------- */
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+  const pad = n => String(n).padStart(2, '0');
+  const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const dayStart = d => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x.getTime(); };
+  const dayKey = ts => {
+    const d = new Date(ts);
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  };
+  const parseKey = k => { const [y, m, d] = k.split('-').map(Number); return new Date(y, m - 1, d); };
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+  const sameDay = (a, b) => dayKey(a) === dayKey(b);
+
+  /** 时钟样式：1:02:03 / 12:34 / 100:05 */
+  function fmtClockSec(sec) {
+    const s = Math.max(0, Math.floor(sec));
+    const h = Math.floor(s / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    const ss = s % 60;
+    if (h > 0) return `${h}:${pad(m)}:${pad(ss)}`;
+    return `${m >= 100 ? m : pad(m)}:${pad(ss)}`;
+  }
+
+  /** 中文时长：1 小时 20 分 / 25 分钟 / 40 秒 */
+  function fmtHM(seconds) {
+    const sec = Math.max(0, Math.round(seconds));
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    if (h > 0) return m > 0 ? `${h} 小时 ${m} 分` : `${h} 小时`;
+    if (m > 0) return `${m} 分钟`;
+    return sec > 0 ? `${sec} 秒` : '0 分钟';
+  }
+
+  /** 紧凑：1h20m / 25m */
+  function fmtShort(seconds) {
+    const sec = Math.max(0, Math.round(seconds));
+    const h = Math.floor(sec / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    if (h > 0) return `${h}h${m > 0 ? m + 'm' : ''}`;
+    return `${m}m`;
+  }
+
+  const fmtClock = ts => {
+    const d = new Date(ts);
+    return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  };
+  /** 时间段：09:12–09:37 */
+  const fmtRange = s => `${fmtClock(s.beganAt || s.ts - s.dur * 1000)}–${fmtClock(s.ts)}`;
+
+  /* ---------------- 数据层 ---------------- */
+  const DEMO = new URLSearchParams(location.search).get('demo') === '1';
+  let demoMode = DEMO;
+
+  const defaultSettings = () => ({
+    dailyGoal: 240,
+    sound: true,
+    theme: 'light',
+    range: 'today',
+    selected: 'math',
+    note: ''
+  });
+
+  function seedData() {
+    return {
+      version: 2,
+      subjects: [
+        { id: 'math',    name: '数学',   color: '#E8613C' },
+        { id: 'english', name: '英语',   color: '#3F8FBF' },
+        { id: 'politics',name: '政治',   color: '#7FB069' },
+        { id: 'major',   name: '专业课', color: '#8667D8' }
+      ],
+      sessions: [],
+      settings: defaultSettings(),
+      updatedAt: 0,
+      settingsAt: 0,
+      deletedSessions: [],
+      deletedSubjects: []
+    };
+  }
+
+  function normalize(raw) {
+    const base = seedData();
+    if (!raw || typeof raw !== 'object') return base;
+    const data = {
+      version: 2,
+      subjects: Array.isArray(raw.subjects) && raw.subjects.length
+        ? raw.subjects.filter(s => s && s.id && s.name).map(s => ({
+            id: String(s.id),
+            name: String(s.name).slice(0, 16),
+            color: /^#[0-9a-f]{6}$/i.test(s.color || '') ? s.color : PALETTE[0]
+          }))
+        : base.subjects,
+      sessions: Array.isArray(raw.sessions)
+        ? raw.sessions.filter(s => s && s.ts && s.dur > 0).map(s => ({
+            id: s.id || uid(),
+            ts: Number(s.ts),
+            dur: Number(s.dur),
+            beganAt: Number(s.beganAt) || (Number(s.ts) - Number(s.dur) * 1000),
+            subjectId: String(s.subjectId || ''),
+            note: typeof s.note === 'string' ? s.note.slice(0, 60) : '',
+            mode: 'focus'
+          }))
+        : [],
+      settings: Object.assign(defaultSettings(), raw.settings || {}),
+      updatedAt: Number(raw.updatedAt) || 0,
+      settingsAt: Number(raw.settingsAt) || 0,
+      deletedSessions: Array.isArray(raw.deletedSessions)
+        ? raw.deletedSessions.filter(x => typeof x === 'string').slice(-2000)
+        : [],
+      deletedSubjects: Array.isArray(raw.deletedSubjects)
+        ? raw.deletedSubjects.filter(x => typeof x === 'string')
+        : []
+    };
+    const s = data.settings;
+    s.dailyGoal = clamp(Number(s.dailyGoal) || 0, 0, 1440);
+    s.sound = s.sound !== false;
+    s.theme = s.theme === 'dark' ? 'dark' : 'light';
+    if (!['today', 'week', 'month'].includes(s.range)) s.range = 'today';
+    if (!data.subjects.some(x => x.id === s.selected)) s.selected = data.subjects[0].id;
+    return data;
+  }
+
+  function load() {
+    if (DEMO) return seedData();
+    try {
+      for (const key of [STORE_KEY, ...OLD_KEYS]) {
+        const raw = localStorage.getItem(key);
+        if (!raw) continue;
+        const parsed = JSON.parse(raw);
+        // 旧版番茄钟的数据结构兼容：只取科目 / 记录 / 目标
+        if (key !== STORE_KEY) {
+          parsed.settings = {
+            dailyGoal: parsed.settings && parsed.settings.dailyGoal,
+            sound: parsed.settings && parsed.settings.sound,
+            theme: parsed.settings && parsed.settings.theme,
+            selected: parsed.settings && parsed.settings.selected
+          };
+        }
+        return normalize(parsed);
+      }
+      return seedData();
+    } catch (err) {
+      console.warn('读取本地数据失败，使用初始数据', err);
+      return seedData();
+    }
+  }
+
+  let data = load();
+  let dirty = false;
+  let saveTimer = null;
+
+  function save(immediate = false) {
+    if (demoMode) return;
+    dirty = true;
+    if (immediate) { flushSave(); scheduleSync(); return; }
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(flushSave, 250);
+    scheduleSync();
+  }
+  function flushSave() {
+    if (!dirty || demoMode) return;
+    clearTimeout(saveTimer);
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+      dirty = false;
+    } catch (err) {
+      console.warn('保存失败', err);
+      toast('本地存储写入失败（可能是隐私模式或空间已满）');
+    }
+  }
+  window.addEventListener('pagehide', flushSave);
+  window.addEventListener('beforeunload', flushSave);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) flushSave(); });
+
+  const subjectById = id => data.subjects.find(s => s.id === id) || null;
+  const subjectName = id => (subjectById(id) || {}).name || '未分类';
+  const subjectColor = id => (subjectById(id) || {}).color || '#8A7A6A';
+
+  /* ---------------- 运行时状态（正向计时） ---------------- */
+  const state = {
+    running: false,
+    elapsedMs: 0,     // 暂停时累计的毫秒
+    startedAt: 0,     // 本段开始的时间戳（用于展示与记录）
+    runSince: 0,      // 本次「继续」时的 performance.now()
+    sessionSubject: null,
+    sessionNote: '',
+    raf: 0,
+    ticker: 0,
+    lastPaintSec: -1,
+    minuteSweep: 0
+  };
+
+  const el = {
+    topDate: $('#topDate'),
+    timerCard: $('#timerCard'),
+    ringWrap: $('#ringWrap'),
+    ringProgress: $('#ringProgress'),
+    ringPhase: $('#ringPhase'),
+    ringTime: $('#ringTime'),
+    ringSub: $('#ringSub'),
+    ringGradA: $('#ringGradA'),
+    ringGradB: $('#ringGradB'),
+    liveDot: $('#liveDot'),
+    headState: $('#headState'),
+    headToday: $('#headToday'),
+    subjectPills: $('#subjectPills'),
+    lockHint: $('#lockHint'),
+    noteInput: $('#noteInput'),
+    btnStart: $('#btnStart'),
+    startLabel: $('#startLabel'),
+    startIcon: $('#startIcon'),
+    btnFinish: $('#btnFinish'),
+    flowList: $('#flowList'),
+    btnFlowHistory: $('#btnFlowHistory'),
+    statFocus: $('#statFocus'),
+    statLongest: $('#statLongest'),
+    statSessions: $('#statSessions'),
+    goalText: $('#goalText'),
+    goalFill: $('#goalFill'),
+    goalSub: $('#goalSub'),
+    chartCaption: $('#chartCaption'),
+    rangeTabs: $('#rangeTabs'),
+    donut: $('#donut'),
+    donutTotal: $('#donutTotal'),
+    legend: $('#legend'),
+    weekBars: $('#weekBars'),
+    weekAvg: $('#weekAvg'),
+    historySheet: $('#historySheet'),
+    historyBody: $('#historyBody'),
+    settingsSheet: $('#settingsSheet'),
+    subjectManage: $('#subjectManage'),
+    swatches: $('#swatches'),
+    newSubjectName: $('#newSubjectName'),
+    btnTheme: $('#btnTheme'),
+    toast: $('#toast')
+  };
+
+  let toastTimer = 0;
+  function showToast(node, timeout = 2600) {
+    clearTimeout(toastTimer);
+    el.toast.innerHTML = '';
+    el.toast.appendChild(node);
+    el.toast.classList.add('show');
+    if (timeout > 0) toastTimer = setTimeout(hideToast, timeout);
+  }
+  function hideToast() {
+    clearTimeout(toastTimer);
+    el.toast.classList.remove('show');
+  }
+  function toast(msg) {
+    const span = document.createElement('span');
+    span.textContent = msg;
+    showToast(span);
+  }
+  /** 带按钮的提示：不满最短时长时让用户选「丢弃」还是「继续」 */
+  function toastAction(msg, buttons, timeout = 6500) {
+    const wrap = document.createElement('div');
+    wrap.className = 'toast-action';
+    const text = document.createElement('span');
+    text.className = 'toast-text';
+    text.textContent = msg;
+    const bar = document.createElement('div');
+    bar.className = 'toast-btns';
+    buttons.forEach(b => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'toast-btn' + (b.primary ? ' primary' : '');
+      btn.textContent = b.label;
+      btn.addEventListener('click', () => {
+        hideToast();
+        if (b.onClick) b.onClick();
+      });
+      bar.appendChild(btn);
+    });
+    wrap.appendChild(text);
+    wrap.appendChild(bar);
+    showToast(wrap, timeout);
+  }
+
+  /* ---------------- 计时引擎 ---------------- */
+  // 用时长的单调时钟，避免系统改时间 / 时区跳变影响
+  const nowMs = () => (window.performance && performance.now ? performance.now() : Date.now());
+  const elapsedMs = () => state.elapsedMs + (state.running ? nowMs() - state.runSince : 0);
+  const elapsedSec = () => elapsedMs() / 1000;
+
+  function start() {
+    if (state.running) return;
+    if (!state.sessionSubject || !subjectById(state.sessionSubject)) {
+      state.sessionSubject = data.settings.selected;
+    }
+    if (!state.startedAt) state.startedAt = Date.now();
+    state.sessionNote = el.noteInput.value.trim();
+    state.runSince = nowMs();
+    state.running = true;
+    paintAll();
+    loop();
+    unlockAudio();
+  }
+
+  function pause() {
+    if (!state.running) return;
+    state.elapsedMs = elapsedMs();
+    state.running = false;
+    cancelAnimationFrame(state.raf);
+    clearInterval(state.ticker);
+    paintAll();
+  }
+
+  function toggle() {
+    if (state.running) pause(); else start();
+    unlockAudio();
+  }
+
+  /** 丢弃当前这一段（只在「不满 5 分钟」的提示里用） */
+  function clearTimer() {
+    cancelAnimationFrame(state.raf);
+    clearInterval(state.ticker);
+    state.running = false;
+    state.elapsedMs = 0;
+    state.startedAt = 0;
+    state.runSince = 0;
+    state.minuteSweep = 0;
+    state.lastPaintSec = -1;
+    hideToast();
+    paintAll();
+  }
+
+  /** 结束并记账 */
+  function finish() {
+    const sec = Math.round(elapsedSec());
+    if (sec <= 0 && !state.running) { toast('还没有开始计时'); return; }
+    if (sec < MIN_RECORD_SEC) {
+      // 不满 5 分钟：不自动记账，让用户决定丢弃还是接着学
+      cancelAnimationFrame(state.raf);
+      clearInterval(state.ticker);
+      state.running = false;
+      state.elapsedMs = sec * 1000;
+      state.runSince = 0;
+      state.lastPaintSec = -1;
+      paintAll();
+      const text = `只学了 ${fmtHM(sec)}，不满 ${fmtHM(MIN_RECORD_SEC)}不记账`;
+      toastAction(text, [
+        { label: '继续计时', primary: true, onClick: () => start() },
+        {
+          label: '丢弃', onClick: () => {
+            clearTimer();
+            el.noteInput.value = '';
+            data.settings.note = '';
+            state.sessionNote = '';
+            save();
+            paintAll();
+            toast('这一段已丢弃');
+          }
+        }
+      ]);      return;
+    }
+    const subjectId = state.sessionSubject || data.settings.selected;
+    // 备注优先取输入框（可能暂停后还在编辑），其次取开始计时时记下的
+    const note = el.noteInput.value.trim() || state.sessionNote;
+    // 结束时间取真实时刻；持续时间用单调时钟
+    const endedAt = Date.now();
+    const beganAt = endedAt - sec * 1000;
+    recordSession(subjectId, sec, note, endedAt, beganAt);
+    cancelAnimationFrame(state.raf);
+    clearInterval(state.ticker);
+    state.running = false;
+    state.elapsedMs = 0;
+    state.startedAt = 0;
+    state.runSince = 0;
+    state.minuteSweep = 0;
+    state.lastPaintSec = -1;
+    el.noteInput.value = '';
+    data.settings.note = '';
+    state.sessionNote = '';
+    save();
+    paintAll();
+    renderStats();
+    renderChart();
+    renderWeekBars();
+    renderFlow();
+    if (!el.historySheet.hidden) renderHistory();
+    toast(`已记录 ${fmtHM(sec)} · ${subjectName(subjectId)}`);
+    playChime();
+    flashRing();
+  }
+
+  function loop() {
+    cancelAnimationFrame(state.raf);
+    clearInterval(state.ticker);
+    const step = () => {
+      if (!state.running) return;
+      paintTime();
+      state.raf = requestAnimationFrame(step);
+    };
+    state.raf = requestAnimationFrame(step);
+    // 兜底：无头浏览器 / 极省电模式下 rAF 可能不触发，用定时器保证秒数照常走
+    state.ticker = setInterval(() => { if (state.running) paintTime(); }, 250);
+  }
+
+  /* 从后台切回时补算 */
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) return;
+    if (state.running) { paintTime(); loop(); }
+  });
+
+  /* ---------------- 记录 ---------------- */
+  function recordSession(subjectId, seconds, note, endedAt, beganAt) {
+    const dur = Math.max(1, Math.round(seconds));
+    data.sessions.push({
+      id: uid(),
+      ts: endedAt || Date.now(),
+      dur,
+      beganAt: beganAt || (endedAt || Date.now()) - dur * 1000,
+      subjectId,
+      note: (note || '').slice(0, 60),
+      mode: 'focus'
+    });
+    if (data.sessions.length > 6000) data.sessions = data.sessions.slice(-6000);
+    data.updatedAt = Date.now();
+    save(true);
+  }
+
+  /* ---------------- 渲染：计时器 ---------------- */
+  function paintTime() {
+    const sec = Math.round(elapsedSec());
+    el.ringTime.textContent = fmtClockSec(sec);
+
+    // 进度环：一分钟扫一圈；整分钟时闪一下，表示又过了一分钟
+    const frac = (sec % 60) / 60;
+    const circ = 2 * Math.PI * 138;
+    el.ringProgress.style.strokeDashoffset = String(circ * (1 - frac));
+    const minute = Math.floor(sec / 60);
+    if (state.running && minute !== state.minuteSweep) {
+      if (state.minuteSweep !== 0) flashRing();
+      state.minuteSweep = minute;
+    }
+    if (sec !== state.lastPaintSec) {
+      state.lastPaintSec = sec;
+      updateTitle(sec);
+      // 盘中信息每秒更新（“科目 · 备注”）
+      if (state.running) el.ringSub.innerHTML = buildSub();
+      paintHeadStat();
+    }
+  }
+
+  function buildSub() {
+    const name = esc(subjectName(state.sessionSubject || data.settings.selected));
+    const note = (state.running ? el.noteInput.value.trim() : state.sessionNote);
+    return `${name}${note ? ' · ' + esc(note.slice(0, 20)) : ''}`;
+  }
+
+  function paintHeadStat() {
+    const sec = Math.round(elapsedSec());
+    el.headState.textContent = state.running ? '计时中' : (sec > 0 ? '已暂停' : '待开始');
+  }
+
+  function updateTitle(sec) {
+    const base = '学习时长记录';
+    if (state.running) document.title = `${fmtClockSec(sec)} · ${subjectName(state.sessionSubject || data.settings.selected)}`;
+    else document.title = base;
+  }
+
+  function paintAll() {
+    paintTime();
+    paintControls();
+    paintRingColor();
+    paintFocus();
+    paintToday();
+  }
+
+  function paintControls() {
+    const sec = Math.round(elapsedSec());
+    const running = state.running;    el.timerCard.classList.toggle('is-running', running);
+    el.timerCard.classList.toggle('is-paused', !running && sec > 0);
+    el.ringWrap.classList.toggle('running', running);
+
+    if (running) {
+      el.startLabel.textContent = '暂停';
+      el.startIcon.innerHTML = '<path d="M8 5h3v14H8zM13 5h3v14h-3z"/>';
+      el.ringPhase.textContent = '计时中';
+    } else if (sec > 0) {
+      el.startLabel.textContent = '继续';
+      el.startIcon.innerHTML = '<path d="M8 5.5v13l11-6.5z"/>';
+      el.ringPhase.textContent = '已暂停';
+    } else {
+      el.startLabel.textContent = '开始计时';
+      el.startIcon.innerHTML = '<path d="M8 5.5v13l11-6.5z"/>';
+      el.ringPhase.textContent = '本段计时';
+    }
+
+    el.ringSub.innerHTML = sec > 0 ? buildSub() : '选好科目，按下开始';    el.liveDot.classList.toggle('on', running);
+    paintHeadStat();
+
+    const locked = running || sec > 0;
+    el.lockHint.hidden = !locked;
+    el.lockHint.textContent = running ? '计时中不可切换' : '已暂停，可继续计时';
+    $$('.pill', el.subjectPills).forEach(p => { p.disabled = locked; });
+    el.btnFinish.disabled = sec <= 0 && !running;
+    el.ringWrap.classList.toggle('has-time', sec > 0);
+  }
+
+  function paintRingColor() {
+    const color = subjectColor(state.sessionSubject || data.settings.selected);
+    el.ringGradA.setAttribute('stop-color', color);
+    el.ringGradB.setAttribute('stop-color', shade(color, 28));
+    el.timerCard.style.setProperty('--subject-color', color);
+  }
+
+  function flashRing() {
+    el.ringWrap.classList.remove('flash');
+    void el.ringWrap.offsetWidth;
+    el.ringWrap.classList.add('flash');
+    setTimeout(() => el.ringWrap.classList.remove('flash'), 1200);
+  }
+
+  function paintFocus() {
+    $$('.pill', el.subjectPills).forEach(p => {
+      const on = p.dataset.id === data.settings.selected;
+      p.setAttribute('aria-pressed', on ? 'true' : 'false');
+      p.style.setProperty('--c', subjectColor(p.dataset.id));
+    });
+  }
+
+  function renderPills() {
+    if (!data.subjects.length) {
+      el.subjectPills.innerHTML = '<p class="muted small">还没有科目，去「设置」里添加一个。</p>';
+      return;
+    }
+    el.subjectPills.innerHTML = data.subjects.map(s => `
+      <button class="pill" type="button" data-id="${esc(s.id)}" aria-pressed="false" style="--c:${esc(s.color)}">
+        <span class="dot"></span>${esc(s.name)}
+      </button>`).join('');
+    paintFocus();
+    paintControls();
+  }
+
+  /** 顶栏的「今日」与卡片的「今天记录」 */
+  function paintToday() {
+    const start = dayStart(Date.now());
+    const today = sessionsBetween(start, start + 86400000);
+    el.headToday.textContent = fmtHM(sumSec(today));
+  }
+
+  function renderFlow() {
+    const start = dayStart(Date.now());
+    const today = sessionsBetween(start, start + 86400000)
+      .slice()
+      .sort((a, b) => b.ts - a.ts)
+      .slice(0, 4);
+    if (!today.length) {
+      el.flowList.innerHTML = `<li class="flow-empty">今天还没有记录。学满 5 分钟后点「结束并记录」，这里就会出现。</li>`;
+      return;
+    }
+    el.flowList.innerHTML = today.map(s => `
+      <li class="flow-item" data-id="${esc(s.id)}">
+        <span class="sw" style="background:${esc(subjectColor(s.subjectId))}"></span>
+        <div class="flow-main">
+          <div class="flow-r1">
+            <b>${esc(subjectName(s.subjectId))}</b>
+            <span class="flow-time">${fmtRange(s)}</span>
+          </div>
+          ${s.note ? `<div class="flow-note">${esc(s.note)}</div>` : ''}
+        </div>
+        <span class="flow-dur">${fmtHM(s.dur)}</span>
+        <button class="session-del" type="button" title="删除这条记录" data-del="${esc(s.id)}">✕</button>
+      </li>`).join('');
+    $$('[data-del]', el.flowList).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = data.sessions.find(s => s.id === btn.dataset.del);
+        const label = item ? `${subjectName(item.subjectId)} ${fmtHM(item.dur)}` : '这条记录';
+        if (!window.confirm(`删除 ${label}？删除后无法恢复。`)) return;
+        data.sessions = data.sessions.filter(s => s.id !== btn.dataset.del);
+        data.deletedSessions = [...(data.deletedSessions || []), btn.dataset.del].slice(-2000);
+        data.updatedAt = Date.now();
+        save(true);
+        renderFlow();
+        renderStats();
+        renderChart();
+        renderWeekBars();
+        paintToday();
+        if (!el.historySheet.hidden) renderHistory();
+        toast('已删除这条记录');
+      });
+    });
+  }
+
+  /* ---------------- 渲染：统计 ---------------- */
+  function sessionsBetween(from, to) {
+    return data.sessions.filter(s => s.ts >= from && s.ts < to);
+  }
+  const sumSec = list => list.reduce((a, s) => a + s.dur, 0);
+
+  function renderStats() {
+    const start = dayStart(Date.now());
+    const today = sessionsBetween(start, start + 86400000);
+    const sec = sumSec(today);
+    const mins = sec / 60;
+    const longest = today.reduce((a, s) => Math.max(a, s.dur), 0);
+
+    el.statFocus.innerHTML = `${Math.floor(mins)}<small>分钟</small>`;
+    el.statLongest.innerHTML = `${Math.floor(longest / 60)}<small>分钟</small>`;
+    el.statSessions.innerHTML = `${today.length}<small>条</small>`;
+
+    const goal = data.settings.dailyGoal;
+    const pct = goal > 0 ? clamp(mins / goal * 100, 0, 100) : 0;
+    el.goalFill.style.width = pct.toFixed(1) + '%';
+    el.goalText.textContent = `${Math.floor(mins)} / ${goal} 分钟`;
+    if (goal <= 0) el.goalSub.textContent = '未设置目标，可在「设置」中填写';
+    else if (mins >= goal) el.goalSub.textContent = `已达成今日目标，超出 ${fmtHM((mins - goal) * 60)} 🎉`;
+    else el.goalSub.textContent = `还差 ${fmtHM((goal - mins) * 60)}，继续加油`;
+    paintToday();
+  }
+
+  /* ---------------- 渲染：饼图 ---------------- */
+  function rangeData(range) {
+    const now = Date.now();
+    let from, to, label;
+    if (range === 'month') {
+      from = dayStart(addDays(now, -29));
+      to = dayStart(addDays(now, 1));
+      label = '最近 30 天各科目投入占比';
+    } else if (range === 'week') {
+      from = dayStart(addDays(now, -6));
+      to = dayStart(addDays(now, 1));
+      label = '最近 7 天各科目投入占比';
+    } else {
+      from = dayStart(now);
+      to = from + 86400000;
+      label = '今天各科目投入占比';
+    }
+    return { list: sessionsBetween(from, to), label };
+  }
+
+  const RING_R = 78;
+  const RING_C = 2 * Math.PI * RING_R;
+
+  function polar(cx, cy, r, deg) {
+    const rad = (deg - 90) * Math.PI / 180;
+    return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+  }
+  function arcPath(cx, cy, r, a0, a1) {
+    const s = polar(cx, cy, r, a0);
+    const e = polar(cx, cy, r, a1);
+    const large = a1 - a0 > 180 ? 1 : 0;
+    return `M ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)}`;
+  }
+
+  function renderChart() {
+    const { list, label } = rangeData(data.settings.range);
+    el.chartCaption.textContent = label;
+    const total = sumSec(list);
+    const css = getComputedStyle(document.documentElement);
+    const trackColor = (css.getPropertyValue('--ring-track') || '#ece4d6').trim() || '#ece4d6';
+
+    const map = new Map();
+    data.subjects.forEach(s => map.set(s.id, { id: s.id, name: s.name, color: s.color, sec: 0 }));
+    list.forEach(s => {
+      if (!map.has(s.subjectId)) map.set(s.subjectId, { id: s.subjectId, name: subjectName(s.subjectId), color: subjectColor(s.subjectId), sec: 0 });
+      map.get(s.subjectId).sec += s.dur;
+    });
+    const rows = Array.from(map.values()).filter(v => v.sec > 0).sort((a, b) => b.sec - a.sec);
+
+    const cx = 110, cy = 110, r = RING_R;
+    let svg = '';
+    if (!rows.length) {
+      svg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${esc(trackColor)}" stroke-width="26" opacity=".55"/>`;
+      el.donutTotal.innerHTML = '<strong>0 分钟<small>总专注</small></strong>';
+    } else {
+      if (rows.length === 1) {
+        svg = `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="url(#donutGrad0)" stroke-width="26" class="donut-seg on" data-id="${esc(rows[0].id)}"/>`;
+      } else {
+        let acc = 0;
+        const gap = 0.6;
+        rows.forEach((row, i) => {
+          const span = row.sec / total * 360;
+          const a0 = acc + gap / 2;
+          const a1 = acc + span - gap / 2;
+          acc += span;
+          if (a1 <= a0) return;
+          svg += `<path class="donut-seg" data-id="${esc(row.id)}" d="${arcPath(cx, cy, r, a0, a1)}"
+                    fill="none" stroke="url(#donutGrad${i})" stroke-width="26" style="--i:${i}"/>`;
+        });
+      }
+        el.donutTotal.innerHTML = `<strong>${fmtHM(total)}<small>总专注</small></strong>`;
+    }
+
+    const defs = rows.map((row, i) => `
+      <linearGradient id="donutGrad${i}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${esc(row.color)}"/>
+        <stop offset="100%" stop-color="${esc(shade(row.color, 18))}"/>
+      </linearGradient>`).join('');
+    el.donut.innerHTML = `<defs>${defs}</defs>${svg}`;
+    el.donut.setAttribute('aria-label', rows.length
+      ? `总专注 ${fmtHM(total)}：` + rows.map(rr => `${rr.name} ${fmtHM(rr.sec)}`).join('，')
+      : '还没有学习记录');
+
+    el.donut.classList.remove('seg-hover');
+    $$('.donut-seg', el.donut).forEach(seg => {
+      seg.addEventListener('mouseenter', () => {
+        el.donut.classList.add('seg-hover');
+        $$('.donut-seg', el.donut).forEach(s => s.classList.toggle('on', s === seg));
+        const row = rows.find(rr => rr.id === seg.dataset.id);
+        if (row) el.donutTotal.innerHTML = `<strong style="color:${esc(row.color)}">${fmtHM(row.sec)}<small>${esc(row.name)} · ${((row.sec / total) * 100).toFixed(0)}%</small></strong>`;
+      });
+      seg.addEventListener('mouseleave', () => {
+        el.donut.classList.remove('seg-hover');
+        $$('.donut-seg', el.donut).forEach(s => s.classList.add('on'));
+        el.donutTotal.innerHTML = `<strong>${fmtHM(total)}<small>总专注</small></strong>`;
+      });
+    });
+
+    if (!rows.length) {
+      el.legend.innerHTML = `<li class="legend-empty">今天还没有学习记录。<br>选中科目，按下「开始计时」，结束后这里就会出现占比。</li>`;
+    } else {
+      el.legend.innerHTML = rows.map(row => `
+        <li>
+          <span class="sw" style="background:${esc(row.color)}"></span>
+          <span class="name">${esc(row.name)}</span>
+          <span class="val">${fmtHM(row.sec)}</span>
+          <span class="pct">${((row.sec / total) * 100).toFixed(0)}%</span>
+        </li>`).join('');
+    }
+  }
+
+  function shade(hex, amount) {
+    const n = parseInt(hex.replace('#', ''), 16);
+    const r = clamp(((n >> 16) & 255) + amount, 0, 255);
+    const g = clamp(((n >> 8) & 255) + amount, 0, 255);
+    const b = clamp((n & 255) + amount, 0, 255);
+    return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('');
+  }
+
+  /* ---------------- 渲染：近 7 天柱状 ---------------- */
+  function renderWeekBars() {
+    const today = dayStart(Date.now());
+    const days = [];
+    for (let i = 6; i >= 0; i--) days.push(addDays(today, -i));
+    const dayTotals = days.map(d => {
+      const list = sessionsBetween(d.getTime(), d.getTime() + 86400000);
+      const bySub = new Map();
+      list.forEach(s => bySub.set(s.subjectId, (bySub.get(s.subjectId) || 0) + s.dur));
+      return { date: d, sec: sumSec(list), bySub };
+    });
+    const max = Math.max(60 * 60, ...dayTotals.map(d => d.sec));
+    const sum = dayTotals.reduce((a, d) => a + d.sec, 0);
+    el.weekAvg.textContent = `日均 ${fmtShort(sum / 7)}`;
+
+    el.weekBars.innerHTML = dayTotals.map((d, i) => {
+      const isToday = i === dayTotals.length - 1;
+      const parts = Array.from(d.bySub.entries()).map(([sid, sec]) =>
+        `<i style="--c:${esc(subjectColor(sid))};height:${(sec / max * 100).toFixed(2)}%" title="${esc(subjectName(sid))} ${fmtHM(sec)}"></i>`
+      ).join('');
+      const weekLabel = isToday ? '今天' : '周' + WEEK_CN[d.date.getDay()];
+      return `<div class="bar-col${isToday ? ' today' : ''}" title="${d.date.getMonth() + 1}/${d.date.getDate()} 共 ${fmtHM(d.sec)}">
+        <span class="bar-total">${d.sec >= 60 ? Math.round(d.sec / 60) : ''}</span>
+        <div class="bar-stack">${parts}</div>
+        <span class="bar-day">${weekLabel}</span>
+      </div>`;
+    }).join('');
+  }
+
+  /* ---------------- 渲染：历史 ---------------- */
+  let histMonth = new Date();
+  let histSelected = null;
+
+  function openHistory() {
+    histMonth = new Date();
+    histSelected = null;
+    el.historySheet.hidden = false;
+    renderHistory();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function renderHistory() {
+    const now = new Date();
+    const monthStart = new Date(histMonth.getFullYear(), histMonth.getMonth(), 1);
+    const nextMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() + 1, 1);
+    const monthSessions = sessionsBetween(monthStart.getTime(), nextMonth.getTime());
+    const monthSec = sumSec(monthSessions);
+    const activeDays = new Set(monthSessions.map(s => dayKey(s.ts))).size;
+
+    const firstWeekday = (monthStart.getDay() + 6) % 7;
+    const daysInMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() + 1, 0).getDate();
+    const byDay = new Map();
+    monthSessions.forEach(s => {
+      const k = dayKey(s.ts);
+      if (!byDay.has(k)) byDay.set(k, []);
+      byDay.get(k).push(s);
+    });
+
+    let cells = '';
+    for (let i = 0; i < firstWeekday; i++) cells += '<span class="cal-cell empty"></span>';
+    for (let d = 1; d <= daysInMonth; d++) {
+      const dt = new Date(histMonth.getFullYear(), histMonth.getMonth(), d);
+      const k = dayKey(dt.getTime());
+      const list = byDay.get(k) || [];
+      const sec = sumSec(list);
+      const isToday = sameDay(dt, now);
+      const isSel = histSelected === k;
+      const intensity = sec > 0 ? Math.min(1, 0.3 + (sec / (4 * 3600)) * 0.7) : 0;
+      cells += `<button type="button" class="cal-cell${sec > 0 ? ' has' : ''}${isToday ? ' today' : ''}${isSel ? ' sel' : ''}"
+        data-key="${k}" style="--i:${intensity.toFixed(2)}">
+        <span class="d">${d}</span>
+        <span class="m">${sec > 0 ? Math.round(sec / 60) + 'm' : ''}</span>
+      </button>`;
+    }
+
+    if (!histSelected) {
+      const todayKey = dayKey(now.getTime());
+      const monthKeys = Array.from(byDay.keys()).sort();
+      if (byDay.has(todayKey)) histSelected = todayKey;
+      else if (monthKeys.length) histSelected = monthKeys[monthKeys.length - 1];
+      else histSelected = todayKey;
+    }
+
+    const selKey = histSelected;
+    const selDate = parseKey(selKey);
+    const selList = (byDay.get(selKey) || []).slice().sort((a, b) => b.ts - a.ts);
+    let detail;
+    if (!selList.length) {
+      detail = `<div class="empty-state">${fmtDateCN(selDate)} 没有学习记录。</div>`;
+    } else {
+      detail = `<div class="session-list">${selList.map(s => `
+        <div class="session-row" data-sid="${esc(s.id)}">
+          <span class="sw" style="background:${esc(subjectColor(s.subjectId))}"></span>
+          <div class="session-main">
+            <div class="r1"><b>${esc(subjectName(s.subjectId))}</b>
+              <span class="tm">${fmtRange(s)}</span></div>
+            ${s.note ? `<div class="note">${esc(s.note)}</div>` : ''}
+          </div>
+          <span class="session-dur">${fmtHM(s.dur)}</span>
+          <button class="session-del" type="button" title="删除这条记录" data-del="${esc(s.id)}">✕</button>
+        </div>`).join('')}</div>`;
+    }
+
+    el.historyBody.innerHTML = `
+      <div class="hist-summary">
+        <div><strong>${fmtHM(monthSec)}</strong><span>${histMonth.getMonth() + 1} 月累计专注</span></div>
+        <div><strong>${activeDays} 天</strong><span>本月学习天数</span></div>
+      </div>
+      <div class="cal-head-row">
+        <button class="cal-nav" type="button" id="calPrev" aria-label="上个月">‹</button>
+        <span class="cal-title">${histMonth.getFullYear()} 年 ${histMonth.getMonth() + 1} 月</span>
+        <button class="cal-nav" type="button" id="calNext" aria-label="下个月">›</button>
+      </div>
+      <div class="cal">
+        ${['一', '二', '三', '四', '五', '六', '日'].map(w => `<span class="cal-head">${w}</span>`).join('')}
+        ${cells}
+      </div>
+      <div class="day-title">
+        <strong>${fmtDateCN(selDate)}</strong>
+        <span>${selList.length ? `共 ${fmtHM(sumSec(selList))}` : '无记录'}</span>
+      </div>
+      ${detail}
+    `;
+
+    $('#calPrev').addEventListener('click', () => {
+      histMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() - 1, 1);
+      histSelected = null;
+      renderHistory();
+    });
+    $('#calNext').addEventListener('click', () => {
+      histMonth = new Date(histMonth.getFullYear(), histMonth.getMonth() + 1, 1);
+      histSelected = null;
+      renderHistory();
+    });
+    $$('.cal-cell[data-key]', el.historyBody).forEach(cell => {
+      cell.addEventListener('click', () => {
+        histSelected = cell.dataset.key;
+        renderHistory();
+      });
+    });
+    $$('[data-del]', el.historyBody).forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.del;
+        const item = data.sessions.find(s => s.id === id);
+        const label = item ? `${subjectName(item.subjectId)} ${fmtHM(item.dur)}` : '这条记录';
+        if (!window.confirm(`删除 ${label}？删除后无法恢复。`)) return;
+        data.sessions = data.sessions.filter(s => s.id !== id);
+        data.deletedSessions = [...(data.deletedSessions || []), id].slice(-2000);
+        data.updatedAt = Date.now();
+        save(true);
+        renderHistory();
+        renderStats();
+        renderChart();
+        renderWeekBars();
+        renderFlow();
+        toast('已删除这条记录');
+      });
+    });
+  }
+
+  function fmtDateCN(d) {
+    const today = new Date();
+    const diff = Math.round((dayStart(d) - dayStart(today)) / 86400000);
+    if (diff === 0) return '今天';
+    if (diff === -1) return '昨天';
+    return `${d.getMonth() + 1} 月 ${d.getDate()} 日 周${WEEK_CN[d.getDay()]}`;
+  }
+
+  /* ---------------- 设置 ---------------- */
+  let draftColor = PALETTE[0];
+
+  function openSettings() {
+    $('#setGoal').value = data.settings.dailyGoal;
+    $('#setSound').checked = !!data.settings.sound;
+    el.newSubjectName.value = '';
+    draftColor = PALETTE[data.subjects.length % PALETTE.length];
+    renderSwatches();
+    renderSubjectManage();
+    paintSync();
+    el.settingsSheet.hidden = false;
+    document.body.style.overflow = 'hidden';
+  }
+
+  function renderSwatches() {
+    el.swatches.innerHTML = PALETTE.map(c => `
+      <button class="swatch" type="button" data-color="${c}" aria-pressed="${c === draftColor}" style="background:${c}" title="${c}"></button>`).join('');
+    $$('.swatch', el.swatches).forEach(b => b.addEventListener('click', () => {
+      draftColor = b.dataset.color;
+      renderSwatches();
+    }));
+  }
+
+  function renderSubjectManage() {
+    el.subjectManage.innerHTML = data.subjects.map(s => `
+      <li data-id="${esc(s.id)}">
+        <span class="sw" style="background:${esc(s.color)}"></span>
+        <input type="text" value="${esc(s.name)}" maxlength="12" aria-label="科目名称">
+        <button class="del" type="button" title="删除科目">删除</button>
+      </li>`).join('');
+    $$('li', el.subjectManage).forEach(li => {
+      const id = li.dataset.id;
+      const input = $('input', li);
+      input.addEventListener('change', () => {
+        const name = input.value.trim();
+        if (!name) { input.value = subjectName(id); return; }
+        const sub = subjectById(id);
+        if (sub) {
+          sub.name = name.slice(0, 12);
+          data.updatedAt = Date.now();
+          save();
+          renderPills();
+          renderChart();
+          renderWeekBars();
+          renderStats();
+          renderFlow();
+          paintAll();
+          if (!el.historySheet.hidden) renderHistory();
+        }
+      });
+      $('.del', li).addEventListener('click', () => {
+        if (data.subjects.length <= 1) { toast('至少保留一个科目'); return; }
+        if (!window.confirm(`删除科目「${subjectName(id)}」？已有记录会保留但不再按科目显示。`)) return;
+        data.subjects = data.subjects.filter(s => s.id !== id);
+        data.deletedSubjects = [...(data.deletedSubjects || []), id];
+        data.updatedAt = Date.now();
+        if (data.settings.selected === id) data.settings.selected = data.subjects[0].id;
+        save(true);
+        renderSubjectManage();
+        renderPills();
+        paintAll();
+        renderChart();
+        renderWeekBars();
+        renderStats();
+        renderFlow();
+        if (!el.historySheet.hidden) renderHistory();
+      });
+    });
+  }
+
+  function applySettings() {
+    data.settings.dailyGoal = clamp(Number($('#setGoal').value) || 0, 0, 1440);
+    data.settings.sound = $('#setSound').checked;
+    data.settingsAt = Date.now();
+    save(true);
+    renderStats();
+    paintAll();
+  }
+
+  /* ---------------- 声音 / 提示 ---------------- */
+  let audioCtx = null;
+  function unlockAudio() {
+    try {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    } catch (e) { /* 不支持音频就静默 */ }
+  }
+  function playChime() {
+    if (!data.settings.sound) return;
+    try {
+      unlockAudio();
+      if (!audioCtx) return;
+      const now = audioCtx.currentTime;
+      [880, 1174.7].forEach((freq, i) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, now + i * 0.14);
+        gain.gain.exponentialRampToValueAtTime(0.16, now + i * 0.14 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.14 + 0.28);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(now + i * 0.14);
+        osc.stop(now + i * 0.14 + 0.32);
+      });
+      if (navigator.vibrate) navigator.vibrate(60);
+    } catch (e) { /* ignore */ }
+  }
+
+  /* ---------------- 主题 ---------------- */
+  function applyTheme(theme) {
+    data.settings.theme = theme;
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]').setAttribute('content', theme === 'dark' ? '#16130f' : '#f5f1e9');
+    save();
+  }
+
+  /* ---------------- 导出 ---------------- */
+  function exportCSV() {
+    const list = data.sessions.slice().sort((a, b) => a.ts - b.ts);
+    if (!list.length) { toast('还没有记录可以导出'); return; }
+    const rows = [['日期', '开始', '结束', '科目', '时长(分钟)', '时长(秒)', '备注']];
+    list.forEach(s => {
+      rows.push([dayKey(s.ts), fmtClock(s.beganAt || s.ts - s.dur * 1000), fmtClock(s.ts), subjectName(s.subjectId), (s.dur / 60).toFixed(1), s.dur, s.note || '']);
+    });
+    const csv = '\uFEFF' + rows.map(r => r.map(v => {
+      const str = String(v);
+      return /[",\n]/.test(str) ? `"${str.replace(/"/g, '""')}"` : str;
+    }).join(',')).join('\r\n');
+    download(new Blob([csv], { type: 'text/csv;charset=utf-8' }), `学习记录_${dayKey(Date.now())}.csv`);
+    toast(`已导出 ${list.length} 条记录`);
+  }
+
+  /** 把当前饼图 + 图例 + 标题画成一张 PNG */
+  function exportChartPng() {
+    const { list, label } = rangeData(data.settings.range);
+    if (!list.length) { toast('图表还是空的，先记录一点时间吧'); return; }
+    const total = sumSec(list);
+    const map = new Map();
+    data.subjects.forEach(s => map.set(s.id, { id: s.id, name: s.name, color: s.color, sec: 0 }));
+    list.forEach(s => {
+      if (!map.has(s.subjectId)) map.set(s.subjectId, { id: s.subjectId, name: subjectName(s.subjectId), color: subjectColor(s.subjectId), sec: 0 });
+      map.get(s.subjectId).sec += s.dur;
+    });
+    const rows = Array.from(map.values()).filter(v => v.sec > 0).sort((a, b) => b.sec - a.sec);
+    if (!rows.length) { toast('图表还是空的，先记录一点时间吧'); return; }
+
+    const dark = document.documentElement.dataset.theme === 'dark';
+    const ink = dark ? '#f4ede2' : '#24201c';
+    const muted = dark ? '#8b8173' : '#91887b';
+    const bg = dark ? '#201c16' : '#fffdf9';
+    const line = dark ? '#332c23' : '#e7dfd1';
+    const W = 720, H = 420, CX = 210, CY = 214, R = 132, SW = 40;
+    const fonts = `font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif"`;
+
+    let arcs = '';
+    let acc = 0;
+    const gap = 0.7;
+    rows.forEach(row => {
+      const span = row.sec / total * 360;
+      const a0 = acc + gap / 2;
+      const a1 = acc + span - gap / 2;
+      acc += span;
+      if (a1 <= a0) return;
+      if (rows.length === 1) {
+        arcs += `<circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${row.color}" stroke-width="${SW}"/>`;
+      } else {
+        arcs += `<path d="${arcPath(CX, CY, R, a0, a1)}" fill="none" stroke="${row.color}" stroke-width="${SW}" stroke-linecap="butt"/>`;
+      }
+    });
+
+    let legend = '';
+    rows.forEach((row, i) => {
+      const y = 132 + i * 44;
+      legend += `
+        <rect x="420" y="${y - 9}" width="12" height="12" rx="3" fill="${row.color}"/>
+        <text x="442" y="${y + 2}" font-size="15" fill="${ink}" ${fonts}>${esc(row.name)}</text>
+        <text x="640" y="${y + 2}" text-anchor="end" font-size="15" font-weight="700" fill="${ink}" ${fonts}>${fmtHM(row.sec)}</text>
+        <text x="640" y="${y + 21}" text-anchor="end" font-size="12" fill="${muted}" ${fonts}>${((row.sec / total) * 100).toFixed(0)}%</text>`;
+    });
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+      <rect width="${W}" height="${H}" fill="${bg}"/>
+      <text x="36" y="46" font-size="19" font-weight="700" fill="${ink}" ${fonts}>学习时间分布</text>
+      <text x="36" y="70" font-size="12.5" fill="${muted}" ${fonts}>${esc(label)}</text>
+      <line x1="36" y1="88" x2="${W - 36}" y2="88" stroke="${line}"/>
+      <circle cx="${CX}" cy="${CY}" r="${R}" fill="none" stroke="${dark ? '#2b251d' : '#ece4d6'}" stroke-width="${SW}"/>
+      ${arcs}
+      <text x="${CX}" y="${CY - 8}" text-anchor="middle" font-size="30" font-weight="700" fill="${ink}" ${fonts}>${fmtHM(total)}</text>
+      <text x="${CX}" y="${CY + 18}" text-anchor="middle" font-size="12" fill="${muted}" ${fonts}>总专注</text>
+      ${legend}
+      <text x="36" y="${H - 22}" font-size="11" fill="${muted}" ${fonts}>学习时长记录 · ${dayKey(Date.now())}</text>
+    </svg>`;
+
+    const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = W * 2;
+      canvas.height = H * 2;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      canvas.toBlob(b => {
+        if (b) download(b, `学习时间分布_${dayKey(Date.now())}.png`);
+        toast('饼图已保存');
+      }, 'image/png');
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); toast('保存图片失败了，可以直接截图'); };
+    img.src = url;
+  }
+
+  function download(blob, name) {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+  }
+
+  /* ---------------- 跨设备同步（GitHub Gist） ----------------
+     - token 只存在本机 localStorage，用来读写用户自己的私有 Gist
+     - 合并策略：记录按 id 取并集，删除用「墓碑」id 记录，设置按时间戳取新
+     ---------------------------------------------------------- */
+  const SYNC_KEY = 'kaoyan-study-timer-sync-v1';
+  const GIST_FILE = 'study-time.json';
+  const GIST_DESC = '学习时长记录 · 同步数据';
+  const GIST_API = 'https://api.github.com';
+
+  function loadSyncCfg() {
+    try {
+      const raw = localStorage.getItem(SYNC_KEY);
+      const c = raw ? JSON.parse(raw) : {};
+      return {
+        token: typeof c.token === 'string' ? c.token : '',
+        gistId: typeof c.gistId === 'string' ? c.gistId : '',
+        lastSyncAt: Number(c.lastSyncAt) || 0
+      };
+    } catch (err) {
+      return { token: '', gistId: '', lastSyncAt: 0 };
+    }
+  }
+  let syncCfg = loadSyncCfg();
+  let syncing = false;
+  let syncTimer = 0;
+  let syncError = '';
+
+  function saveSyncCfg() {
+    try {
+      localStorage.setItem(SYNC_KEY, JSON.stringify({
+        token: syncCfg.token, gistId: syncCfg.gistId, lastSyncAt: syncCfg.lastSyncAt
+      }));
+    } catch (err) { /* 隐私模式下忽略 */ }
+  }
+
+  /** 只同步「共享型」设置；主题、当前科目、统计范围是每台设备自己的偏好 */
+  function syncPayload(d = data) {
+    const st = d.settings || {};
+    return {
+      version: 2,
+      updatedAt: d.updatedAt || 0,
+      settingsAt: d.settingsAt || 0,
+      settings: { dailyGoal: st.dailyGoal, sound: st.sound },
+      subjects: d.subjects || [],
+      sessions: d.sessions || [],
+      deletedSessions: d.deletedSessions || [],
+      deletedSubjects: d.deletedSubjects || []
+    };
+  }
+
+  async function gh(path, opts = {}) {
+    const headers = {
+      'Accept': 'application/vnd.github+json',
+      'Authorization': 'Bearer ' + syncCfg.token,
+      'X-GitHub-Api-Version': '2022-11-28'
+    };
+    if (opts.body) headers['Content-Type'] = 'application/json';
+    let res;
+    try {
+      res = await fetch(GIST_API + path, { method: opts.method || 'GET', headers, body: opts.body });
+    } catch (err) {
+      throw new Error('网络连不上 GitHub');
+    }
+    if (res.status === 401) throw new Error('token 无效或没有 gist 权限');
+    if (res.status === 403) throw new Error('GitHub 触发频率限制，稍后再试');
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error('GitHub 返回 ' + res.status);
+    return res.status === 204 ? null : res.json();
+  }
+
+  async function ensureGist() {
+    if (syncCfg.gistId) {
+      const g = await gh('/gists/' + syncCfg.gistId);
+      if (g) return g;
+      syncCfg.gistId = '';
+      saveSyncCfg();
+    }
+    const list = await gh('/gists?per_page=100');
+    const found = Array.isArray(list) ? list.find(g => g.files && (g.files[GIST_FILE] || g.files['todo.json'])) : null;
+    if (found) {
+      syncCfg.gistId = found.id;
+      saveSyncCfg();
+      return found;
+    }
+    const created = await gh('/gists', {
+      method: 'POST',
+      body: JSON.stringify({
+        description: GIST_DESC,
+        public: false,
+        files: { [GIST_FILE]: { content: JSON.stringify(syncPayload(), null, 1) } }
+      })
+    });
+    syncCfg.gistId = created.id;
+    saveSyncCfg();
+    return created;
+  }
+
+  async function readGist(gist) {
+    const f = gist && gist.files && gist.files[GIST_FILE];
+    if (!f) return null;
+    let content = f.content;
+    if (f.truncated && f.raw_url) {
+      try {
+        const r = await fetch(f.raw_url, { headers: { Authorization: 'Bearer ' + syncCfg.token } });
+        content = await r.text();
+      } catch (err) { throw new Error('读取 Gist 内容失败'); }
+    }
+    try {
+      const parsed = JSON.parse(content);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  /** 把远端数据并进本地，返回是否有变化 */
+  function mergeRemote(remote) {
+    if (!remote || typeof remote !== 'object') return false;
+    const before = JSON.stringify(syncPayload());
+    const sessions = new Map();
+    (Array.isArray(remote.sessions) ? remote.sessions : []).forEach(s => {
+      if (s && s.id) sessions.set(String(s.id), s);
+    });
+    data.sessions.forEach(s => sessions.set(s.id, s));   // 同 id 以本地为准
+    const delS = new Set([...(data.deletedSessions || []), ...(remote.deletedSessions || [])]);
+    delS.forEach(id => sessions.delete(id));
+
+    const subs = new Map();
+    (Array.isArray(remote.subjects) ? remote.subjects : []).forEach(s => {
+      if (s && s.id && s.name) subs.set(String(s.id), s);
+    });
+    data.subjects.forEach(s => subs.set(s.id, s));
+    const delSub = new Set([...(data.deletedSubjects || []), ...(remote.deletedSubjects || [])]);
+    delSub.forEach(id => subs.delete(id));
+
+    const next = {
+      ...data,
+      updatedAt: Math.max(data.updatedAt || 0, remote.updatedAt || 0),
+      settingsAt: Math.max(data.settingsAt || 0, remote.settingsAt || 0),
+      deletedSessions: Array.from(delS).slice(-2000),
+      deletedSubjects: Array.from(delSub),
+      sessions: Array.from(sessions.values()).sort((a, b) => a.ts - b.ts),
+      subjects: Array.from(subs.values())
+    };
+    const remoteSettings = remote.settings || {};
+    if ((remote.settingsAt || 0) > (data.settingsAt || 0)) {
+      next.settings = {
+        ...next.settings,
+        dailyGoal: Number.isFinite(Number(remoteSettings.dailyGoal)) ? Number(remoteSettings.dailyGoal) : next.settings.dailyGoal,
+        sound: remoteSettings.sound !== false,
+        // 以下为设备本地偏好，保持本机
+        theme: data.settings.theme,
+        range: data.settings.range,
+        selected: data.settings.selected,
+        note: data.settings.note
+      };
+    }
+    if (!next.subjects.some(s => s.id === next.settings.selected)) {
+      next.settings.selected = next.subjects[0] ? next.subjects[0].id : '';
+    }
+    Object.assign(data, next);
+    return before !== JSON.stringify(syncPayload());
+  }
+
+  function persistLocal() {
+    if (demoMode) return;
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify(data));
+      dirty = false;
+    } catch (err) { /* ignore */ }
+  }
+
+  function refreshAfterSync() {
+    renderPills();
+    paintAll();
+    renderStats();
+    renderChart();
+    renderWeekBars();
+    renderFlow();
+    if (!el.historySheet.hidden) renderHistory();
+    paintSync();
+  }
+
+  async function syncNow(opts = {}) {
+    if (demoMode) { if (!opts.silent) toast('预览模式不参与同步'); return false; }
+    if (!syncCfg.token) { if (!opts.silent) toast('先连接 GitHub 账号'); return false; }
+    if (syncing) return false;
+    syncing = true;
+    syncError = '';
+    paintSync();
+    try {
+      const gist = await ensureGist();
+      const remote = await readGist(gist);
+      const changed = remote ? mergeRemote(remote) : false;
+      if (changed) {
+        persistLocal();
+        refreshAfterSync();
+      }
+      const localJson = JSON.stringify(syncPayload(), null, 1);
+      const remoteJson = remote ? JSON.stringify(syncPayload(remote), null, 1) : '';
+      if (localJson !== remoteJson) {
+        await gh('/gists/' + syncCfg.gistId, {
+          method: 'PATCH',
+          body: JSON.stringify({ files: { [GIST_FILE]: { content: localJson } } })
+        });
+      }
+      syncCfg.lastSyncAt = Date.now();
+      saveSyncCfg();
+      if (!opts.silent) toast('已同步');
+      return true;
+    } catch (err) {
+      syncError = String((err && err.message) || err);
+      if (!opts.silent) toast('同步失败：' + syncError);
+      return false;
+    } finally {
+      syncing = false;
+      paintSync();
+    }
+  }
+
+  function scheduleSync(delay = 4000) {
+    if (!syncCfg.token || demoMode) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => syncNow({ silent: true }), delay);
+  }
+
+  function paintSync() {
+    const on = !!syncCfg.token;
+    const stateEl = $('#syncState');
+    const setup = $('#syncSetup');
+    const live = $('#syncLive');
+    if (setup) setup.hidden = on;
+    if (live) live.hidden = !on;
+
+    let label = '未开启';
+    let cls = '';
+    if (on) {
+      if (syncing) { label = '同步中…'; cls = 'syncing'; }
+      else if (syncError) { label = '同步失败'; cls = 'err'; }
+      else { label = '已连接'; cls = 'on'; }
+    }
+    if (stateEl) {
+      stateEl.textContent = label + (on && syncCfg.lastSyncAt && !syncing && !syncError ? ' · ' + fmtClock(syncCfg.lastSyncAt) : '');
+      stateEl.className = 'sync-state ' + cls;
+    }
+    const foot = $('#btnSync');
+    if (foot) {
+      foot.textContent = '云同步：' + (on ? (syncing ? '同步中…' : (syncError ? '同步失败，点此查看' : '已开启')) : '未开启');
+      foot.className = 'link-btn ' + cls;
+    }
+    const info = $('#syncInfo');
+    if (info) {
+      if (syncError) info.textContent = '上次同步失败：' + syncError;
+      else if (syncCfg.lastSyncAt) info.textContent = `已连接 · 上次同步 ${fmtClock(syncCfg.lastSyncAt)}（${dayKey(syncCfg.lastSyncAt)}）`;
+      else info.textContent = '已连接，正在等待第一次同步';
+    }
+    const link = $('#syncGist');
+    if (link) {
+      if (syncCfg.gistId) { link.href = 'https://gist.github.com/' + syncCfg.gistId; link.hidden = false; }
+      else link.hidden = true;
+    }
+    const tokenInput = $('#syncToken');
+    if (tokenInput && !on) tokenInput.value = '';
+  }
+
+  async function connectSync() {
+    const input = $('#syncToken');
+    const token = (input ? input.value : '').trim();
+    if (!token) { toast('先粘贴 GitHub token'); if (input) input.focus(); return; }
+    if (!/^(ghp_|github_pat_)/.test(token)) {
+      if (!window.confirm('这个 token 看起来不是 GitHub 的格式（通常以 ghp_ 开头），仍然尝试连接吗？')) return;
+    }
+    syncCfg.token = token;
+    syncCfg.gistId = '';
+    syncCfg.lastSyncAt = 0;
+    saveSyncCfg();
+    paintSync();
+    const ok = await syncNow();
+    if (ok) {
+      if (input) input.value = '';
+      toast('已连接，之后会自动同步');
+    } else {
+      // 保留 token，网络恢复后还能继续重试；按钮提示失败原因
+      toast('连接失败：' + (syncError || '未知错误'));
+    }
+  }
+
+  function disconnectSync() {
+    if (!window.confirm('断开云同步？本机数据会保留，但不再与其他设备同步。')) return;
+    clearTimeout(syncTimer);
+    syncCfg = { token: '', gistId: '', lastSyncAt: 0 };
+    saveSyncCfg();
+    paintSync();
+    toast('已断开云同步');
+  }
+
+  /* ---------------- 示例数据 ---------------- */
+  function generateSampleSessions() {
+    const notes = {
+      math: ['高数 中值定理', '线代 特征值', '概率 大数定律', '真题 2019'],
+      english: ['阅读 2 篇', '单词 100 个', '作文模板', '长难句'],
+      politics: ['马原 辩证法', '毛中特', '史纲 时间线', '肖秀荣 1000 题'],
+      major: ['408 数据结构', '408 组成原理', '专题整理', '真题复盘']
+    };
+    const now = Date.now();
+    const out = [];
+    for (let d = 6; d >= 0; d--) {
+      const day = dayStart(addDays(now, -d));
+      const count = d === 0 ? 2 : 2 + ((d * 7) % 3);
+      for (let i = 0; i < count; i++) {
+        const sub = data.subjects[(d + i) % data.subjects.length];
+        if (!sub) continue;
+        const hours = 9 + i * 2 + ((d * 3) % 2);
+        const ts = day + hours * 3600000 + 12 * 60000;
+        if (ts > now) continue;
+        const dur = (25 + ((d * 13 + i * 7) % 2) * 25) * 60;
+        const pool = notes[sub.id] || ['学习'];
+        out.push({
+          id: 'demo-' + d + '-' + i,
+          ts,
+          dur,
+          beganAt: ts - dur * 1000,
+          subjectId: sub.id,
+          note: pool[(d + i) % pool.length],
+          mode: 'focus'
+        });
+      }
+    }
+    return out;
+  }
+
+  function loadSample() {
+    if (data.sessions.length && !window.confirm('将追加最近 7 天的示例记录，原来的记录会保留。继续？')) return;
+    data.sessions = data.sessions.concat(generateSampleSessions());
+    save(true);
+    renderStats();
+    renderChart();
+    renderWeekBars();
+    renderFlow();
+    renderHistoryIfOpen();
+    toast('已载入示例数据，看看图表效果');
+  }
+
+  function renderHistoryIfOpen() {
+    if (!el.historySheet.hidden) renderHistory();
+  }
+
+  /** ?demo=1 预览模式：只展示示例数据，不写入本地存储 */
+  function setupDemo() {
+    data.sessions = generateSampleSessions();
+    const banner = document.createElement('div');
+    banner.className = 'demo-banner';
+    banner.innerHTML = `<span><b>预览模式</b>：正在展示示例数据，不会被保存。</span>
+      <button type="button" id="exitDemo">开始记录我自己的</button>`;
+    document.querySelector('.page').insertBefore(banner, document.querySelector('.layout'));
+    $('#exitDemo').addEventListener('click', () => {
+      demoMode = false;
+      data.sessions = [];
+      banner.remove();
+      save(true);
+      renderStats();
+      renderChart();
+      renderWeekBars();
+      renderFlow();
+      toast('已就绪，按下开始就能记录啦');
+    });
+  }
+
+  /* ---------------- 事件绑定 ---------------- */
+  function bind() {
+    el.btnStart.addEventListener('click', toggle);
+    el.btnFinish.addEventListener('click', finish);
+    el.btnFlowHistory.addEventListener('click', openHistory);
+
+    el.subjectPills.addEventListener('click', e => {
+      const pill = e.target.closest('.pill');
+      if (!pill || pill.disabled) return;
+      data.settings.selected = pill.dataset.id;
+      save();
+      paintFocus();
+      paintRingColor();
+      paintAll();
+    });
+
+    el.rangeTabs.addEventListener('click', e => {
+      const btn = e.target.closest('.seg');
+      if (!btn) return;
+      data.settings.range = btn.dataset.range;
+      save();
+      $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b === btn ? 'true' : 'false'));
+      renderChart();
+    });
+
+    el.noteInput.addEventListener('input', () => {
+      data.settings.note = el.noteInput.value;
+      save();
+      if (state.running) {
+        state.sessionNote = el.noteInput.value.trim();
+        el.ringSub.innerHTML = buildSub();
+      }
+    });
+
+    el.btnTheme.addEventListener('click', () => {
+      applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+
+    $('#btnHistory').addEventListener('click', openHistory);
+    $('#btnSettings').addEventListener('click', openSettings);
+    $('#btnExport').addEventListener('click', exportCSV);
+    $('#btnExportPng').addEventListener('click', exportChartPng);
+
+    $$('.sheet').forEach(sheet => {
+      $$('[data-close]', sheet).forEach(b => b.addEventListener('click', closeSheets));
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeSheets();
+      if (e.target.matches('input, textarea, select')) return;
+      if (e.key === ' ' || e.code === 'Space') {
+        if (el.historySheet.hidden && el.settingsSheet.hidden) { e.preventDefault(); toggle(); }
+      }
+    });
+
+    $('#btnSample').addEventListener('click', loadSample);
+    $('#btnClear').addEventListener('click', () => {
+      if (!window.confirm('清空全部学习记录？科目与设置会保留，此操作不可撤销（同步后其他设备也会清空）。')) return;
+      const ids = data.sessions.map(s => s.id);
+      data.deletedSessions = [...(data.deletedSessions || []), ...ids].slice(-2000);
+      data.sessions = [];
+      data.updatedAt = Date.now();
+      save(true);
+      renderStats();
+      renderChart();
+      renderWeekBars();
+      renderFlow();
+      renderHistoryIfOpen();
+      toast('记录已清空');
+    });
+
+    $('#btnSync').addEventListener('click', openSettings);
+    $('#btnSyncConnect').addEventListener('click', connectSync);
+    $('#btnSyncNow').addEventListener('click', () => syncNow());
+    $('#btnSyncDisconnect').addEventListener('click', disconnectSync);
+
+    $('#setGoal').addEventListener('change', applySettings);
+    $('#setSound').addEventListener('change', applySettings);
+
+    $('#addSubjectForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const name = el.newSubjectName.value.trim();
+      if (!name) { el.newSubjectName.focus(); return; }
+      if (data.subjects.some(s => s.name === name)) { toast('已经有同名科目了'); return; }
+      data.subjects.push({ id: 'sub-' + uid(), name: name.slice(0, 12), color: draftColor });
+      data.updatedAt = Date.now();
+      el.newSubjectName.value = '';
+      draftColor = PALETTE[data.subjects.length % PALETTE.length];
+      renderSwatches();
+      save(true);
+      renderSubjectManage();
+      renderPills();
+      renderChart();
+      renderStats();
+      paintAll();
+    });
+  }
+
+  function closeSheets() {
+    el.historySheet.hidden = true;
+    el.settingsSheet.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  /* ---------------- 初始化 ---------------- */
+  function init() {
+    document.documentElement.dataset.theme = data.settings.theme === 'dark' ? 'dark' : 'light';
+    document.querySelector('meta[name="theme-color"]').setAttribute('content',
+      data.settings.theme === 'dark' ? '#16130f' : '#f5f1e9');
+
+    const now = new Date();
+    el.topDate.textContent = `${now.getMonth() + 1} 月 ${now.getDate()} 日 周${WEEK_CN[now.getDay()]}`;
+
+    $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b.dataset.range === data.settings.range ? 'true' : 'false'));
+    renderPills();
+    el.noteInput.value = data.settings.note || '';
+    el.ringProgress.style.strokeDasharray = String(2 * Math.PI * 138);
+    if (DEMO) setupDemo();
+    paintAll();
+    renderStats();
+    renderChart();
+    renderWeekBars();
+    renderFlow();
+    paintSync();
+    bind();
+
+    // 云同步：启动时拉一次；恢复网络 / 回到页面时再拉
+    if (syncCfg.token && !DEMO) setTimeout(() => syncNow({ silent: true }), 1200);
+    window.addEventListener('online', () => { if (syncCfg.token && !DEMO) syncNow({ silent: true }); });
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && syncCfg.token && !DEMO) syncNow({ silent: true });
+    });
+
+    // 到零点自动刷新“今日”数据
+    let dayMark = dayKey(Date.now());
+    setInterval(() => {
+      const k = dayKey(Date.now());
+      if (k !== dayMark) {
+        dayMark = k;
+        renderStats();
+        renderChart();
+        renderWeekBars();
+        renderFlow();
+        const d = new Date();
+        el.topDate.textContent = `${d.getMonth() + 1} 月 ${d.getDate()} 日 周${WEEK_CN[d.getDay()]}`;
+      }
+    }, 30000);
+  }
+
+  init();
+
+  // 调试入口：控制台可用 __timer.debugElapsed(分钟) 模拟已经学了一段时间，方便验证记录逻辑
+  window.__timer = {
+    state,
+    get data() { return data; },
+    sync: {
+      cfg: () => syncCfg,
+      now: opts => syncNow(opts),
+      merge: mergeRemote,
+      payload: syncPayload,
+      setToken(token, gistId) {
+        syncCfg.token = token || '';
+        syncCfg.gistId = gistId || '';
+        saveSyncCfg();
+        paintSync();
+      }
+    },
+    debugElapsed(minutes) {
+      state.elapsedMs = Math.max(0, minutes) * 60000;
+      if (!state.running) state.runSince = nowMs();
+      paintAll();
+    }
+  };
+})();

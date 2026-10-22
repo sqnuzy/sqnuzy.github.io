@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#f5f1e9">
+<title>学习计时 | sqnuzy 的算法小站</title>
+<link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="page">
+  <div class="crumb"><a href="/todo/">← 返回训练清单</a></div>
+
+  <!-- ============ 顶栏 ============ -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" width="40" height="40">
+          <circle cx="20" cy="20" r="17" fill="none" stroke="rgba(255,255,255,.28)" stroke-width="4"/>
+          <circle cx="20" cy="20" r="17" fill="none" stroke="#ffd9c8" stroke-width="4"
+                  stroke-dasharray="107" stroke-dashoffset="34" stroke-linecap="round"
+                  transform="rotate(-90 20 20)"/>
+          <path d="M20 11v9l6 4" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>学习时长记录</h1>
+        <p><span id="topDate"></span> · 只记时长，不设上限</p>
+      </div>
+    </div>
+    <nav class="top-actions">
+      <button class="icon-btn" id="btnTheme" type="button" title="切换深色 / 浅色">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
+        <span>主题</span>
+      </button>
+      <button class="icon-btn" id="btnHistory" type="button">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+        <span>历史</span>
+      </button>
+      <button class="icon-btn" id="btnSettings" type="button">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M5 7h14M5 12h14M5 17h14"/><circle cx="9" cy="7" r="1.8" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="8" cy="17" r="1.8" fill="currentColor" stroke="none"/></svg>
+        <span>设置</span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="layout">
+    <!-- ============ 计时器 ============ -->
+    <section class="card timer-card" id="timerCard" aria-label="学习计时器">
+      <div class="timer-head">
+        <span class="line-badge">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v5l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+          正向计时
+        </span>
+        <div class="head-stat">
+          <span class="live-dot" id="liveDot" aria-hidden="true"></span>
+          <span id="headState">待开始</span>
+          <span class="head-sep">·</span>
+          <span>今日 <b id="headToday">0 分钟</b></span>
+        </div>
+      </div>
+
+      <div class="ring-wrap" id="ringWrap">
+        <svg class="ring" viewBox="0 0 320 320" aria-hidden="true">
+          <defs>
+            <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#e8613c" id="ringGradA"/>
+              <stop offset="100%" stop-color="#f2a03d" id="ringGradB"/>
+            </linearGradient>
+          </defs>
+          <circle class="ring-track" cx="160" cy="160" r="138"/>
+          <circle class="ring-progress" id="ringProgress" cx="160" cy="160" r="138" transform="rotate(-90 160 160)"/>
+          <circle class="ring-flash" id="ringFlash" cx="160" cy="160" r="138"/>
+        </svg>
+        <div class="ring-center">
+          <div class="ring-phase" id="ringPhase">本段计时</div>
+          <div class="ring-time" id="ringTime">00:00</div>
+          <div class="ring-sub" id="ringSub">选好科目，按下开始</div>
+        </div>
+      </div>
+
+      <div class="subject-block">
+        <div class="block-label">
+          <span>本次科目</span>
+          <span class="lock-hint" id="lockHint" hidden>计时中不可切换</span>
+        </div>
+        <div class="subject-pills" id="subjectPills"></div>
+      </div>
+
+      <label class="note-field">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 5h16M4 10h16M4 15h9"/></svg>
+        <input id="noteInput" type="text" maxlength="60" placeholder="备注（选填）" autocomplete="off">
+      </label>
+
+      <div class="controls">
+        <button class="btn btn-primary" id="btnStart" type="button">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" id="startIcon"><path d="M8 5.5v13l11-6.5z"/></svg>
+          <span id="startLabel">开始计时</span>
+        </button>
+        <button class="btn btn-ghost" id="btnFinish" type="button" title="结束并把这 段 时间记入科目">
+          <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>
+          结束并记录
+        </button>
+      </div>
+
+      <p class="kbd-hint"><kbd>空格</kbd> 开始 / 暂停 · 不满 5 分钟不记账 · 记录可在下方删除 · 切到后台也继续计时</p>
+
+      <div class="today-flow">
+        <div class="flow-head">
+          <span>今天的记录</span>
+          <button class="link-btn" id="btnFlowHistory" type="button">查看全部</button>
+        </div>
+        <ul class="flow-list" id="flowList"></ul>
+      </div>
+    </section>
+
+    <!-- ============ 右侧统计 ============ -->
+    <aside class="side">
+      <section class="card stats-card" aria-label="今日统计">
+        <div class="stats-top">
+          <div class="stat">
+            <span class="stat-label">今日专注</span>
+            <span class="stat-value" id="statFocus">0<small>分钟</small></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">最长一段</span>
+            <span class="stat-value" id="statLongest">0<small>分钟</small></span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">今日记录</span>
+            <span class="stat-value" id="statSessions">0<small>条</small></span>
+          </div>
+        </div>
+        <div class="goal">
+          <div class="goal-head">
+            <span>今日目标</span>
+            <span id="goalText">0 / 240 分钟</span>
+          </div>
+          <div class="goal-bar"><i id="goalFill"></i></div>
+          <div class="goal-sub" id="goalSub">目标可以在「设置」里调整</div>
+        </div>
+      </section>
+
+      <section class="card chart-card" aria-label="时间分布">
+        <div class="card-head">
+          <div>
+            <h2>时间分布</h2>
+            <p class="muted" id="chartCaption">今天各科目投入占比</p>
+          </div>
+          <div class="segmented sm" id="rangeTabs" role="tablist" aria-label="统计范围">
+            <button class="seg" data-range="today" role="tab" aria-selected="true" type="button">今天</button>
+            <button class="seg" data-range="week" role="tab" aria-selected="false" type="button">7 天</button>
+            <button class="seg" data-range="month" role="tab" aria-selected="false" type="button">30 天</button>
+          </div>
+        </div>
+
+        <div class="donut-wrap">
+          <svg class="donut" id="donut" viewBox="0 0 220 220" role="img" aria-label="各科目学习时间饼图"></svg>
+          <div class="donut-center">
+            <strong id="donutTotal">0 分钟<small>总专注</small></strong>
+          </div>
+        </div>
+        <ul class="legend" id="legend"></ul>
+      </section>
+
+      <section class="card bars-card" aria-label="近七天趋势">
+        <div class="card-head">
+          <div>
+            <h2>近 7 天</h2>
+            <p class="muted">每天的总专注时长</p>
+          </div>
+          <span class="badge" id="weekAvg">日均 0 分钟</span>
+        </div>
+        <div class="bars" id="weekBars"></div>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="page-foot">
+    <span>数据默认存在本机浏览器；开启云同步后可在多设备间共用。</span>
+    <div class="foot-actions">
+      <button class="link-btn" id="btnSync" type="button">云同步：未开启</button>
+      <button class="link-btn" id="btnExport" type="button">导出 CSV</button>
+      <button class="link-btn" id="btnExportPng" type="button">保存饼图</button>
+    </div>
+  </footer>
+</div>
+
+<!-- ============ 历史面板 ============ -->
+<div class="sheet" id="historySheet" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel wide" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
+    <div class="sheet-head">
+      <h2 id="historyTitle">学习记录</h2>
+      <button class="icon-btn ghost" data-close type="button" aria-label="关闭">✕</button>
+    </div>
+    <div class="sheet-body" id="historyBody"></div>
+  </div>
+</div>
+
+<!-- ============ 设置面板 ============ -->
+<div class="sheet" id="settingsSheet" hidden>
+  <div class="sheet-backdrop" data-close></div>
+  <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="sheet-head">
+      <h2 id="settingsTitle">设置</h2>
+      <button class="icon-btn ghost" data-close type="button" aria-label="关闭">✕</button>
+    </div>
+    <div class="sheet-body">
+      <div class="field-grid">
+        <label class="field">
+          <span>每日目标（分钟）</span>
+          <input type="number" id="setGoal" min="0" max="1440" step="10">
+        </label>
+        <label class="field switch-field">
+          <span>结束时提示音</span>
+          <input type="checkbox" id="setSound">
+        </label>
+      </div>
+      <p class="muted small" style="margin-top:8px">正向计时没有固定时长，学多久记多久；每日目标只是给进度条一个参照，填 0 表示不设目标。</p>
+
+      <div class="panel-section">
+        <div class="section-head">
+          <h3>科目管理</h3>
+          <span class="muted">删除科目不会删除已有记录</span>
+        </div>
+        <ul class="subject-manage" id="subjectManage"></ul>
+        <form class="add-subject" id="addSubjectForm">
+          <input type="text" id="newSubjectName" maxlength="12" placeholder="新增科目，例如：线代" autocomplete="off">
+          <div class="swatches" id="swatches"></div>
+          <button class="btn btn-soft" type="submit">添加</button>
+        </form>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-head">
+          <h3>跨设备同步</h3>
+          <span class="sync-state" id="syncState">未开启</span>
+        </div>
+        <div id="syncSetup">
+          <p class="muted small">用你自己的 GitHub Gist 当云盘：电脑、手机、不同浏览器用同一个 GitHub 账号，打开就能看到同一份记录。数据存在你私有的 Gist 里，不经过任何第三方服务器。</p>
+          <ol class="sync-steps">
+            <li>打开 <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=study-timer" target="_blank" rel="noopener">github.com/settings/tokens</a>（需要先登录）</li>
+            <li>页面里的权限列表很长，用 <kbd>Ctrl</kbd>+<kbd>F</kbd> 搜 <b>gist</b>，只勾这一项（描述是 <i>Create gists</i>），再点绿色 <b>Generate token</b></li>
+            <li>复制生成的 <code>ghp_…</code> token，粘贴到下面，点「连接并同步」；另一台设备重复一次即可</li>
+          </ol>
+          <div class="sync-input">
+            <input id="syncToken" type="password" placeholder="ghp_…" autocomplete="off" spellcheck="false" aria-label="GitHub token">
+            <button class="btn btn-soft" id="btnSyncConnect" type="button">连接并同步</button>
+          </div>
+          <p class="muted small">Token 只保存在这台设备的浏览器里；只给 gist 权限，随时可在 GitHub 撤销。</p>
+        </div>
+        <div id="syncLive" hidden>
+          <p class="muted small" id="syncInfo">已连接</p>
+          <div class="data-actions">
+            <button class="btn btn-soft" id="btnSyncNow" type="button">立即同步</button>
+            <a class="btn btn-soft" id="syncGist" target="_blank" rel="noopener" href="#">查看 Gist</a>
+            <button class="btn btn-danger" id="btnSyncDisconnect" type="button">断开</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-head"><h3>数据</h3></div>
+        <div class="data-actions">
+          <button class="btn btn-soft" id="btnSample" type="button">载入示例数据</button>
+          <button class="btn btn-danger" id="btnClear" type="button">清空全部记录</button>
+        </div>
+        <p class="muted small">示例数据会写入最近 7 天，可随时用「清空全部记录」删除，便于先看看图表效果。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

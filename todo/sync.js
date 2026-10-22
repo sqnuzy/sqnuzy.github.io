@@ -262,7 +262,14 @@
       .todo-sync-btn .dot{width:7px;height:7px;border-radius:50%;background:#ccc;flex:none}
       .todo-sync-btn.on .dot{background:#2f9e8f}
       .todo-sync-btn.err .dot{background:#d94f3d}
+      .todo-sync-btn.off{border-color:#e8613c;color:#e8613c;font-weight:600}
+      .todo-sync-btn.off .dot{background:#e8613c}
       .todo-sync-btn.syncing .dot{background:#e8a13c;animation:todoSyncPulse 1s infinite}
+      .todo-sync-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;max-width:1200px;margin:0 auto 14px;padding:10px 14px;border-radius:10px;border:1px solid #f0c9b8;background:#fff7f2;color:#7a4a33;font-size:13px;line-height:1.5;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+      .todo-sync-banner[hidden]{display:none}
+      .todo-sync-banner.err{border-color:#eccac2;background:#fdf3f0;color:#a33a26}
+      .todo-sync-banner button{border:1px solid #e8613c;background:#e8613c;color:#fff;border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+      .todo-sync-banner button:hover{opacity:.9}
       @keyframes todoSyncPulse{50%{opacity:.35}}
       .todo-sync-mask{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(25,20,12,.42);backdrop-filter:blur(3px)}
       .todo-sync-mask[hidden]{display:none}
@@ -323,8 +330,9 @@
     if (!btn) return;
     btn.classList.toggle('on', !!cfg.token && !syncError);
     btn.classList.toggle('err', !!(cfg.token && syncError));
+    btn.classList.toggle('off', !cfg.token);
     btn.classList.toggle('syncing', syncing);
-    let text = '云同步：未开启';
+    let text = '开启云同步';
     if (cfg.token) {
       if (syncing) text = '同步中…';
       else if (syncError) text = '同步失败';
@@ -332,6 +340,45 @@
     }
     btn.innerHTML = '<span class="dot"></span>' + text;
     btn.title = syncError || (cfg.token ? '点击查看同步状态' : '点击开启跨设备同步');
+    renderBanner();
+  }
+
+  function banner() {
+    let b = document.getElementById('todoSyncBanner');
+    if (b) return b;
+    const anchor = document.querySelector('.todo-layout');
+    if (!anchor || !anchor.parentNode) return null;
+    b = document.createElement('div');
+    b.id = 'todoSyncBanner';
+    b.className = 'todo-sync-banner';
+    b.hidden = true;
+    b.innerHTML = '<span></span><button type="button">开启</button>';
+    b.querySelector('button').addEventListener('click', () => {
+      if (syncError && cfg.token) syncNow();
+      else showPanel();
+    });
+    anchor.parentNode.insertBefore(b, anchor);
+    return b;
+  }
+
+  function renderBanner() {
+    const b = banner();
+    if (!b) return;
+    const txt = b.querySelector('span');
+    const act = b.querySelector('button');
+    if (!cfg.token) {
+      b.hidden = false;
+      b.className = 'todo-sync-banner';
+      txt.textContent = '云同步还没开启：手机和电脑各连一次，才能看到同一份待办';
+      act.textContent = '去开启';
+    } else if (syncError) {
+      b.hidden = false;
+      b.className = 'todo-sync-banner err';
+      txt.textContent = '同步失败：' + syncError;
+      act.textContent = '重试';
+    } else {
+      b.hidden = true;
+    }
   }
 
   function ensurePanel() {

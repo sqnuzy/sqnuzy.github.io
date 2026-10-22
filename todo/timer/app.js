@@ -7,11 +7,14 @@
 
   const STORE_KEY = 'kaoyan-study-timer-v2';
   const OLD_KEYS = ['kaoyan-pomodoro-v1'];
-  const PALETTE = ['#E8613C', '#F2A03D', '#D9A404', '#7FB069', '#2F9E8F',
-                   '#3F8FBF', '#5A7BE0', '#8667D8', '#B25FC4', '#E1699E',
-                   '#C2534B', '#8A7A6A'];
+  const PALETTE = ['#FF6B4A', '#2E8BFF', '#22C55E', '#8B5CF6', '#FFB020',
+                   '#EC4899', '#06B6D4', '#F97316', '#10B981', '#6366F1',
+                   '#EF4444', '#64748B'];
   const WEEK_CN = ['日', '一', '二', '三', '四', '五', '六'];
   const MIN_RECORD_SEC = 5 * 60;   // 不满 5 分钟不记账
+  // 旧版默认配色 → 新版高饱和配色（只在颜色没被用户改过时替换）
+  const LEGACY_COLORS = { math: '#E8613C', english: '#3F8FBF', politics: '#7FB069', major: '#8667D8' };
+  const FRESH_COLORS = { math: '#FF6B4A', english: '#2E8BFF', politics: '#22C55E', major: '#8B5CF6' };
 
   /* ---------------- 小工具 ---------------- */
   const $ = (sel, root = document) => root.querySelector(sel);
@@ -85,10 +88,10 @@
     return {
       version: 2,
       subjects: [
-        { id: 'math',    name: '数学',   color: '#E8613C' },
-        { id: 'english', name: '英语',   color: '#3F8FBF' },
-        { id: 'politics',name: '政治',   color: '#7FB069' },
-        { id: 'major',   name: '专业课', color: '#8667D8' }
+        { id: 'math',    name: '数学',   color: '#FF6B4A' },
+        { id: 'english', name: '英语',   color: '#2E8BFF' },
+        { id: 'politics',name: '政治',   color: '#22C55E' },
+        { id: 'major',   name: '专业课', color: '#8B5CF6' }
       ],
       sessions: [],
       settings: defaultSettings(),
@@ -133,6 +136,10 @@
         : []
     };
     const s = data.settings;
+    data.subjects.forEach(sub => {
+      const old = LEGACY_COLORS[sub.id];
+      if (old && String(sub.color).toLowerCase() === old.toLowerCase()) sub.color = FRESH_COLORS[sub.id];
+    });
     s.dailyGoal = clamp(Number(s.dailyGoal) || 0, 0, 1440);
     s.sound = s.sound !== false;
     s.theme = s.theme === 'dark' ? 'dark' : 'light';
@@ -811,14 +818,21 @@
         const a1 = acc + span;
         acc = a1;
         if (span <= 0) return;
-        const s = polar(cx, cy, R, a0);
-        const e = polar(cx, cy, R, a1);
-        const large = span > 180 ? 1 : 0;
-        svg += `<path class="pie-seg" data-id="${esc(row.id)}" d="M ${cx} ${cy} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z"
-          fill="${esc(row.color)}" stroke="#fff" stroke-width="1.5"/>`;
-
-        // 标签与引线（小占比放到外面，避免盖住）
-        const mid = a0 + span / 2;
+        // 只有一个科目时整圆，用 path 画会退化成一个点
+        const full = span >= 359.9;
+        let mid;
+        if (full) {
+          svg += `<circle class="pie-seg" data-id="${esc(row.id)}" cx="${cx}" cy="${cy}" r="${R}"
+            fill="${esc(row.color)}" stroke="#fff" stroke-width="1.5"/>`;
+          mid = 32;
+        } else {
+          const s = polar(cx, cy, R, a0);
+          const e = polar(cx, cy, R, a1);
+          const large = span > 180 ? 1 : 0;
+          svg += `<path class="pie-seg" data-id="${esc(row.id)}" d="M ${cx} ${cy} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z"
+            fill="${esc(row.color)}" stroke="#fff" stroke-width="1.5"/>`;
+          mid = a0 + span / 2;
+        }
         const p1 = polar(cx, cy, R + 4, mid);
         const p2 = polar(cx, cy, R + 16, mid);
         const p3 = polar(cx, cy, R + 30, mid);

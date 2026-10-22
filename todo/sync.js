@@ -252,6 +252,41 @@
     scheduleTimer = setTimeout(() => syncNow({ silent: true }), delay);
   }
 
+  /** 账号里可能有多个 Gist（例如两台设备各自建了一个），把它们全部合并回来 */
+  async function recoverFromAllGists() {
+    if (!cfg.token || syncing) return;
+    syncing = true;
+    syncError = '';
+    renderChip();
+    try {
+      const list = await gh('/gists?per_page=100');
+      const cands = (Array.isArray(list) ? list : []).filter(g => g.files && g.files[FILE]);
+      let found = 0;
+      for (const g of cands) {
+        if (cfg.gistId && g.id === cfg.gistId) continue;
+        const r = await readRemote(g);
+        if (r && Array.isArray(r.tasks) && r.tasks.length) {
+          mergeRemote(r);
+          found++;
+        }
+      }
+      syncing = false;
+      if (found) {
+        await syncNow({ silent: true });
+        toastBox(`已从其他 ${found} 个 Gist 合并数据`);
+      } else {
+        toastBox('没有找到其他带任务的 Gist');
+      }
+    } catch (err) {
+      syncError = String((err && err.message) || err);
+      toastBox('找回失败：' + syncError);
+    } finally {
+      syncing = false;
+      renderChip();
+      if (panelEl && !panelEl.hidden) renderPanel();
+    }
+  }
+
   /* ---------- UI ---------- */
   let panelEl = null;
 
@@ -410,9 +445,13 @@
     const connected = !!cfg.token;
     const statusText = syncError ? '同步失败：' + syncError
       : (connected ? (syncing ? '同步中…' : '已连接' + (lastSyncAt ? ' · 上次同步 ' + timeText(lastSyncAt) : '')) : '未开启');
+    const gistLine = connected
+      ? `<p class="sub">Gist：<code>${cfg.gistId ? cfg.gistId.slice(0, 10) : '尚未创建'}</code> · 本机任务 <b>${store.getTasks().length}</b> 条</p>`
+      : '';
     let html = `<h3>跨设备同步</h3>
       <p class="sub">和计时页共用同一个 Gist：手机、电脑打开 ${location.origin} 下的页面，看到的是同一份待办。数据存在你私有的 GitHub Gist（<code>todo.json</code>）。</p>
-      <p class="status${syncError ? ' err' : ''}">${statusText}</p>`;
+      <p class="status${syncError ? ' err' : ''}">${statusText}</p>
+      ${gistLine}`;
     if (!connected) {
       html += `<ol>
         <li>打开 <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=study-timer" target="_blank" rel="noopener">github.com/settings/tokens</a>，勾选 <b>gist</b>，生成 token</li>
@@ -423,8 +462,10 @@
       html += `<div class="actions">
         <button class="primary" id="todoSyncNow" type="button">立即同步</button>
         <button id="todoSyncOpenGist" type="button">查看 Gist</button>
+        <button id="todoSyncRecover" type="button">从其他 Gist 找回</button>
         <button class="danger" id="todoSyncDisconnect" type="button">断开</button>
-      </div>`;
+      </div>
+      <p class="sub" style="margin-top:8px">如果另一台设备上有任务、这里却是空的，先点「立即同步」；还不行就点「从其他 Gist 找回」，会把账号里所有带 todo.json 的 Gist 合并进来。</p>`;
     }
     body.innerHTML = html;
     if (!connected) {
@@ -440,6 +481,7 @@
       });
     } else {
       body.querySelector('#todoSyncNow').addEventListener('click', () => syncNow());
+      body.querySelector('#todoSyncRecover').addEventListener('click', () => recoverFromAllGists());
       body.querySelector('#todoSyncOpenGist').addEventListener('click', () => {
         if (!cfg.gistId) { toastBox('还没有同步过，先点「立即同步」'); return; }
         window.open('https://gist.github.com/' + cfg.gistId, '_blank', 'noopener');
@@ -485,6 +527,7 @@
       now: syncNow,
       merge: mergeRemote,
       payload,
+      recover: recoverFromAllGists,
       status: () => ({ connected: !!cfg.token, syncing, error: syncError, lastSyncAt })
     };
   }

@@ -1371,6 +1371,40 @@
     syncTimer = setTimeout(() => syncNow({ silent: true }), delay);
   }
 
+  /** 账号里可能有多个 Gist（不同设备各建了一个），全部合并回来 */
+  async function recoverFromAllGists() {
+    if (!syncCfg.token || syncing) return;
+    syncing = true;
+    syncError = '';
+    paintSync();
+    try {
+      const list = await gh('/gists?per_page=100');
+      const cands = (Array.isArray(list) ? list : []).filter(g => g.files && g.files[GIST_FILE]);
+      let found = 0;
+      for (const g of cands) {
+        if (syncCfg.gistId && g.id === syncCfg.gistId) continue;
+        const r = await readGist(g);
+        if (r && Array.isArray(r.sessions) && r.sessions.length) {
+          mergeRemote(r);
+          found++;
+        }
+      }
+      syncing = false;
+      if (found) {
+        await syncNow({ silent: true });
+        toast(`已从其他 ${found} 个 Gist 合并记录`);
+      } else {
+        toast('没有找到其他带记录的 Gist');
+      }
+    } catch (err) {
+      syncError = String((err && err.message) || err);
+      toast('找回失败：' + syncError);
+    } finally {
+      syncing = false;
+      paintSync();
+    }
+  }
+
   function paintSync() {
     const on = !!syncCfg.token;
     const stateEl = $('#syncState');
@@ -1397,8 +1431,9 @@
     }
     const info = $('#syncInfo');
     if (info) {
+      const gistTag = syncCfg.gistId ? ` · Gist ${syncCfg.gistId.slice(0, 10)}` : '';
       if (syncError) info.textContent = '上次同步失败：' + syncError;
-      else if (syncCfg.lastSyncAt) info.textContent = `已连接 · 上次同步 ${fmtClock(syncCfg.lastSyncAt)}（${dayKey(syncCfg.lastSyncAt)}）`;
+      else if (syncCfg.lastSyncAt) info.textContent = `已连接 · 上次同步 ${fmtClock(syncCfg.lastSyncAt)}（${dayKey(syncCfg.lastSyncAt)}）${gistTag} · 本机记录 ${data.sessions.length} 条`;
       else info.textContent = '已连接，正在等待第一次同步';
     }
     const link = $('#syncGist');
@@ -1597,6 +1632,7 @@
     $('#btnSync').addEventListener('click', openSettings);
     $('#btnSyncConnect').addEventListener('click', connectSync);
     $('#btnSyncNow').addEventListener('click', () => syncNow());
+    $('#btnSyncRecover').addEventListener('click', () => recoverFromAllGists());
     $('#btnSyncDisconnect').addEventListener('click', disconnectSync);
 
     $('#setGoal').addEventListener('change', applySettings);
@@ -1683,6 +1719,7 @@
       now: opts => syncNow(opts),
       merge: mergeRemote,
       payload: syncPayload,
+      recover: recoverFromAllGists,
       setToken(token, gistId) {
         syncCfg.token = token || '';
         syncCfg.gistId = gistId || '';

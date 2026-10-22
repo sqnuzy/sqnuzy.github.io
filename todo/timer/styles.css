@@ -910,7 +910,7 @@ kbd {
   max-width: calc(100% - 40px);
   text-align: center;
 }
-.toast.show { opacity: 1; transform: translate(-50%, 0); }
+.toast.show { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
 .toast-action {
   display: flex; align-items: center; gap: 12px;
   flex-wrap: wrap;

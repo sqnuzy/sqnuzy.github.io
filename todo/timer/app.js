@@ -272,7 +272,7 @@
     showToast(span);
   }
   /** 带按钮的提示：不满最短时长时让用户选「丢弃」还是「继续」 */
-  function toastAction(msg, buttons, timeout = 6500) {
+  function toastAction(msg, buttons, timeout = 12000) {
     const wrap = document.createElement('div');
     wrap.className = 'toast-action';
     const text = document.createElement('span');

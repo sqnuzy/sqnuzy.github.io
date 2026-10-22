@@ -406,6 +406,51 @@
     flashRing();
   }
 
+  /** 退出页面时：满 5 分钟自动入库，不满就丢弃（不会重复记账） */
+  let exitRecorded = false;
+  let exitDiscarded = false;
+
+  function finalizeOnExit() {
+    if (exitRecorded || exitDiscarded) return;
+    const sec = Math.round(elapsedSec());
+    if (sec <= 0) return;
+    if (sec < MIN_RECORD_SEC) {
+      exitDiscarded = true;
+      return;
+    }
+    const subjectId = state.sessionSubject || data.settings.selected;
+    if (!subjectId || !subjectById(subjectId)) return;
+    exitRecorded = true;
+    const note = el.noteInput.value.trim() || state.sessionNote;
+    const endedAt = Date.now();
+    recordSession(subjectId, sec, note, endedAt, endedAt - sec * 1000);
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (err) { /* ignore */ }
+    cancelAnimationFrame(state.raf);
+    clearInterval(state.ticker);
+    state.running = false;
+    state.elapsedMs = 0;
+    state.startedAt = 0;
+    state.runSince = 0;
+    state.minuteSweep = 0;
+    state.lastPaintSec = -1;
+    state.sessionSubject = null;
+  }
+
+  // pagehide 在手机 Safari / 微信里也能可靠触发；beforeunload 兜底桌面端
+  window.addEventListener('pagehide', finalizeOnExit);
+  window.addEventListener('beforeunload', finalizeOnExit);
+  // 从往返缓存（bfcache）恢复时，上一段已经记过，重置到 00:00
+  window.addEventListener('pageshow', e => {
+    if (!e.persisted) return;
+    exitRecorded = false;
+    exitDiscarded = false;
+    paintAll();
+    renderStats();
+    renderChart();
+    renderWeekBars();
+    renderFlow();
+  });
+
   function loop() {
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
@@ -1584,12 +1629,8 @@
     });
 
     el.noteInput.addEventListener('input', () => {
-      data.settings.note = el.noteInput.value;
-      save();
-      if (state.running) {
-        state.sessionNote = el.noteInput.value.trim();
-        el.ringSub.innerHTML = buildSub();
-      }
+      state.sessionNote = el.noteInput.value.trim();
+      if (state.running) el.ringSub.innerHTML = buildSub();
     });
 
     el.btnTheme.addEventListener('click', () => {
@@ -1674,7 +1715,9 @@
 
     $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b.dataset.range === data.settings.range ? 'true' : 'false'));
     renderPills();
-    el.noteInput.value = data.settings.note || '';
+    // 备注只属于「当前这一段」，不跨刷新保留，避免每次打开都残留上次的内容
+    el.noteInput.value = '';
+    if (data.settings.note) { data.settings.note = ''; save(); }
     el.ringProgress.style.strokeDasharray = String(2 * Math.PI * 138);
     if (DEMO) setupDemo();
     paintAll();

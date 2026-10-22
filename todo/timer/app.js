@@ -206,6 +206,7 @@
     raf: 0,
     ticker: 0,
     lastPaintSec: -1,
+    lastPersist: 0,
     minuteSweep: 0
   };
 
@@ -318,6 +319,8 @@
     state.running = true;
     paintAll();
     loop();
+    persistSession();
+    state.lastPersist = Date.now();
     unlockAudio();
   }
 
@@ -328,6 +331,7 @@
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
     paintAll();
+    persistSession();
   }
 
   function toggle() {
@@ -350,6 +354,7 @@
     hideShortNotice();
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
+    try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
     state.running = false;
     state.elapsedMs = 0;
     state.startedAt = 0;
@@ -391,6 +396,7 @@
     state.runSince = 0;
     state.minuteSweep = 0;
     state.lastPaintSec = -1;
+    try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
     el.noteInput.value = '';
     data.settings.note = '';
     state.sessionNote = '';
@@ -406,50 +412,47 @@
     flashRing();
   }
 
-  /** 退出页面时：满 5 分钟自动入库，不满就丢弃（不会重复记账） */
-  let exitRecorded = false;
-  let exitDiscarded = false;
+  /** 刷新 / 关页面时把“正在计的这一段”存下来，下次打开恢复为暂停状态（不自动记账） */
+  const SESSION_KEY = 'kaoyan-study-timer-session-v1';
 
-  function finalizeOnExit() {
-    if (exitRecorded || exitDiscarded) return;
-    const sec = Math.round(elapsedSec());
-    if (sec <= 0) return;
-    if (sec < MIN_RECORD_SEC) {
-      exitDiscarded = true;
-      return;
-    }
-    const subjectId = state.sessionSubject || data.settings.selected;
-    if (!subjectId || !subjectById(subjectId)) return;
-    exitRecorded = true;
-    const note = el.noteInput.value.trim() || state.sessionNote;
-    const endedAt = Date.now();
-    recordSession(subjectId, sec, note, endedAt, endedAt - sec * 1000);
-    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (err) { /* ignore */ }
-    cancelAnimationFrame(state.raf);
-    clearInterval(state.ticker);
-    state.running = false;
-    state.elapsedMs = 0;
-    state.startedAt = 0;
-    state.runSince = 0;
-    state.minuteSweep = 0;
-    state.lastPaintSec = -1;
-    state.sessionSubject = null;
+  function persistSession() {
+    try {
+      const ms = elapsedMs();
+      if (ms < 1000) { localStorage.removeItem(SESSION_KEY); return; }
+      localStorage.setItem(SESSION_KEY, JSON.stringify({
+        elapsedMs: ms,
+        running: state.running,
+        subjectId: state.sessionSubject || data.settings.selected,
+        note: el.noteInput.value,
+        savedAt: Date.now()
+      }));
+    } catch (err) { /* ignore */ }
   }
 
-  // pagehide 在手机 Safari / 微信里也能可靠触发；beforeunload 兜底桌面端
-  window.addEventListener('pagehide', finalizeOnExit);
-  window.addEventListener('beforeunload', finalizeOnExit);
-  // 从往返缓存（bfcache）恢复时，上一段已经记过，重置到 00:00
-  window.addEventListener('pageshow', e => {
-    if (!e.persisted) return;
-    exitRecorded = false;
-    exitDiscarded = false;
-    paintAll();
-    renderStats();
-    renderChart();
-    renderWeekBars();
-    renderFlow();
-  });
+  function restoreSession() {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return;
+      const s = JSON.parse(raw);
+      localStorage.removeItem(SESSION_KEY);
+      if (!s || !(s.elapsedMs >= 3000)) return;
+      if (Date.now() - (s.savedAt || 0) > 12 * 3600 * 1000) return;
+      state.elapsedMs = s.elapsedMs;
+      state.running = false;
+      state.runSince = 0;
+      state.sessionSubject = s.subjectId || data.settings.selected;
+      if (s.note) {
+        el.noteInput.value = s.note;
+        state.sessionNote = s.note.trim();
+      }
+      paintAll();
+      setTimeout(() => toast(`已恢复上一段 ${fmtHM(s.elapsedMs / 1000)}，点「继续」接着计`), 700);
+    } catch (err) { /* ignore */ }
+  }
+
+  window.addEventListener('pagehide', persistSession);
+  window.addEventListener('beforeunload', persistSession);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) persistSession(); });
 
   function loop() {
     cancelAnimationFrame(state.raf);
@@ -457,11 +460,22 @@
     const step = () => {
       if (!state.running) return;
       paintTime();
+      if (Date.now() - state.lastPersist > 2000) {
+        state.lastPersist = Date.now();
+        persistSession();
+      }
       state.raf = requestAnimationFrame(step);
     };
     state.raf = requestAnimationFrame(step);
     // 兜底：无头浏览器 / 极省电模式下 rAF 可能不触发，用定时器保证秒数照常走
-    state.ticker = setInterval(() => { if (state.running) paintTime(); }, 250);
+    state.ticker = setInterval(() => {
+      if (!state.running) return;
+      paintTime();
+      if (Date.now() - state.lastPersist > 2000) {
+        state.lastPersist = Date.now();
+        persistSession();
+      }
+    }, 250);
   }
 
   /* 从后台切回时补算 */
@@ -1727,6 +1741,8 @@
     renderFlow();
     paintSync();
     bind();
+    // 刷新 / 重新打开后，把没结束的那一段恢复成「已暂停」
+    restoreSession();
 
     // 云同步：启动时拉一次；恢复网络 / 回到页面时再拉
     if (syncCfg.token && !DEMO) setTimeout(() => syncNow({ silent: true }), 1200);

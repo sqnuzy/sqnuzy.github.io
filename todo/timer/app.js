@@ -12,6 +12,7 @@
                    '#EF4444', '#64748B'];
   const WEEK_CN = ['日', '一', '二', '三', '四', '五', '六'];
   const MIN_RECORD_SEC = 5 * 60;   // 不满 5 分钟不记账
+  const MIN_SILENT_SEC = 10;       // 低于 10 秒直接忽略，不提示、不恢复
   // 旧版默认配色 → 新版高饱和配色（只在颜色没被用户改过时替换）
   const LEGACY_COLORS = { math: '#E8613C', english: '#3F8FBF', politics: '#7FB069', major: '#8667D8' };
   const FRESH_COLORS = { math: '#FF6B4A', english: '#2E8BFF', politics: '#22C55E', major: '#8B5CF6' };
@@ -385,6 +386,22 @@
   function finish() {
     const sec = Math.round(elapsedSec());
     if (sec <= 0 && !state.running) { toast('还没有开始计时'); return; }
+    if (sec < MIN_SILENT_SEC) {
+      // 不到 10 秒：直接忽略，不弹提示
+      cancelAnimationFrame(state.raf);
+      clearInterval(state.ticker);
+      state.running = false;
+      state.elapsedMs = 0;
+      state.startedAt = 0;
+      state.runSince = 0;
+      state.minuteSweep = 0;
+      state.lastPaintSec = -1;
+      try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
+      hideShortNotice();
+      paintAll();
+      toast('不到 10 秒，已忽略');
+      return;
+    }
     if (sec < MIN_RECORD_SEC) {
       // 不满 5 分钟：不自动记账，在计时卡里直接给两个大按钮，避免手机点不到
       cancelAnimationFrame(state.raf);
@@ -434,7 +451,7 @@
   function persistSession() {
     try {
       const ms = elapsedMs();
-      if (ms < 1000) { localStorage.removeItem(SESSION_KEY); return; }
+      if (ms < MIN_SILENT_SEC * 1000) { localStorage.removeItem(SESSION_KEY); return; }
       localStorage.setItem(SESSION_KEY, JSON.stringify({
         elapsedMs: ms,
         running: state.running,
@@ -451,7 +468,7 @@
       if (!raw) return;
       const s = JSON.parse(raw);
       localStorage.removeItem(SESSION_KEY);
-      if (!s || !(s.elapsedMs >= 3000)) return;
+      if (!s || !(s.elapsedMs >= MIN_SILENT_SEC * 1000)) return;
       if (Date.now() - (s.savedAt || 0) > 12 * 3600 * 1000) return;
       state.elapsedMs = s.elapsedMs;
       state.running = false;

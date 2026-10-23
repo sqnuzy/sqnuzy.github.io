@@ -12,6 +12,7 @@
                    '#EF4444', '#64748B'];
   const WEEK_CN = ['日', '一', '二', '三', '四', '五', '六'];
   const MIN_RECORD_SEC = 10;       // 低于 10 秒直接忽略，10 秒及以上直接记账
+  const DEFAULT_MOTTO = '还有多少个明天可以浪费，还有多少个夜晚可以忏悔';
   // 旧版默认配色 → 新版高饱和配色（只在颜色没被用户改过时替换）
   const LEGACY_COLORS = { math: '#E8613C', english: '#3F8FBF', politics: '#7FB069', major: '#8667D8' };
   const FRESH_COLORS = { math: '#FF6B4A', english: '#2E8BFF', politics: '#22C55E', major: '#8B5CF6' };
@@ -81,7 +82,8 @@
     customFrom: '',
     customTo: '',
     selected: 'math',
-    note: ''
+    note: '',
+    motto: DEFAULT_MOTTO
   });
 
   function seedData() {
@@ -142,6 +144,7 @@
     });
     s.dailyGoal = clamp(Number(s.dailyGoal) || 0, 0, 1440);
     s.sound = s.sound !== false;
+    s.motto = typeof s.motto === 'string' ? s.motto.slice(0, 40) : DEFAULT_MOTTO;
     s.theme = s.theme === 'dark' ? 'dark' : 'light';
     if (!['today', 'week', 'month', 'custom'].includes(s.range)) s.range = 'today';
     const isDate = v => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v) && !Number.isNaN(parseKey(v).getTime());
@@ -224,6 +227,8 @@
 
   const el = {
     topDate: $('#topDate'),
+    motto: $('#motto'),
+    mottoText: $('#mottoText'),
     timerCard: $('#timerCard'),
     ringWrap: $('#ringWrap'),
     ringProgress: $('#ringProgress'),
@@ -587,6 +592,12 @@
     void el.ringWrap.offsetWidth;
     el.ringWrap.classList.add('flash');
     setTimeout(() => el.ringWrap.classList.remove('flash'), 1200);
+  }
+
+  function paintMotto() {
+    const text = String(data.settings.motto || '').trim();
+    if (el.mottoText) el.mottoText.textContent = text;
+    if (el.motto) el.motto.hidden = !text;
   }
 
   function paintFocus() {
@@ -1040,6 +1051,7 @@
   function openSettings() {
     $('#setGoal').value = data.settings.dailyGoal;
     $('#setSound').checked = !!data.settings.sound;
+    $('#setMotto').value = data.settings.motto || '';
     el.newSubjectName.value = '';
     draftColor = PALETTE[data.subjects.length % PALETTE.length];
     renderSwatches();
@@ -1108,8 +1120,10 @@
   function applySettings() {
     data.settings.dailyGoal = clamp(Number($('#setGoal').value) || 0, 0, 1440);
     data.settings.sound = $('#setSound').checked;
+    data.settings.motto = String($('#setMotto').value || '').trim().slice(0, 40);
     data.settingsAt = Date.now();
     save(true);
+    paintMotto();
     renderStats();
     paintAll();
   }
@@ -1267,6 +1281,176 @@
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
   }
 
+  /* ---------------- 整页截屏 ----------------
+     思路：把整页内容装进 SVG 的 <foreignObject> 里，让浏览器自己重新排版渲染，
+     再画到 canvas 上导出 PNG。纯前端，不依赖任何外部库，也不需要系统截图权限。
+     ---------------------------------------------------------- */
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const XHTML_NS = 'http://www.w3.org/1999/xhtml';
+  const SHOT_EXTRA_CSS = `
+html, body { margin: 0 !important; padding: 0 !important; background: none !important; }
+.shot-root *, .shot-root *::before, .shot-root *::after {
+  animation: none !important;
+  transition: none !important;
+}
+.shot-root .topbar { position: static !important; }
+.shot-root .icon-btn, .shot-root .btn { cursor: default; }
+`;
+
+  function shotStylesheet() {
+    const jobs = [];
+    $$('link[rel="stylesheet"]').forEach(link => {
+      jobs.push(fetch(link.href).then(r => (r.ok ? r.text() : '')).catch(() => ''));
+    });
+    $$('style').forEach(node => jobs.push(Promise.resolve(node.textContent || '')));
+    return Promise.all(jobs).then(list => list.filter(css => css && css.trim()).join('\n'));
+  }
+
+  function shotBuild(css) {
+    const W = Math.max(320, document.documentElement.clientWidth);
+    const H = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight, 480);
+    const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+    const bodyStyle = getComputedStyle(document.body);
+    const glowStyle = getComputedStyle(document.body, '::before');
+
+    const clone = document.body.cloneNode(true);
+    $$('.sheet, .toast, script, noscript', clone).forEach(node => node.remove());
+    $$('input', clone).forEach(input => {
+      if (input.type === 'checkbox' || input.type === 'radio') {
+        if (input.checked) input.setAttribute('checked', 'checked');
+        else input.removeAttribute('checked');
+        return;
+      }
+      if (input.value) input.setAttribute('value', input.value);
+      else input.removeAttribute('value');
+    });
+
+    const svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('xmlns', SVG_NS);
+    svg.setAttribute('width', String(W));
+    svg.setAttribute('height', String(H));
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+
+    const fo = document.createElementNS(SVG_NS, 'foreignObject');
+    fo.setAttribute('x', '0');
+    fo.setAttribute('y', '0');
+    fo.setAttribute('width', String(W));
+    fo.setAttribute('height', String(H));
+
+    const root = document.createElementNS(XHTML_NS, 'div');
+    root.setAttribute('class', 'shot-root');
+    root.setAttribute('data-theme', theme);
+    root.setAttribute('style', [
+      'position:relative', 'margin:0', 'padding:0', 'overflow:hidden',
+      `width:${W}px`, `min-height:${H}px`,
+      `color:${bodyStyle.color}`,
+      `font-family:${bodyStyle.fontFamily}`,
+      `font-size:${bodyStyle.fontSize}`,
+      `line-height:${bodyStyle.lineHeight}`,
+      `background-color:${bodyStyle.backgroundColor}`,
+      `background-image:${bodyStyle.backgroundImage}`,
+      `background-size:${bodyStyle.backgroundSize}`,
+      `background-position:${bodyStyle.backgroundPosition}`
+    ].join(';'));
+
+    const styleNode = document.createElementNS(XHTML_NS, 'style');
+    styleNode.textContent = css + '\n' + SHOT_EXTRA_CSS;
+    root.appendChild(styleNode);
+
+    // 页面背景那层柔光（body::before 的替身）
+    const glow = document.createElementNS(XHTML_NS, 'div');
+    glow.setAttribute('style', [
+      'position:absolute', 'inset:-10%', 'z-index:0', 'pointer-events:none',
+      `background-image:${glowStyle.backgroundImage || 'none'}`,
+      `filter:${glowStyle.filter || 'none'}`,
+      `opacity:${glowStyle.opacity || '1'}`
+    ].join(';'));
+    root.appendChild(glow);
+
+    const content = document.createElementNS(XHTML_NS, 'div');
+    content.setAttribute('style', 'position:relative;z-index:1');
+    while (clone.firstChild) content.appendChild(clone.firstChild);
+    root.appendChild(content);
+
+    fo.appendChild(root);
+    svg.appendChild(fo);
+    return { svg, W, H };
+  }
+
+  function shotLoadImage(src) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => reject(new Error('svg-render-failed'));
+      img.src = src;
+    });
+  }
+
+  /** 有些浏览器（老 Safari / Firefox）不允许在 <img> 里渲染 foreignObject，会得到一张空白图 */
+  function shotLooksEmpty(img) {
+    try {
+      const probe = document.createElement('canvas');
+      probe.width = 48;
+      probe.height = 48;
+      const ctx = probe.getContext('2d');
+      ctx.drawImage(img, 0, 0, 48, 48);
+      const px = ctx.getImageData(0, 0, 48, 48).data;
+      const seen = new Set();
+      for (let i = 0; i < px.length; i += 4) seen.add(`${px[i]},${px[i + 1]},${px[i + 2]},${px[i + 3]}`);
+      return seen.size <= 2;
+    } catch (err) {
+      return true;
+    }
+  }
+
+  async function shotCanvas() {
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+    } catch (err) { /* 字体加载失败也不影响 */ }
+
+    const css = await shotStylesheet();
+    if (!css.trim()) throw new Error('stylesheet-missing');
+
+    const { svg, W, H } = shotBuild(css);
+    const markup = new XMLSerializer().serializeToString(svg);
+    const img = await shotLoadImage('data:image/svg+xml;charset=utf-8,' + encodeURIComponent(markup));
+    if (shotLooksEmpty(img)) throw new Error('empty-render');
+
+    let scale = 2;
+    while (scale > 1 && (W * scale > 4000 || H * scale > 16000 || W * scale * H * scale > 18e6)) scale -= 0.25;
+    const cw = Math.max(1, Math.round(W * scale));
+    const ch = Math.max(1, Math.round(H * scale));
+
+    const canvas = document.createElement('canvas');
+    canvas.width = cw;
+    canvas.height = ch;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, cw, ch);
+    ctx.drawImage(img, 0, 0, cw, ch);
+    return { canvas, W, H };
+  }
+
+  async function capturePage() {
+    const btn = $('#btnShot');
+    if (btn && btn.disabled) return;
+    if (btn) btn.disabled = true;
+    toast('正在把整页拼成图片…');
+    try {
+      const { canvas } = await shotCanvas();
+      const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+      if (!blob) throw new Error('encode-failed');
+      const now = new Date();
+      download(blob, `学习计时_${dayKey(Date.now())}_${pad(now.getHours())}${pad(now.getMinutes())}.png`);
+      toast('整页截图已保存到下载文件夹');
+    } catch (err) {
+      console.warn('截屏失败', err);
+      toast('截屏没成功，先用系统截图吧（Win + Shift + S）');
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
   /* ---------------- 跨设备同步（GitHub Gist） ----------------
      - token 只存在本机 localStorage，用来读写用户自己的私有 Gist
      - 合并策略：记录按 id 取并集，删除用「墓碑」id 记录，设置按时间戳取新
@@ -1309,7 +1493,7 @@
       version: 2,
       updatedAt: d.updatedAt || 0,
       settingsAt: d.settingsAt || 0,
-      settings: { dailyGoal: st.dailyGoal, sound: st.sound },
+      settings: { dailyGoal: st.dailyGoal, sound: st.sound, motto: st.motto },
       subjects: d.subjects || [],
       sessions: d.sessions || [],
       deletedSessions: d.deletedSessions || [],
@@ -1417,6 +1601,7 @@
         ...next.settings,
         dailyGoal: Number.isFinite(Number(remoteSettings.dailyGoal)) ? Number(remoteSettings.dailyGoal) : next.settings.dailyGoal,
         sound: remoteSettings.sound !== false,
+        motto: typeof remoteSettings.motto === 'string' ? remoteSettings.motto.slice(0, 40) : next.settings.motto,
         // 以下为设备本地偏好，保持本机
         theme: data.settings.theme,
         range: data.settings.range,
@@ -1713,6 +1898,7 @@
     $('#btnSettings').addEventListener('click', openSettings);
     $('#btnExport').addEventListener('click', exportCSV);
     $('#btnExportPng').addEventListener('click', exportChartPng);
+    $('#btnShot').addEventListener('click', capturePage);
 
     $$('.sheet').forEach(sheet => {
       $$('[data-close]', sheet).forEach(b => b.addEventListener('click', closeSheets));
@@ -1750,6 +1936,13 @@
 
     $('#setGoal').addEventListener('change', applySettings);
     $('#setSound').addEventListener('change', applySettings);
+    $('#setMotto').addEventListener('input', () => {
+      // 边打边预览，不必等失焦
+      data.settings.motto = String($('#setMotto').value || '').trim().slice(0, 40);
+      data.settingsAt = Date.now();
+      paintMotto();
+      save();
+    });
 
     $('#addSubjectForm').addEventListener('submit', e => {
       e.preventDefault();
@@ -1784,6 +1977,7 @@
 
     const now = new Date();
     el.topDate.textContent = `${now.getMonth() + 1} 月 ${now.getDate()} 日 周${WEEK_CN[now.getDay()]}`;
+    paintMotto();
 
     $$('.seg', el.rangeTabs).forEach(b => b.setAttribute('aria-selected', b.dataset.range === data.settings.range ? 'true' : 'false'));
     renderPills();
@@ -1849,6 +2043,7 @@
       state.elapsedMs = Math.max(0, minutes) * 60000;
       if (!state.running) state.runSince = nowMs();
       paintAll();
-    }
+    },
+    shot: async () => (await shotCanvas()).canvas.toDataURL('image/png')
   };
 })();

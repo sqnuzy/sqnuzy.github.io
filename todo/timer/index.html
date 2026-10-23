@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f5f1e9">
 <title>学习计时 | sqnuzy 的算法小站</title>
 <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=20261023">
 </head>
 <body>
 <div class="page">
@@ -30,6 +30,10 @@
       </div>
     </div>
     <nav class="top-actions">
+      <button class="icon-btn" id="btnShot" type="button" title="截屏：把整页内容保存成一张长图">
+        <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.4A1.4 1.4 0 0 1 5.4 7h1.7l1.05-1.5a1.4 1.4 0 0 1 1.15-.6h4.4a1.4 1.4 0 0 1 1.15.6L15.9 7h1.7A1.4 1.4 0 0 1 19 8.4v9.2A1.4 1.4 0 0 1 17.6 19H6.4A1.4 1.4 0 0 1 5 17.6z"/><circle cx="12" cy="12.7" r="3.2"/></svg>
+        <span>截屏</span>
+      </button>
       <button class="icon-btn" id="btnTheme" type="button" title="切换深色 / 浅色">
         <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/></svg>
         <span>主题</span>
@@ -44,6 +48,11 @@
       </button>
     </nav>
   </header>
+
+  <!-- ============ 座右铭 ============ -->
+  <p class="motto" id="motto">
+    <span class="motto-text" id="mottoText">还有多少个明天可以浪费，还有多少个夜晚可以忏悔</span>
+  </p>
 
   <main class="layout">
     <!-- ============ 计时器 ============ -->
@@ -223,6 +232,10 @@
           <span>结束时提示音</span>
           <input type="checkbox" id="setSound">
         </label>
+        <label class="field motto-field">
+          <span>座右铭（留空则隐藏）</span>
+          <input type="text" id="setMotto" maxlength="40" placeholder="写一句给自己的话" autocomplete="off">
+        </label>
       </div>
       <p class="muted small" style="margin-top:8px">正向计时没有固定时长，学多久记多久；每日目标只是给进度条一个参照，填 0 表示不设目标。</p>
 
@@ -283,6 +296,6 @@
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<script src="app.js"></script>
+<script src="app.js?v=20261023"></script>
 </body>
 </html>

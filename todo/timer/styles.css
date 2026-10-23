@@ -1334,3 +1334,40 @@ body::before {
 [data-theme="dark"] .btn-ghost:disabled,
 [data-theme="dark"] .btn-soft:disabled { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); }
 [data-theme="dark"] .flow-empty { border-color: rgba(255, 255, 255, 0.12); }
+
+/* ---------------- 座右铭 ---------------- */
+.motto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -4px 2px 18px;
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--ink-2);
+  letter-spacing: 0.2px;
+}
+.motto::before {
+  content: "";
+  flex: none;
+  width: 24px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-2));
+}
+.motto[hidden] { display: none; }
+.motto-text { font-weight: 500; }
+.motto-field { grid-column: 1 / -1; }
+.motto-field input[type="text"] {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.motto-field input[type="text"]::placeholder { color: var(--muted); font-weight: 500; }
+@media (max-width: 620px) {
+  .motto { font-size: 12.5px; margin-bottom: 14px; gap: 8px; }
+  .motto::before { width: 18px; }
+}

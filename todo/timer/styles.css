@@ -867,29 +867,16 @@ kbd {
   opacity: calc(.3 + var(--heat, .2) * .8);
 }
 /* 热力分级：当天专注越久颜色越深（<30m / 30-60m / 1-2h / 2-4h / ≥4h） */
-.cal .cal-cell[data-level="1"], .cal-legend i[data-level="1"] { --heat: .13; }
-.cal .cal-cell[data-level="2"], .cal-legend i[data-level="2"] { --heat: .26; }
-.cal .cal-cell[data-level="3"], .cal-legend i[data-level="3"] { --heat: .40; }
-.cal .cal-cell[data-level="4"], .cal-legend i[data-level="4"] { --heat: .56; }
-.cal .cal-cell[data-level="5"], .cal-legend i[data-level="5"] { --heat: .74; }
+.cal .cal-cell[data-level="1"] { --heat: .13; }
+.cal .cal-cell[data-level="2"] { --heat: .26; }
+.cal .cal-cell[data-level="3"] { --heat: .40; }
+.cal .cal-cell[data-level="4"] { --heat: .56; }
+.cal .cal-cell[data-level="5"] { --heat: .74; }
 .cal .cal-cell.has { background: color-mix(in srgb, var(--accent) calc(var(--heat, .2) * 100%), transparent); }
 .cal .cal-cell.has .m { color: var(--ink-2); }
 .cal .cal-cell[data-level="4"], .cal .cal-cell[data-level="5"] { color: var(--ink); }
 .cal .cal-cell[data-level="4"] .m, .cal .cal-cell[data-level="5"] .m { color: var(--ink); opacity: .72; }
 .cal .cal-cell[data-level="4"]::after, .cal .cal-cell[data-level="5"]::after { background: rgba(255, 255, 255, .92); }
-.cal-legend {
-  display: flex; align-items: center; justify-content: flex-end;
-  gap: 4px;
-  margin: -6px 2px 14px;
-  font-size: 10.5px;
-  color: var(--muted);
-}
-.cal-legend i {
-  display: block;
-  width: 12px; height: 12px;
-  border-radius: 4px;
-  background: color-mix(in srgb, var(--accent) calc(var(--heat, .2) * 100%), transparent);
-}
 .cal .cal-cell.today { border-color: var(--line-strong); }
 .cal .cal-cell.sel { background: var(--accent); color: #fff; border-color: transparent; box-shadow: 0 4px 12px rgba(232, 97, 60, .3); }
 .cal .cal-cell.sel .m { color: rgba(255, 255, 255, .82); }

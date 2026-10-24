@@ -1005,11 +1005,6 @@
         ${['一', '二', '三', '四', '五', '六', '日'].map(w => `<span class="cal-head">${w}</span>`).join('')}
         ${cells}
       </div>
-      <div class="cal-legend" aria-hidden="true">
-        <span>少</span>
-        ${[1, 2, 3, 4, 5].map(l => `<i data-level="${l}"></i>`).join('')}
-        <span>多</span>
-      </div>
       <div class="day-title">
         <strong>${fmtDateCN(selDate)}</strong>
         <span>${selList.length ? `共 ${fmtHM(sumSec(selList))}` : '无记录'}</span>

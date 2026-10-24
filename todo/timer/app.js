@@ -222,7 +222,9 @@
     ticker: 0,
     lastPaintSec: -1,
     lastPersist: 0,
-    minuteSweep: 0
+    minuteSweep: 0,
+    statsKey: '',     // 今日统计的缓存键，避免心跳时重复写 DOM
+    title: ''         // 标签页标题缓存
   };
 
   const el = {
@@ -324,6 +326,11 @@
   const nowMs = () => (window.performance && performance.now ? performance.now() : Date.now());
   const elapsedMs = () => state.elapsedMs + (state.running ? nowMs() - state.runSince : 0);
   const elapsedSec = () => elapsedMs() / 1000;
+  // 还没记账的这一段（计时中或暂停中）的秒数，用来让「今日」数字跟着实时涨
+  const pendingSec = () => {
+    const ms = elapsedMs();
+    return ms > 0 ? Math.round(ms / 1000) : 0;
+  };
 
   function start() {
     if (state.running) return;
@@ -513,12 +520,15 @@
       if (state.minuteSweep !== 0) flashRing();
       state.minuteSweep = minute;
     }
+    // 标题每秒都同步（计时中显示时间，暂停后显示「已暂停」）
+    updateTitle(sec);
     if (sec !== state.lastPaintSec) {
       state.lastPaintSec = sec;
-      updateTitle(sec);
       // 盘中信息每秒更新（“科目 · 备注”）
       if (state.running) el.ringSub.innerHTML = buildSub();
       paintHeadStat();
+      // 今日专注 / 目标进度跟着长，不用等「结束并记录」
+      if (state.running) renderStats();
     }
   }
 
@@ -535,8 +545,14 @@
 
   function updateTitle(sec) {
     const base = '学习时长记录';
-    if (state.running) document.title = `${fmtClockSec(sec)} · ${subjectName(state.sessionSubject || data.settings.selected)}`;
-    else document.title = base;
+    const name = subjectName(state.sessionSubject || data.settings.selected);
+    let title = base;
+    if (state.running) title = `${fmtClockSec(sec)} · ${name}`;
+    else if (sec > 0) title = `${fmtClockSec(sec)} · ${name}（已暂停）`;
+    if (title !== state.title) {
+      state.title = title;
+      document.title = title;
+    }
   }
 
   function paintAll() {
@@ -625,7 +641,7 @@
   function paintToday() {
     const start = dayStart(Date.now());
     const today = sessionsBetween(start, start + 86400000);
-    el.headToday.textContent = fmtHM(sumSec(today));
+    el.headToday.textContent = fmtHM(sumSec(today) + pendingSec());
   }
 
   function renderFlow() {
@@ -680,15 +696,21 @@
   function renderStats() {
     const start = dayStart(Date.now());
     const today = sessionsBetween(start, start + 86400000);
-    const sec = sumSec(today);
+    // 正在计时 / 暂停中的这一段还没记账，但也要算进「今日」里
+    const alive = pendingSec();
+    const sec = sumSec(today) + alive;
     const mins = sec / 60;
-    const longest = today.reduce((a, s) => Math.max(a, s.dur), 0);
+    const longest = Math.max(alive, today.reduce((a, s) => Math.max(a, s.dur), 0));
+
+    const goal = data.settings.dailyGoal;
+    const key = `${Math.floor(mins)}|${today.length}|${Math.floor(longest / 60)}|${goal}`;
+    if (key === state.statsKey) return;
+    state.statsKey = key;
 
     el.statFocus.innerHTML = `${Math.floor(mins)}<small>分钟</small>`;
     el.statLongest.innerHTML = `${Math.floor(longest / 60)}<small>分钟</small>`;
     el.statSessions.innerHTML = `${today.length}<small>条</small>`;
 
-    const goal = data.settings.dailyGoal;
     const pct = goal > 0 ? clamp(mins / goal * 100, 0, 100) : 0;
     el.goalFill.style.width = pct.toFixed(1) + '%';
     el.goalText.textContent = `${Math.floor(mins)} / ${goal} 分钟`;

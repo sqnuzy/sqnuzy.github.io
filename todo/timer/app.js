@@ -918,6 +918,16 @@
     document.body.style.overflow = 'hidden';
   }
 
+  /** 热力图分级：按当天专注分钟数分 5 档（<30m / 30-60m / 1-2h / 2-4h / ≥4h） */
+  function heatLevel(minutes) {
+    if (!(minutes > 0)) return 0;
+    if (minutes < 30) return 1;
+    if (minutes < 60) return 2;
+    if (minutes < 120) return 3;
+    if (minutes < 240) return 4;
+    return 5;
+  }
+
   function renderHistory() {
     const now = new Date();
     const monthStart = new Date(histMonth.getFullYear(), histMonth.getMonth(), 1);
@@ -944,9 +954,10 @@
       const sec = sumSec(list);
       const isToday = sameDay(dt, now);
       const isSel = histSelected === k;
-      const intensity = sec > 0 ? Math.min(1, 0.3 + (sec / (4 * 3600)) * 0.7) : 0;
+      const level = heatLevel(sec / 60);
+      const tip = `${histMonth.getMonth() + 1} 月 ${d} 日 · ${sec > 0 ? fmtHM(sec) : '无记录'}`;
       cells += `<button type="button" class="cal-cell${sec > 0 ? ' has' : ''}${isToday ? ' today' : ''}${isSel ? ' sel' : ''}"
-        data-key="${k}" style="--i:${intensity.toFixed(2)}">
+        data-key="${k}" data-level="${level}" title="${esc(tip)}" aria-label="${esc(tip)}">
         <span class="d">${d}</span>
         <span class="m">${sec > 0 ? Math.round(sec / 60) + 'm' : ''}</span>
       </button>`;
@@ -993,6 +1004,11 @@
       <div class="cal">
         ${['一', '二', '三', '四', '五', '六', '日'].map(w => `<span class="cal-head">${w}</span>`).join('')}
         ${cells}
+      </div>
+      <div class="cal-legend" aria-hidden="true">
+        <span>少</span>
+        ${[1, 2, 3, 4, 5].map(l => `<i data-level="${l}"></i>`).join('')}
+        <span>多</span>
       </div>
       <div class="day-title">
         <strong>${fmtDateCN(selDate)}</strong>

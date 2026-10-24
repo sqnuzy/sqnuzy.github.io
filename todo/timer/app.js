@@ -334,7 +334,8 @@
 
   function start() {
     if (state.running) return;
-    if (!state.sessionSubject || !subjectById(state.sessionSubject)) {
+    // 新的一段直接跟着当前选中的科目；只有「继续」暂停中的那一段才沿用原来的科目
+    if (Math.round(elapsedSec()) === 0 || !state.sessionSubject || !subjectById(state.sessionSubject)) {
       state.sessionSubject = data.settings.selected;
     }
     if (!state.startedAt) state.startedAt = Date.now();
@@ -379,6 +380,7 @@
       state.runSince = 0;
       state.minuteSweep = 0;
       state.lastPaintSec = -1;
+      state.sessionSubject = null;   // 这一段丢掉了，科目回到「当前选中」
       try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
       hideToast();
       paintAll();
@@ -401,6 +403,7 @@
     state.runSince = 0;
     state.minuteSweep = 0;
     state.lastPaintSec = -1;
+    state.sessionSubject = null;   // 这一段落账了，科目回到「当前选中」
     try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
     el.noteInput.value = '';
     data.settings.note = '';
@@ -1899,6 +1902,8 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       const pill = e.target.closest('.pill');
       if (!pill || pill.disabled) return;
       data.settings.selected = pill.dataset.id;
+      // 没有正在计的那一段时，科目显示直接跟着当前选中
+      if (!state.running && Math.round(elapsedSec()) === 0) state.sessionSubject = null;
       save();
       paintFocus();
       paintRingColor();

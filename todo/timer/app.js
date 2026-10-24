@@ -917,15 +917,19 @@
     const sum = dayTotals.reduce((a, d) => a + d.sec, 0);
     el.weekAvg.textContent = `日均 ${fmtShort(sum / 7)}`;
 
+    // 柱高最多占绘图区的 84%，给上方的分钟数留出位置
+    const TOP = 0.84;
     el.weekBars.innerHTML = dayTotals.map((d, i) => {
       const isToday = i === dayTotals.length - 1;
-      const parts = Array.from(d.bySub.entries()).map(([sid, sec]) =>
-        `<i style="--c:${esc(subjectColor(sid))};height:${(sec / max * 100).toFixed(2)}%" title="${esc(subjectName(sid))} ${fmtHM(sec)}"></i>`
-      ).join('');
+      const pct = d.sec > 0 ? Math.max(3, (d.sec / max) * TOP * 100) : 0;
+      const parts = d.sec > 0 ? Array.from(d.bySub.entries()).map(([sid, sec]) =>
+        `<i style="--c:${esc(subjectColor(sid))};height:${(sec / d.sec * 100).toFixed(2)}%" title="${esc(subjectName(sid))} ${fmtHM(sec)}"></i>`
+      ).join('') : '';
       const weekLabel = isToday ? '今天' : '周' + WEEK_CN[d.date.getDay()];
+      const total = d.sec >= 60 ? `<span class="bar-total" style="bottom:calc(${pct.toFixed(2)}% + 6px)">${Math.round(d.sec / 60)}</span>` : '';
+      const stack = `<div class="bar-stack${d.sec > 0 ? '' : ' empty'}"${d.sec > 0 ? ` style="height:${pct.toFixed(2)}%"` : ''}>${parts}</div>`;
       return `<div class="bar-col${isToday ? ' today' : ''}" title="${d.date.getMonth() + 1}/${d.date.getDate()} 共 ${fmtHM(d.sec)}">
-        <span class="bar-total">${d.sec >= 60 ? Math.round(d.sec / 60) : ''}</span>
-        <div class="bar-stack">${parts}</div>
+        <div class="bar-plot">${total}${stack}</div>
         <span class="bar-day">${weekLabel}</span>
       </div>`;
     }).join('');

@@ -950,10 +950,11 @@
       return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
     }
 
+    /** 新任务默认截止时间：今天 23:59 */
     function setCurrentDateTime() {
       const now = new Date();
       document.getElementById('dateInput').value = formatDate(now);
-      document.getElementById('timeInput').value = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('timeInput').value = '23:59';
     }
 
     function getNextRecurrenceDate(recurrence, recurrenceDay) {

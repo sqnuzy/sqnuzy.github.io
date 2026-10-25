@@ -145,311 +145,517 @@
       <section class="todo-page">
   
   <style>
-    .todo-page,
-    .todo-page * { box-sizing: border-box; margin: 0; padding: 0; }
-    .todo-page {
-  	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
-  	background: #f7f7f7;
-  	color: #333;
-  	padding: 0 15px 30px;
-     }
-    .todo-layout {
-      display: grid;
-      grid-template-columns: minmax(0, 900px) 280px;
-      gap: 18px;
-      max-width: 1200px;
-      margin: 0 auto;
-      align-items: start;
-    }
-    .container {
-      width: 100%;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      padding: 28px;
-    }
-    .todo-page h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .add-form {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
-    }
-    .add-form input[type="text"] {
-      flex: 1;
-      min-width: 220px;
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-    }
-    .add-form select,
-    .add-form input[type="date"],
-    .add-form input[type="time"] {
-      padding: 10px 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 14px;
-      background: #fff;
-    }
-    .add-form button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 8px;
-      background: #222;
-      color: #fff;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    .add-form button:hover {
-      background: #444;
-    }
-    .options-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 16px;
-      align-items: center;
-    }
-    .sort-bar {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .sort-bar button {
-      padding: 8px 14px;
-      border-radius: 8px;
-      border: 1px solid #ddd;
-      background: #fff;
-      cursor: pointer;
-    }
-    .sort-bar button.active {
-      background: #222;
-      color: #fff;
-      border-color: #222;
-    }
-    .task-list {
-      list-style: none;
-    }
-    .task-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 14px 0;
-      border-bottom: 1px solid #eee;
-      flex-wrap: wrap;
-    }
-    .status-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      border: 2px solid #ccc;
-      background: #fff;
-      cursor: pointer;
-      flex-shrink: 0;
-      font-size: 12px;
-      line-height: 1;
-    }
-    .status-btn.todo { border-color: #ccc; }
-    .status-btn.done { border-color: #43a047; background: #43a047; color: #fff; }
+/* ==========================================================
+   待办清单 · 页面样式（跟全站玻璃主题同一套语言）
+   - 顶部胶水变量：优先用主题的 --ref-* / --glass-*，主题色相滑块改了就跟着变
+   - 卡片 = 半透明渐变 + backdrop-filter，圆角 24~30px
+   ========================================================== */
+.todo-page {
+  --tp-ink: var(--ref-ink, #1f1f1d);
+  --tp-muted: var(--ref-muted, #8b8173);
+  --tp-line: var(--ref-line, rgba(20, 24, 20, .1));
+  --tp-accent: var(--ref-accent, #6cc400);
+  --tp-accent-ink: var(--ref-accent-ink, #1b2600);
+  --tp-surface: var(--ref-surface, #fff);
+  --tp-glass: linear-gradient(160deg, rgba(255, 255, 255, .74), rgba(255, 255, 255, .46));
+  --tp-glass-line: var(--glass-line, rgba(255, 255, 255, .65));
+  --tp-shadow: var(--glass-shadow, 0 20px 60px rgba(40, 48, 70, .1));
+  --tp-soft: rgba(255, 255, 255, .5);
+  --tp-soft-hover: rgba(255, 255, 255, .74);
+  --tp-mono: "SF Mono", "JetBrains Mono", "Cascadia Mono", Consolas, ui-monospace, monospace;
+  padding: 6px 18px 40px;
+  color: var(--tp-ink);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+:root[data-theme="dark"] .todo-page {
+  --tp-glass: linear-gradient(160deg, rgba(38, 42, 50, .78), rgba(26, 30, 38, .6));
+  --tp-glass-line: rgba(255, 255, 255, .1);
+  --tp-soft: rgba(255, 255, 255, .06);
+  --tp-soft-hover: rgba(255, 255, 255, .1);
+}
+.todo-page h1, .todo-page h2, .todo-page h3, .todo-page p, .todo-page ul, .todo-page li { margin: 0; padding: 0; }
+.todo-page ul { list-style: none; }
+.todo-page input, .todo-page select, .todo-page button, .todo-page textarea { font-family: inherit; color: inherit; }
+.todo-page ::placeholder { color: var(--tp-muted); opacity: .8; }
 
-    .priority-tag {
-      font-size: 12px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 6px;
-      color: #fff;
-      flex-shrink: 0;
-    }
-    .p0 { background: #e53935; }
-    .p1 { background: #fb8c00; }
-    .p2 { background: #1e88e5; }
-    .p3 { background: #8e8e8e; }
-    .p4 { background: #bdbdbd; }
+.todo-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 322px;
+  gap: 20px;
+  max-width: 1180px;
+  margin: 0 auto;
+  align-items: start;
+}
 
-    .task-title {
-      flex: 1;
-      min-width: 180px;
-      word-break: break-all;
-      cursor: pointer;
-      font-size: 15px;
-    }
-    .task-item.done .task-title {
-      text-decoration: line-through;
-      color: #aaa;
-    }
-    .task-title-input {
-      padding: 4px 8px;
-      border: 1px solid #1e88e5;
-      border-radius: 6px;
-      font-size: 14px;
-      outline: none;
-    }
-    .task-title-input {
-      flex: 1;
-      min-width: 180px;
-    }
+/* ---------------- 主卡片 ---------------- */
+.container {
+  padding: 24px 24px 16px;
+  border-radius: 30px;
+  border: 1px solid var(--tp-glass-line);
+  background: var(--tp-glass);
+  box-shadow: var(--tp-shadow);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
 
-    .task-meta,
-    .recurrence-tag {
-      font-size: 12px;
-      flex-shrink: 0;
-    }
-    .task-meta {
-      color: #777;
-      cursor: pointer;
-    }
-    .task-meta:hover {
-      color: #1e88e5;
-    }
-    .recurrence-tag {
-      color: #7b1fa2;
-      background: #f3e5f5;
-      padding: 2px 6px;
-      border-radius: 6px;
-    }
-    .delete-btn {
-      border: none;
-      background: none;
-      color: #bbb;
-      font-size: 20px;
-      cursor: pointer;
-      padding: 0 4px;
-    }
-    .delete-btn:hover {
-      color: #e53935;
-    }
-    .empty-msg {
-      text-align: center;
-      color: #aaa;
-      padding: 24px 0;
-    }
+/* 标题 */
+.todo-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.todo-title-wrap { display: flex; align-items: center; gap: 13px; }
+.todo-badge {
+  flex: none;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: var(--tp-accent);
+  color: var(--tp-accent-ink);
+  box-shadow: 0 10px 22px color-mix(in srgb, var(--tp-accent) 26%, transparent), inset 0 1px 0 rgba(255, 255, 255, .45);
+}
+.todo-badge svg { display: block; }
+.todo-head h1 { font-size: 25px; font-weight: 800; letter-spacing: .2px; }
+.todo-sub { margin-top: 7px; font-size: 12.5px; color: var(--tp-muted); }
 
-    .meta-edit {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      align-items: center;
-    }
-    .meta-edit select,
-    .meta-edit input,
-    .meta-edit button {
-      font-size: 12px;
-      padding: 4px 6px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      background: #fff;
-    }
-    .meta-edit button {
-      cursor: pointer;
-    }
-    .timer-sidebar {
-      display: grid;
-      gap: 14px;
-    }
-    .timer-card {
-      padding: 18px;
-      border-radius: 12px;
-      background: #fff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-    .timer-card.dragging {
-      opacity: 0.45;
-    }
-    .timer-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .timer-kind {
-      color: #888;
-      font-size: 12px;
-    }
-    .timer-card h2 {
-      margin-top: 8px;
-      font-size: 17px;
-      font-weight: 700;
-      word-break: break-all;
-    }
-    .timer-value {
-      margin-top: 16px;
-      font-size: 24px;
-      font-weight: 800;
-      font-variant-numeric: tabular-nums;
-      white-space: nowrap;
-    }
-    .timer-action {
-      padding: 4px 7px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      color: #666;
-      background: #fff;
-      cursor: grab;
-      font-size: 12px;
-    }
-    .timer-action:active {
-      cursor: grabbing;
-    }
-    .timer-edit {
-      display: none;
-      gap: 8px;
-      margin-top: 14px;
-    }
-    .timer-edit.open {
-      display: grid;
-    }
-    .timer-edit input {
-      width: 100%;
-      padding: 8px 9px;
-      border: 1px solid #ddd;
-      border-radius: 7px;
-      font: inherit;
-    }
-    .timer-time-fields {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-    }
-    .timer-time-fields input[type="date"] {
-      grid-column: 1 / -1;
-    }
-    .timer-time-fields input[type="number"] {
-      min-width: 0;
-      text-align: center;
-    }
-    .timer-edit button {
-      padding: 8px;
-      border: 0;
-      border-radius: 7px;
-      color: #fff;
-      background: #222;
-      cursor: pointer;
-    }
-    @media (max-width: 980px) {
-      .todo-layout {
-        grid-template-columns: 1fr;
-      }
-      .timer-sidebar {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-    @media (max-width: 620px) {
-      .timer-sidebar {
-        grid-template-columns: 1fr;
-      }
-    }
+/* ---------------- 添加任务 ---------------- */
+.composer {
+  padding: 10px 12px 12px;
+  margin-bottom: 14px;
+  border-radius: 20px;
+  border: 1px solid var(--tp-glass-line);
+  background: var(--tp-soft);
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+.composer:focus-within {
+  background: var(--tp-soft-hover);
+  border-color: color-mix(in srgb, var(--tp-accent) 45%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--tp-accent) 14%, transparent);
+}
+.add-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.add-form input[type="text"] {
+  flex: 1 1 260px;
+  min-width: 150px;
+  height: 42px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  font-size: 15px;
+  outline: 0;
+}
+.add-form select,
+.add-form input[type="date"],
+.add-form input[type="time"],
+.options-row select {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 11px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-ink);
+  font-size: 12.5px;
+  outline: 0;
+}
+.add-form select:focus-visible,
+.add-form input[type="date"]:focus-visible,
+.add-form input[type="time"]:focus-visible,
+.options-row select:focus-visible { border-color: var(--tp-accent); }
+.add-form button {
+  height: 38px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--tp-accent);
+  color: var(--tp-accent-ink);
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--tp-accent) 24%, transparent);
+  transition: transform .12s, box-shadow .18s, filter .18s;
+}
+.add-form button:hover { filter: brightness(1.04); box-shadow: 0 8px 20px color-mix(in srgb, var(--tp-accent) 30%, transparent); }
+.add-form button:active { transform: translateY(1px); }
+
+.options-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; padding-top: 10px; border-top: 1px dashed var(--tp-line); }
+.options-row #recurrenceOptions select { height: 30px; font-size: 12px; }
+
+/* ---------------- 排序条 ---------------- */
+.sort-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+.sort-bar button {
+  height: 32px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+}
+.sort-bar button:hover { background: var(--tp-soft-hover); }
+.sort-bar button.active {
+  background: var(--tp-accent);
+  border-color: transparent;
+  color: var(--tp-accent-ink);
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--tp-accent) 30%, transparent);
+}
+.btn-timer {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 15px;
+  border-radius: 999px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-ink);
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.btn-timer:hover { border-color: var(--tp-accent); color: var(--tp-accent); background: var(--tp-soft-hover); }
+
+/* 云同步状态（sync.js 注入） */
+.sort-bar .todo-sync-btn {
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 13px;
+  border-radius: 999px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-muted);
+  font-size: 12.5px;
+  cursor: pointer;
+}
+.sort-bar .todo-sync-btn .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: .45; }
+.sort-bar .todo-sync-btn.on .dot { background: #2f9e8f; opacity: 1; }
+.sort-bar .todo-sync-btn.err .dot { background: #d94f3d; opacity: 1; }
+.sort-bar .todo-sync-btn.off { color: var(--tp-accent); border-color: color-mix(in srgb, var(--tp-accent) 45%, transparent); font-weight: 600; }
+.sort-bar .todo-sync-btn.off .dot { opacity: 1; }
+
+/* ---------------- 任务列表 ---------------- */
+.task-list { display: grid; gap: 7px; }
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  flex-wrap: wrap;
+  padding: 11px 13px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  background: var(--tp-soft);
+  transition: background .16s, border-color .16s, transform .16s, box-shadow .16s;
+}
+.task-item:hover {
+  background: var(--tp-soft-hover);
+  border-color: var(--tp-line);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(30, 38, 50, .07);
+}
+:root[data-theme="dark"] .task-item:hover { box-shadow: 0 10px 24px rgba(0, 0, 0, .28); }
+.task-item.done { opacity: .55; }
+.task-item.done:hover { transform: none; box-shadow: none; }
+
+.status-btn {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1.6px solid color-mix(in srgb, var(--tp-ink) 24%, transparent);
+  background: transparent;
+  color: transparent;
+  font-size: 11px;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s, transform .12s;
+}
+.status-btn:hover { border-color: var(--tp-accent); transform: scale(1.08); }
+.status-btn.done {
+  background: var(--tp-accent);
+  border-color: var(--tp-accent);
+  color: var(--tp-accent-ink);
+}
+
+.priority-tag {
+  flex: none;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  line-height: 1.4;
+}
+.p0 { color: #d0392b; background: rgba(208, 57, 43, .12); border-color: rgba(208, 57, 43, .2); }
+.p1 { color: #bf7114; background: rgba(191, 113, 20, .12); border-color: rgba(191, 113, 20, .2); }
+.p2 { color: #2f6fd0; background: rgba(47, 111, 208, .12); border-color: rgba(47, 111, 208, .2); }
+.p3 { color: #6f7780; background: rgba(111, 119, 128, .13); border-color: rgba(111, 119, 128, .2); }
+.p4 { color: #8b9298; background: rgba(139, 146, 152, .1); border-color: rgba(139, 146, 152, .16); }
+:root[data-theme="dark"] .p0 { color: #ff9c8d; background: rgba(255, 120, 100, .14); border-color: rgba(255, 120, 100, .2); }
+:root[data-theme="dark"] .p1 { color: #f3b567; background: rgba(243, 181, 103, .13); border-color: rgba(243, 181, 103, .2); }
+:root[data-theme="dark"] .p2 { color: #8bb6ff; background: rgba(139, 182, 255, .13); border-color: rgba(139, 182, 255, .2); }
+:root[data-theme="dark"] .p3 { color: #b9c0c8; background: rgba(185, 192, 200, .1); border-color: rgba(185, 192, 200, .16); }
+:root[data-theme="dark"] .p4 { color: #9aa1a8; background: rgba(154, 161, 168, .08); border-color: rgba(154, 161, 168, .14); }
+
+.task-title {
+  flex: 1 1 200px;
+  min-width: 140px;
+  font-size: 14.5px;
+  font-weight: 500;
+  line-height: 1.45;
+  word-break: break-word;
+  cursor: text;
+}
+.task-item.done .task-title { text-decoration: line-through; color: var(--tp-muted); }
+.task-title-input {
+  flex: 1 1 200px;
+  min-width: 140px;
+  height: 30px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid color-mix(in srgb, var(--tp-accent) 55%, transparent);
+  background: var(--tp-surface);
+  font-size: 14px;
+  outline: 0;
+}
+
+.recurrence-tag {
+  flex: none;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #7b52c9;
+  background: rgba(123, 82, 201, .1);
+  border: 1px solid rgba(123, 82, 201, .18);
+}
+:root[data-theme="dark"] .recurrence-tag { color: #c4a7ff; background: rgba(196, 167, 255, .12); border-color: rgba(196, 167, 255, .2); }
+
+.task-meta {
+  flex: none;
+  padding: 4px 9px;
+  border-radius: 9px;
+  font-size: 12px;
+  color: var(--tp-muted);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.task-meta:hover { background: var(--tp-soft); border-color: var(--tp-line); color: var(--tp-ink); }
+.task-meta.empty { opacity: .45; }
+
+.delete-btn {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--tp-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity .15s, background .15s, color .15s;
+}
+.task-item:hover .delete-btn,
+.delete-btn:focus-visible { opacity: .8; }
+.delete-btn:hover { opacity: 1; color: #d63f30; background: rgba(214, 63, 48, .1); }
+@media (hover: none) { .delete-btn { opacity: .7; } }
+
+.empty-msg {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  padding: 42px 18px;
+  border-radius: 18px;
+  border: 1px dashed var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-muted);
+  font-size: 12.5px;
+  text-align: center;
+}
+.empty-msg b { font-size: 14px; font-weight: 700; color: var(--tp-ink); }
+.empty-ico { font-size: 19px; line-height: 1; color: var(--tp-accent); }
+
+/* 行内编辑元信息 */
+.meta-edit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  flex: 1 1 100%;
+  padding: 8px;
+  border-radius: 12px;
+  background: var(--tp-soft);
+  border: 1px solid var(--tp-line);
+}
+.meta-edit select,
+.meta-edit input {
+  height: 28px;
+  padding: 0 8px;
+  border-radius: 8px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-surface);
+  color: var(--tp-ink);
+  font-size: 12px;
+  outline: 0;
+}
+.meta-edit button {
+  height: 28px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--tp-accent);
+  color: var(--tp-accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------------- 右侧倒计时 ---------------- */
+.timer-sidebar { display: grid; gap: 14px; }
+.timer-card {
+  position: relative;
+  padding: 17px 18px 18px;
+  border-radius: 24px;
+  border: 1px solid var(--tp-glass-line);
+  background: var(--tp-glass);
+  box-shadow: var(--tp-shadow);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  transition: transform .18s, box-shadow .18s;
+}
+.timer-card:hover { transform: translateY(-2px); }
+.timer-card.dragging { opacity: .45; }
+.timer-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.timer-kind {
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  color: var(--tp-muted);
+}
+.timer-action {
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-muted);
+  font-size: 11.5px;
+  cursor: grab;
+  transition: background .15s, color .15s, border-color .15s;
+}
+.timer-action:hover { background: var(--tp-soft-hover); color: var(--tp-ink); }
+.timer-action:active { cursor: grabbing; }
+.timer-card h2 { margin-top: 9px; font-size: 15px; font-weight: 700; line-height: 1.35; word-break: break-word; }
+.timer-value {
+  margin-top: 12px;
+  font-family: var(--tp-mono);
+  font-size: clamp(20px, 2.2vw, 25px);
+  font-weight: 700;
+  letter-spacing: -.4px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.timer-edit { display: none; gap: 8px; margin-top: 14px; }
+.timer-edit.open { display: grid; }
+.timer-edit input {
+  width: 100%;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid var(--tp-line);
+  background: var(--tp-soft);
+  color: var(--tp-ink);
+  font-size: 12.5px;
+  outline: 0;
+}
+.timer-edit input:focus { border-color: var(--tp-accent); }
+.timer-time-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.timer-time-fields input[type="date"] { grid-column: 1 / -1; }
+.timer-time-fields input[type="number"] { text-align: center; min-width: 0; }
+.timer-edit button {
+  height: 30px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--tp-accent);
+  color: var(--tp-accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* 云同步提示条（sync.js 注入） */
+.todo-page .todo-sync-banner {
+  max-width: 1180px;
+  margin: 0 auto 14px;
+  padding: 11px 15px;
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--tp-accent) 30%, transparent);
+  background: color-mix(in srgb, var(--tp-accent) 8%, transparent);
+  color: var(--tp-ink);
+  font-size: 12.5px;
+}
+.todo-page .todo-sync-banner button {
+  border: 0;
+  border-radius: 999px;
+  padding: 6px 13px;
+  background: var(--tp-accent);
+  color: var(--tp-accent-ink);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* ---------------- 响应式 ---------------- */
+@media (max-width: 1020px) {
+  .todo-layout { grid-template-columns: 1fr; }
+  .timer-sidebar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .btn-timer { margin-left: 0; }
+}
+@media (max-width: 720px) {
+  .todo-page { padding: 4px 12px 32px; }
+  .container { padding: 18px 16px 12px; border-radius: 24px; }
+  .todo-head h1 { font-size: 22px; }
+  .timer-sidebar { grid-template-columns: 1fr; }
+  .add-form input[type="text"] { flex-basis: 100%; }
+  .add-form button { height: 34px; flex: 0 1 40%; }
+  .task-item { padding: 10px 11px; gap: 9px; }
+  .task-title { flex: 1 1 auto; min-width: 0; }
+  .task-meta { margin-left: auto; }
+}
   </style>
   <div class="todo-layout">
   <div class="container">
-    <h1>待办清单</h1>
+    <header class="todo-head">
+      <div class="todo-title-wrap">
+        <span class="todo-badge" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h9"></path><path d="M4 12h6"></path><path d="M4 17h6"></path><path d="m13.5 16.5 2.8 2.8 4.7-5.6"></path></svg>
+        </span>
+        <div>
+          <h1>待办清单</h1>
+          <p class="todo-sub" id="todoSub">还没有任务</p>
+        </div>
+      </div>
+    </header>
 
+    <div class="composer">
     <div class="add-form">
-      <input type="text" id="titleInput" placeholder="添加新任务..." />
+      <input type="text" id="titleInput" placeholder="添加新任务，回车即可" />
       <select id="priorityInput">
         <option value="0">P0</option>
         <option value="1">P1</option>
@@ -486,11 +692,12 @@
         </select>
       </span>
     </div>
+    </div>
 
     <div class="sort-bar">
       <button id="sortPriority" class="active" onclick="setSortMode('priority')">按优先级</button>
       <button id="sortTime" onclick="setSortMode('time')">按时间</button>
-          <a href="/todo/timer/" style="margin-left:auto;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;border:1px solid #222;background:#222;color:#fff;text-decoration:none;font-size:14px;font-family:inherit;line-height:1.2">
+          <a class="btn-timer" href="/todo/timer/">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
         学习计时
       </a></div>
@@ -1040,9 +1247,20 @@
     function render() {
       const list = document.getElementById('taskList');
       const sorted = sortedTasks();
+      const doneCount = tasks.filter(t => t.status === 'done').length;
+      const summary = document.getElementById('todoSub');
+      if (summary) {
+        summary.textContent = tasks.length
+          ? `共 ${tasks.length} 项 · 待完成 ${tasks.length - doneCount} 项 · 已完成 ${doneCount} 项`
+          : '还没有任务，先加一条吧';
+      }
 
       if (sorted.length === 0) {
-        list.innerHTML = '<li class="empty-msg">暂无任务</li>';
+        list.innerHTML = '<li class="empty-msg">' +
+          '<span class="empty-ico">✦</span>' +
+          '<b>今天还没有待办</b>' +
+          '<span>在上面输入框写点什么，回车就能加进来</span>' +
+          '</li>';
         return;
       }
 
@@ -1058,7 +1276,7 @@
           <span class="priority-tag p${t.priority}">P${t.priority}</span>
           <span class="task-title" id="title-${t.id}" onclick="startEdit('${t.id}')">${escapeHtml(t.title)}</span>
           ${recHtml}
-          <span class="task-meta" id="meta-${t.id}" onclick="editMeta('${t.id}')" ${!meta ? 'style="color:#ccc"' : ''}>${meta || '+时间'}</span>
+          <span class="task-meta${meta ? '' : ' empty'}" id="meta-${t.id}" onclick="editMeta('${t.id}')">${meta || '+时间'}</span>
           <button class="delete-btn" onclick="deleteTask('${t.id}')">&times;</button>
         </li>`;
       }).join('');

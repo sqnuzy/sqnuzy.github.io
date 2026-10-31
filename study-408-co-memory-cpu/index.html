@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>408计组3.3｜存储器扩展、片选与CPU连接 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="整理字扩展与位扩展、芯片分组、片选与区域使能、地址范围和CPU连接，详解A₀为最高位的选择题，并附折叠自测。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css">
+  <link rel="stylesheet" href="/css/refined.css?v=7">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+    <button class="tool-btn" type="button" data-panel-toggle="style" aria-label="显示设置">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="13.5" cy="6.5" r="2.5"></circle>
+        <circle cx="17.5" cy="12" r="2.5"></circle>
+        <circle cx="8.5" cy="12.5" r="2.5"></circle>
+        <path d="M12 3a9 9 0 0 0 0 18h1.2a2 2 0 0 0 1.55-3.27 1.5 1.5 0 0 1 1.15-2.48H17a4 4 0 0 0 4-4A8.25 8.25 0 0 0 12 3Z"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel style-panel" data-panel="style" hidden>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>主题色相</h2>
+        <span data-hue-value>78</span>
+      </div>
+      <div class="range-wrap">
+        <input class="hue-range" type="range" min="0" max="360" step="5" value="78" data-hue-range>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>壁纸模式</h2>
+      </div>
+      <div class="setting-list">
+        <button type="button" class="setting-row active">
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="m4 15 5-5 4 4 2-2 5 5"></path></svg>
+          </span>
+          <span>横幅</span>
+        </button>
+        <button type="button" class="setting-row" disabled>
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z"></path><path d="M8 5v14M16 5v14"></path></svg>
+          </span>
+          <span>跟随当前主题</span>
+        </button>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>文章布局</h2>
+      </div>
+      <div class="panel-grid">
+        <button type="button" data-post-layout="list">列表</button>
+        <button type="button" data-post-layout="grid">网格</button>
+      </div>
+    </section>
+  </div>
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-10-30T16:00:00.000Z">2026-10-31</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>408计组3.3｜存储器扩展、片选与CPU连接</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 408 / 计算机组成原理</span>
+        
+        
+          <span>#易错点 #408 #计算机组成原理 #主存储器与CPU的连接 #位扩展 #字扩展 #片选译码 #地址范围</span>
+        
+      </div>
+      
+        <div class="study-tools" data-study-note data-note-key="/study-408-co-memory-cpu/">
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  <div class="study-actions">
+    
+    <button class="study-button study-button-primary" type="button" data-review-complete hidden>记为已复习</button>
+  </div>
+  <p class="study-review-status" data-note-review-status aria-live="polite">先回忆，再核对；复习完后标记一次。</p>
+  <p class="study-review-status" data-quiz-status aria-live="polite" hidden></p>
+  <p class="study-review-status" data-study-storage-notice hidden role="status">当前浏览器无法保存复习记录，阅读和自测仍可使用。</p>
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <p>对应王道计组3.3“主存储器与CPU的连接”。按本次反复确认的问题，重点整理扩展后数据怎样组织、怎样分组、哪些地址位选组，以及区域判断有什么用。</p>
+<p>先修：<a
+href="/study-408-co-address-space/">RAM、MAR、MDR与地址空间</a>。章节范围可核对<a
+target="_blank" rel="noopener" href="https://wap.phei.com.cn/module/goods/wssd_content.jsp?bookid=64061">王道复习指导的出版社目录</a>。</p>
+<span id="more"></span>
+<h2 id="一本次优先掌握的考法">一、本次优先掌握的考法</h2>
+<table>
+<thead>
+<tr>
+<th>题目问什么</th>
+<th>需要完成什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>扩展后有多少个字、每字多少位</td>
+<td>区分增加字数和增加位宽</td>
+</tr>
+<tr>
+<td>需要几片芯片、分几组</td>
+<td>分别计算位向片数和字向组数</td>
+</tr>
+<tr>
+<td>哪些地址线接芯片、接译码器</td>
+<td>按题目规定的高低位顺序划分地址</td>
+</tr>
+<tr>
+<td>某地址所在组的起止地址</td>
+<td>保留组选择位，改变片内地址位</td>
+</tr>
+<tr>
+<td>片选有效时哪些芯片工作</td>
+<td>按组选择，同组位扩展芯片同时工作</td>
+</tr>
+<tr>
+<td>如何连接CPU与ROM、RAM</td>
+<td>标清地址线、数据线、片选和读写控制</td>
+</tr>
+</tbody>
+</table>
+<p>这是本次学习的复习优先级，侧重能计算、能读图、能解释接线。题目要求画图时，应能画出标明上述信号的基本连接框图。</p>
+<h2
+id="二位扩展与字扩展增加的是什么">二、位扩展与字扩展：增加的是什么</h2>
+<p>把存储器看成一张表：行数是字数，每行宽度是每字位数。</p>
+<table>
+<thead>
+<tr>
+<th>对比</th>
+<th>位扩展</th>
+<th>字扩展</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>增加什么</td>
+<td>每字位数，即位宽</td>
+<td>存储字数，即单元数量</td>
+</tr>
+<tr>
+<td>扩展后的组织</td>
+<td>单元数相同，每单元更宽</td>
+<td>单元更多，每单元位数相同</td>
+</tr>
+<tr>
+<td>数据线</td>
+<td>各片接数据总线的不同位</td>
+<td>各组对应位共用数据总线</td>
+</tr>
+<tr>
+<td>片选</td>
+<td>同组各片同时选中</td>
+<td>每次选择一个芯片组</td>
+</tr>
+<tr>
+<td>地址</td>
+<td>同组芯片接收相同片内地址</td>
+<td>由高位区分组，低位定位组内单元</td>
+</tr>
+</tbody>
+</table>
+<p>这些规则可对照<a
+target="_blank" rel="noopener" href="https://www.tup.com.cn/upload/books/yz/085216-01.pdf">清华大学出版社教材样章，第116～118页</a>。</p>
+<h3 id="只增加2位2个字">1. 只增加2位、2个字</h3>
+<p>从<span class="math inline">\(1024\times8\)</span>位出发：</p>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>扩展后</th>
+<th>增加的总容量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>每个字增加2位</td>
+<td><span class="math inline">\(1024\times10\)</span>位</td>
+<td><span class="math inline">\(1024\times2=2048\)</span>位</td>
+</tr>
+<tr>
+<td>增加2个字</td>
+<td><span class="math inline">\(1026\times8\)</span>位</td>
+<td><span class="math inline">\(2\times8=16\)</span>位</td>
+</tr>
+</tbody>
+</table>
+<p>一般地，<span class="math inline">\(M\times
+w\)</span>位存储器增加2位后为<span
+class="math inline">\(M\times(w+2)\)</span>位；增加2个字后为<span
+class="math inline">\((M+2)\times w\)</span>位。</p>
+<h3 id="再加2片相同芯片">2. 再加2片相同芯片</h3>
+<p>原来只有1片<span
+class="math inline">\(1\text{K}\times8\)</span>位芯片，再加2片，共3片：</p>
+<table>
+<thead>
+<tr>
+<th>方式</th>
+<th>扩展后</th>
+<th>增加量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全部用于位扩展</td>
+<td><span class="math inline">\(1\text{K}\times24\)</span>位</td>
+<td>每字增加16位</td>
+</tr>
+<tr>
+<td>全部用于字扩展</td>
+<td><span class="math inline">\(3\text{K}\times8\)</span>位</td>
+<td>字数增加2K</td>
+</tr>
+</tbody>
+</table>
+<p>两种方式的总容量都从1KB增加到3KB。每增加一片，增加的容量固定；“增加原容量的2倍”描述新增部分，“变为原容量的3倍”描述最终总量。</p>
+<p>位扩展时，3片同时各提供8位，组成24位；字扩展时，每次选择一片，提供8位。</p>
+<h3 id="增加芯片与增加地址位">3. 增加芯片与增加地址位</h3>
+<ul>
+<li>增加相同芯片：总容量按新增芯片的容量累加。</li>
+<li>增加1位可变地址：可表示的地址个数变为原来的2倍。</li>
+<li>增加2位可变地址：可表示的地址个数变为原来的4倍。</li>
+</ul>
+<p>这里的地址个数是编码能力；要让新增地址有实际内容，还需要配置相应的存储器和译码。</p>
+<h2 id="三芯片片数每组片数和组数">三、芯片片数、每组片数和组数</h2>
+<p>目标为<span class="math inline">\(M\times
+W\)</span>位存储器，现有芯片为<span class="math inline">\(m\times
+w\)</span>位。规格可整除且按常规字位扩展组织时：</p>
+<p><span class="math display">\[
+\text{每组片数}=\frac{W}{w},
+\qquad
+\text{组数}=\frac{M}{m},
+\qquad
+\text{总片数}=\frac{M}{m}\times\frac{W}{w}.
+\]</span></p>
+<p><strong>先按位扩展组成一组，再按字扩展增加组数。</strong>
+同组芯片提供同一个完整存储字的不同部分。</p>
+<p>例如，用<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片组成<span
+class="math inline">\(16\text{K}\times8\)</span>位存储器：</p>
+<ul>
+<li>每组2片，共同组成<span
+class="math inline">\(4\text{K}\times8\)</span>位。</li>
+<li>一共4组，得到<span
+class="math inline">\(16\text{K}\times8\)</span>位。</li>
+<li>共8片芯片，需要4路组片选信号。</li>
+<li>一次选中1组中的2片，各提供4位，共提供8位数据。</li>
+</ul>
+<h2 id="四片选字选片选地址与cs">四、片选、字选、片选地址与CS</h2>
+<table>
+<thead>
+<tr>
+<th>概念</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>片选</td>
+<td>确定本次由哪一片或哪一组芯片参与访问</td>
+</tr>
+<tr>
+<td>片内寻址，也称字选</td>
+<td>确定选中芯片或组内部的哪个单元</td>
+</tr>
+<tr>
+<td>片选地址</td>
+<td>CPU地址中用于判断访问哪片或哪组的地址位</td>
+</tr>
+<tr>
+<td>片选信号CS</td>
+<td>根据片选地址和访存条件生成的控制信号</td>
+</tr>
+</tbody>
+</table>
+<p>理解关系：<strong>片选地址参与译码，生成片选信号；片内地址送入芯片，定位内部单元。</strong>
+这是地址各部分的职责划分，不要求它们在时间上分两次到达。</p>
+<p>位扩展时，同组多片使用相同的片内地址，也共用片选信号。某个地址对应的完整8位数据，可以由两片芯片分别保存高4位、低4位。</p>
+<h2 id="五怎样划分地址线">五、怎样划分地址线</h2>
+<h3 id="先从题目指定的最低位开始数">1. 先从题目指定的最低位开始数</h3>
+<p>若芯片有<span class="math inline">\(2^n\)</span>个单元，则需要<span
+class="math inline">\(n\)</span>位片内地址。对于常见的非地址复用芯片：</p>
+<ol type="1">
+<li>从最低位起，取<span
+class="math inline">\(n\)</span>位接芯片地址端。</li>
+<li>若有<span class="math inline">\(2^k\)</span>组，紧接着取<span
+class="math inline">\(k\)</span>位作组选择，适用于连续、对齐的常规编址。</li>
+<li>其余更高位参与存储区域的判断或译码器使能。</li>
+</ol>
+<p>地址位编号的大小不决定高低位。通常A₀最低，但题目可以反过来规定。</p>
+<h3 id="两种编号方向对照">2. 两种编号方向对照</h3>
+<p>CPU有16根地址线，使用<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片组成16KB存储器，按字节组织并连续编址：</p>
+<table>
+<thead>
+<tr>
+<th>作用</th>
+<th>常规编号：A₀最低</th>
+<th>反向编号：A₀最高、A₁₅最低</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>最低12位：片内地址</td>
+<td>A₀～A₁₁</td>
+<td>A₄～A₁₅</td>
+</tr>
+<tr>
+<td>接着2位：选择4组</td>
+<td>A₁₂、A₁₃</td>
+<td>A₂、A₃</td>
+</tr>
+<tr>
+<td>最高2位：区域判断</td>
+<td>A₁₄、A₁₅</td>
+<td>A₀、A₁</td>
+</tr>
+</tbody>
+</table>
+<h3 id="做过的选择题a₀为最高位">3. 做过的选择题：A₀为最高位</h3>
+<p>题意：地址总线A₀为高位，A₁₅为低位，用<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片组成16KB存储器，问产生片选信号的译码器的选择输入地址线。</p>
+<table>
+<thead>
+<tr>
+<th>选项</th>
+<th>地址线</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td>A₂、A₃</td>
+</tr>
+<tr>
+<td>B</td>
+<td>A₀、A₁</td>
+</tr>
+<tr>
+<td>C</td>
+<td>A₁₂、A₁₃</td>
+</tr>
+<tr>
+<td>D</td>
+<td>A₁₄、A₁₅</td>
+</tr>
+</tbody>
+</table>
+<p>先自行完成，再展开答案。</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>选A。</p>
+<p>16KB按字节组织为<span
+class="math inline">\(16\text{K}\times8\)</span>位。每组2片<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片，共4组。</p>
+<p>每组4K个单元，需要最低12位作片内地址。从A₁₅向高位数12根，是A₄～A₁₅；紧接着的两根为A₂、A₃，用来区分4组。</p>
+<pre><code>高位                                    低位
+A₀、A₁ │ A₂、A₃ │ A₄…………A₁₅
+区域判断│ 组选择  │ 片内地址
+  2位  │   2位   │   12位</code></pre>
+<p>A₀、A₁仍可参与区域使能。因此，“译码器的两根选择输入”和“完整片选逻辑涉及的全部高位地址”要分开。</p>
+</details>
+<h2 id="六区域判断与全译码有什么用">六、区域判断与全译码有什么用</h2>
+<h3 id="cpu地址空间可以大于安装容量">1. CPU地址空间可以大于安装容量</h3>
+<p>16根地址线、按字节编址，对应64KB地址空间。实际只配置16KB存储器时，要决定这16KB放在哪个区域。</p>
+<p>沿用反向编号，A₀、A₁为最高两位：</p>
+<table>
+<thead>
+<tr>
+<th>A₀A₁</th>
+<th>16KB区域</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>00</td>
+<td>0000H～3FFFH</td>
+</tr>
+<tr>
+<td>01</td>
+<td>4000H～7FFFH</td>
+</tr>
+<tr>
+<td>10</td>
+<td>8000H～BFFFH</td>
+</tr>
+<tr>
+<td>11</td>
+<td>C000H～FFFFH</td>
+</tr>
+</tbody>
+</table>
+<p>假设这块16KB存储器放在0000H～3FFFH，则只有<strong>CPU访存有效，并且A₀A₁为00</strong>时，允许它响应。具体应取哪种高位组合，由题目分配的地址范围决定。</p>
+<h3 id="不判断高位会发生什么">2. 不判断高位会发生什么</h3>
+<p>若只用A₂、A₃选择组，用A₄～A₁₅选择内部单元，完全忽略最高两位：</p>
+<pre><code>0005H = 00 │ 00 │ 0000 0000 0101
+4005H = 01 │ 00 │ 0000 0000 0101</code></pre>
+<p>两个地址的组号和片内地址相同，会访问同一个实际存储位置。这是<strong>地址重叠，也称地址镜像</strong>。</p>
+<h3 id="译码方法与有效电平">3. 译码方法与有效电平</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>方法</th>
+<th>判断方式</th>
+<th>需要理解的特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>线选法</td>
+<td>某些高位地址线直接作片选</td>
+<td>电路简单，地址空间利用和扩展受限制</td>
+</tr>
+<tr>
+<td>全译码</td>
+<td>片内地址之外的相关高位全部参与判断</td>
+<td>每个存储单元对应唯一的系统地址</td>
+</tr>
+<tr>
+<td>部分译码</td>
+<td>部分高位不参与判断</td>
+<td>不同系统地址可能指向同一个实际单元</td>
+</tr>
+</tbody>
+</table>
+<p>高位参与判断，可以接译码器的选择输入，也可以通过门电路接使能端。<strong>全译码不要求所有高位都接在译码器的选择输入端。</strong>
+可对照<a
+target="_blank" rel="noopener" href="https://mooc1-1.chaoxing.com/mooc-ans/nodedetailcontroller/visitnodedetail?courseId=241003452&amp;knowledgeId=825291415">课程中的译码与CPU连接说明</a>。</p>
+<p><span
+class="math inline">\(\overline{CS}\)</span>表示低电平有效：0时选中，1时不选中。译码器自身的使能条件也必须成立，具体电平按题目给出的芯片引脚和真值表判断。</p>
+<h2 id="七地址范围怎样计算">七、地址范围怎样计算</h2>
+<h3 id="已知首地址和地址个数">1. 已知首地址和地址个数</h3>
+<p><span class="math display">\[
+\text{末地址}=\text{首地址}+\text{地址个数}-1.
+\]</span></p>
+<p>按字节编址时，8KB存储区占<span
+class="math inline">\(8\text{K}=2000\text{H}\)</span>个地址。若从2000H开始：</p>
+<p><span class="math display">\[
+\text{末地址}=2000\text{H}+2000\text{H}-1=3FFF\text{H}.
+\]</span></p>
+<p>反过来：</p>
+<p><span class="math display">\[
+\text{地址个数}=\text{末地址}-\text{首地址}+1.
+\]</span></p>
+<p>4000H～5FFFH共<span
+class="math inline">\(2000\text{H}=8\text{K}\)</span>个地址；按字节编址，容量为8KB。按其他单位编址时，要再乘每个地址对应的容量。</p>
+<h3 id="已知片选条件">2. 已知片选条件</h3>
+<p>固定片选条件对应的高位，低位片内地址从全0变化到全1，分别得到首地址和末地址。</p>
+<p>例如，16位地址采用常规编号，每组4K个单元，高4位为0010：</p>
+<pre><code>最小地址：0010 │ 0000 0000 0000 = 2000H
+最大地址：0010 │ 1111 1111 1111 = 2FFFH</code></pre>
+<h3 id="已知某地址求所在组的范围">3. 已知某地址，求所在组的范围</h3>
+<p>在连续、对齐编址条件下，保留高位片选部分：</p>
+<ul>
+<li>将片内地址全部清0，得到组首地址。</li>
+<li>将片内地址全部置1，得到组末地址。</li>
+</ul>
+<p>例如，用<span
+class="math inline">\(2\text{K}\times4\)</span>位芯片组成<span
+class="math inline">\(8\text{K}\times8\)</span>位存储器，从0连续编址：</p>
+<ul>
+<li>每组2片，共4组，总共8片。</li>
+<li>每组2K个单元，占<span
+class="math inline">\(0800\text{H}\)</span>个地址，片内地址11位。</li>
+<li>各组范围为0000H～07FFH、0800H～0FFFH、1000H～17FFH、1800H～1FFFH。</li>
+<li>地址0B1FH位于第二组，所在组的首地址为0800H，末地址为0FFFH。</li>
+</ul>
+<p><strong>位扩展的同组芯片使用同一段地址范围。</strong>
+上例第二组的两片都对应0800H～0FFFH，各保存每个地址的数据的一部分。</p>
+<h2 id="八完整连接例题rom与ram">八、完整连接例题：ROM与RAM</h2>
+<h3 id="题设与芯片选择">1. 题设与芯片选择</h3>
+<p>以下规格是为了讲解而设定的条件，实际题目按给定规格选片。</p>
+<ul>
+<li>CPU有16根地址线，按常规编号A₁₅最高、A₀最低。</li>
+<li>数据总线8位，按字节编址。</li>
+<li>0000H～1FFFH为8KB ROM区，使用<span
+class="math inline">\(4\text{K}\times8\)</span>位ROM。</li>
+<li>2000H～3FFFH为8KB RAM区，使用<span
+class="math inline">\(4\text{K}\times4\)</span>位RAM。</li>
+</ul>
+<p>ROM每片4KB，使用2片。RAM每片2KB，两片位扩展为一组4KB，需要2组，共4片RAM。</p>
+<table>
+<thead>
+<tr>
+<th>组号</th>
+<th>组成</th>
+<th>组内容量</th>
+<th>高4位条件</th>
+<th>系统地址范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>1片ROM</td>
+<td>4KB</td>
+<td>0000</td>
+<td>0000H～0FFFH</td>
+</tr>
+<tr>
+<td>1</td>
+<td>1片ROM</td>
+<td>4KB</td>
+<td>0001</td>
+<td>1000H～1FFFH</td>
+</tr>
+<tr>
+<td>2</td>
+<td>2片RAM</td>
+<td>4KB</td>
+<td>0010</td>
+<td>2000H～2FFFH</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2片RAM</td>
+<td>4KB</td>
+<td>0011</td>
+<td>3000H～3FFFH</td>
+</tr>
+</tbody>
+</table>
+<p>共6片芯片、4个组，使用4路组片选。</p>
+<h3 id="地址与片选连接">2. 地址与片选连接</h3>
+<ul>
+<li>所有芯片均有4K个单元，CPU的A₀～A₁₁接各芯片的12个地址端。</li>
+<li>A₁₂、A₁₃作2—4译码器的选择输入，产生4路组片选。</li>
+<li>A₁₄、A₁₅参与使能判断，限定为00；还需结合CPU访存控制信号。</li>
+<li>同组两片RAM的CS端接同一路片选输出。</li>
+</ul>
+<p>完整片选逻辑涉及4根高位地址线，译码器的组选择输入只有2根。</p>
+<h3 id="数据线与读写控制连接">3. 数据线与读写控制连接</h3>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>信号</th>
+<th>连接方式</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ROM的数据输出</td>
+<td>每片8位分别接CPU的D₀～D₇</td>
+</tr>
+<tr>
+<td>每组低位RAM片</td>
+<td>4位数据接CPU的D₀～D₃</td>
+</tr>
+<tr>
+<td>每组高位RAM片</td>
+<td>4位数据接CPU的D₄～D₇</td>
+</tr>
+<tr>
+<td>RAM读写控制</td>
+<td>按题设连接读允许、写允许或读写控制端</td>
+</tr>
+<tr>
+<td>ROM控制</td>
+<td>正常运行时按只读方式连接；若有编程或写控制端，保持正常读模式</td>
+</tr>
+</tbody>
+</table>
+<p>未被选中的芯片，其数据输出通常为高阻态，使不同组能够共用数据总线。</p>
+<p>对<span class="math inline">\(\overline{OE}\)</span>、<span
+class="math inline">\(\overline{WE}\)</span>等低有效引脚，应按题目说明接入读、写信号。<strong>片选有效与读写条件必须共同满足，不能把“选中”直接理解成“正在写入”。</strong></p>
+<h3 id="访问2a35h读写a5h">4. 访问2A35H，读写A5H</h3>
+<pre><code>地址2A35H = 00 │ 10 │ 1010 0011 0101
+            区域  组号      片内地址</code></pre>
+<ol type="1">
+<li>最高两位00，允许本例16KB存储区响应。</li>
+<li>组号10，选中第2组的两片RAM。</li>
+<li>片内地址为A35H，两片均定位各自内部的A35H单元。</li>
+<li>写入A5H，即二进制1010 0101：高位片写入1010，低位片写入0101。</li>
+<li>读取同一地址时，两片各输出4位，拼回A5H。</li>
+</ol>
+<p>地址2A35H回答“存在哪里”；数据A5H回答“存什么”。可与<a
+href="/study-408-co-address-space/">MAR、MDR的区别</a>一起复习。</p>
+<h2 id="九自测">九、自测</h2>
+<h3 id="自测1增加2片还是增加2位地址">自测1：增加2片还是增加2位地址</h3>
+<p>原来只有1片<span
+class="math inline">\(1\text{K}\times8\)</span>位芯片，再加2片并全部作字扩展，结果是什么？若只是增加2位可变地址，可表示的地址个数怎样变化？</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>增加2片后，共3片，组织为<span
+class="math inline">\(3\text{K}\times8\)</span>位。</p>
+<p>增加2位可变地址，可表示的地址个数变为原来的4倍。地址编码能力和实际安装的芯片容量应分别计算。</p>
+</details>
+<h3
+id="自测2片选路数看组数还是总片数">自测2：片选路数看组数还是总片数</h3>
+<p>用<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片组成<span
+class="math inline">\(16\text{K}\times16\)</span>位存储器，按字编址。共多少片、多少组、多少路组片选，一次选中多少片？</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>每组<span class="math inline">\(16/4=4\)</span>片，共<span
+class="math inline">\(16\text{K}/4\text{K}=4\)</span>组，总共16片。需要4路组片选，一次选中同组4片，共提供16位。</p>
+<p>按字编址时共16K个字地址，需要14位地址；每组片内地址12位，组选择2位。</p>
+</details>
+<h3
+id="自测3常规编号时哪些地址位选组">自测3：常规编号时哪些地址位选组</h3>
+<p>CPU有16根地址线，A₀最低。用<span
+class="math inline">\(4\text{K}\times4\)</span>位芯片组成16KB存储器，安排在0000H～3FFFH，按字节编址。哪些位用于片内、组选择和区域判断？</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>A₀～A₁₁用于片内寻址；A₁₂、A₁₃选择4个芯片组；A₁₄、A₁₅用于区域判断，取值为00时允许这块存储区响应。</p>
+</details>
+<h3 id="自测4为什么必须判断区域">自测4：为什么必须判断区域</h3>
+<p>沿用上一题，如果完全忽略A₁₄、A₁₅，0005H与4005H会发生什么？</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>两个地址的低14位完全相同，会选中同一组的同一个内部单元，形成地址镜像。若要求完整、唯一的地址映射，高位也要参与片选判断。</p>
+</details>
+<h3 id="自测5按地址求范围">自测5：按地址求范围</h3>
+<p>16位地址，采用连续、对齐编址，每组4K个单元。地址6B2CH所在组的首末地址是多少？</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>每组4K个单元，对应低12位片内地址。保留高4位6，将低12位清0得到6000H，置1得到6FFFH。</p>
+</details>
+<h2 id="十计算与画图检查顺序">十、计算与画图检查顺序</h2>
+<ol type="1">
+<li>明确bit、B和编址单位，先确定目标的单元数与位宽。</li>
+<li>计算每组片数、组数和总片数。</li>
+<li>确认地址位的高低方向，再划分片内地址与组选择位。</li>
+<li>计算各组起止地址，检查连续编址中的容量与边界。</li>
+<li>检查剩余高位和访存信号是否参与区域使能。</li>
+<li>连接数据线、片选线和读写控制线，核对同组芯片是否同时工作。</li>
+</ol>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=6"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/js/study.js?v=20261031"></script>
+  
+</body>
+</html>

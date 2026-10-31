@@ -54,7 +54,7 @@
       hub.querySelector('[data-study-result-count]').textContent = '共 ' + visible + ' 篇笔记';
       var empty = hub.querySelector('[data-study-empty]');
       empty.hidden = visible !== 0;
-      empty.textContent = query ? '没有找到相符的笔记，试试其他关键词。' : '这个科目还没有笔记。';
+      empty.textContent = query ? '没有找到相符的笔记，试试其他关键词。' : subject === '全部' ? '暂时还没有复习笔记。' : subject + '还没有笔记。';
       hub.querySelectorAll('[data-study-subject]').forEach(function (button) {
         button.setAttribute('aria-pressed', String(button.dataset.studySubject === subject));
       });

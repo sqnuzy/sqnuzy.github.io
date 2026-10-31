@@ -86,7 +86,9 @@
     if (feed) feed.dataset.layout = next;
     localStorage.setItem('firefly-post-layout', next);
     document.querySelectorAll('[data-post-layout]').forEach(function (button) {
-      button.classList.toggle('active', button.getAttribute('data-post-layout') === next);
+      var selected = button.getAttribute('data-post-layout') === next;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
     });
   }
   setPostLayout(layout);

@@ -3,43 +3,6 @@
   var hub = document.querySelector('[data-study-hub]');
   var note = document.querySelector('[data-study-note]');
   if (!hub && !note) return;
-  var storageKey = 'study-notes-reviews-v1';
-  var records = {};
-  var storageAvailable = true;
-  var renderHistory;
-  var renderNoteStatus;
-  function loadRecords() {
-    try {
-      var stored = JSON.parse(localStorage.getItem(storageKey) || '{}');
-      records = stored && typeof stored === 'object' && !Array.isArray(stored) ? stored : {};
-      storageAvailable = true;
-    } catch (error) { storageAvailable = false; }
-  }
-  loadRecords();
-
-  function day(value) {
-    var date = new Date(value);
-    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate();
-  }
-  function lastReview(key) {
-    var value = records[key];
-    return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : null;
-  }
-  function reviewedToday(key) {
-    var value = lastReview(key);
-    return value !== null && day(value) === day(Date.now());
-  }
-  function status(key) {
-    var value = lastReview(key);
-    if (!value) return '尚未复习';
-    return reviewedToday(key) ? '今天已复习' : '上次复习：' + new Date(value).toLocaleDateString('zh-CN');
-  }
-  function storageNotice() {
-    document.querySelectorAll('[data-study-storage-notice]').forEach(function (element) {
-      element.hidden = storageAvailable;
-    });
-  }
-
   if (hub) {
     var cards = Array.from(hub.querySelectorAll('[data-study-card]'));
     var subject = '全部';
@@ -59,18 +22,6 @@
         button.setAttribute('aria-pressed', String(button.dataset.studySubject === subject));
       });
     }
-    renderHistory = function () {
-      var todayCount = 0;
-      var unreviewed = 0;
-      cards.forEach(function (card) {
-        var key = card.dataset.noteKey;
-        if (reviewedToday(key)) todayCount++;
-        if (!lastReview(key)) unreviewed++;
-        card.querySelector('[data-card-review-status]').textContent = status(key);
-      });
-      hub.querySelector('[data-reviewed-today]').textContent = todayCount;
-      hub.querySelector('[data-unreviewed]').textContent = unreviewed;
-    };
     hub.querySelectorAll('[data-study-subject]').forEach(function (button) {
       button.addEventListener('click', function () {
         subject = button.dataset.studySubject;
@@ -79,7 +30,6 @@
     });
     input.addEventListener('input', renderFilter);
     renderFilter();
-    renderHistory();
   }
 
   if (note) {
@@ -91,27 +41,6 @@
     document.querySelectorAll('[data-toc] a').forEach(function (link) {
       link.addEventListener('click', closeMobileToc);
     });
-    var key = note.dataset.noteKey;
-    var complete = note.querySelector('[data-review-complete]');
-    var reviewStatus = note.querySelector('[data-note-review-status]');
-    renderNoteStatus = function () {
-      complete.disabled = reviewedToday(key);
-      complete.textContent = reviewedToday(key) ? '今天已复习' : '记为已复习';
-      reviewStatus.textContent = status(key) + ' · 记录保存在当前浏览器';
-    };
-    complete.hidden = false;
-    complete.addEventListener('click', function () {
-      records[key] = Date.now();
-      try {
-        localStorage.setItem(storageKey, JSON.stringify(records));
-        storageAvailable = true;
-      } catch (error) { storageAvailable = false; }
-      renderNoteStatus();
-      if (!storageAvailable) reviewStatus.textContent = '本次已复习；当前浏览器无法保存，下次打开不会保留记录。';
-      storageNotice();
-    });
-    renderNoteStatus();
-
     var toggle = note.querySelector('[data-review-toggle]');
     if (toggle) {
       var groups = [];
@@ -168,15 +97,4 @@
       });
     }
   }
-  function refresh() {
-    loadRecords();
-    if (hub) renderHistory();
-    if (note) renderNoteStatus();
-    storageNotice();
-  }
-  window.addEventListener('pageshow', refresh);
-  window.addEventListener('storage', function (event) {
-    if (event.key === storageKey || event.key === null) refresh();
-  });
-  storageNotice();
 }());

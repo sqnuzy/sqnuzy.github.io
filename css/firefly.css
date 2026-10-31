@@ -10,18 +10,12 @@
   --card: rgba(255, 255, 255, 0.78);
   --card-strong: rgba(255, 255, 255, 0.92);
   --line: rgba(74, 97, 128, 0.13);
-  --brand: #5d8cff;
-  --brand-2: #7bc7ff;
+  --brand: #2563eb;
+  --brand-2: #60a5fa;
   --pink: #ff8db3;
   --green: #65d6a4;
   --shadow: 0 18px 46px rgba(55, 75, 110, 0.14);
   --radius: 18px;
-}
-
-:root {
-  --user-hue: 212;
-  --brand: hsl(var(--user-hue), 92%, 66%);
-  --brand-2: hsl(calc(var(--user-hue) + 28), 90%, 72%);
 }
 
 :root[data-theme="dark"] {
@@ -36,8 +30,8 @@
   --card: rgba(24, 35, 54, 0.78);
   --card-strong: rgba(29, 43, 66, 0.94);
   --line: rgba(219, 232, 255, 0.12);
-  --brand: #8bb0ff;
-  --brand-2: #7bd6ff;
+  --brand: #60a5fa;
+  --brand-2: #93c5fd;
   --shadow: 0 18px 46px rgba(0, 0, 0, 0.28);
 }
 
@@ -393,8 +387,7 @@ pre {
   padding: 12px;
 }
 
-.theme-panel button,
-.style-panel button {
+.theme-panel button {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -411,101 +404,14 @@ pre {
   text-align: left;
 }
 
-.theme-panel button:hover,
-.style-panel button:hover {
-  color: #10a56f;
-  background: rgba(220, 252, 231, 0.85);
+.theme-panel button:hover {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
 }
 
-.theme-panel button.active,
-.style-panel button.active,
-.setting-row.active {
-  color: #38e0d2;
-  background: rgba(93, 140, 255, 0.1);
-}
-
-.style-panel {
-  width: 320px;
-  padding: 8px 16px 14px;
-}
-
-.panel-section {
-  margin: 10px 0;
-}
-
-.panel-heading {
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 8px 12px;
-}
-
-.panel-heading::before {
-  content: "";
-  position: absolute;
-  left: -12px;
-  top: 50%;
-  width: 4px;
-  height: 16px;
-  border-radius: 999px;
-  background: var(--brand);
-  transform: translateY(-50%);
-}
-
-.style-panel h2 {
-  margin: 0;
-  color: #111827;
-  font-size: 18px;
-}
-
-.panel-heading span {
-  display: grid;
-  min-width: 40px;
-  min-height: 28px;
-  place-items: center;
-  border-radius: 8px;
-  color: #334155;
-  background: rgba(0, 0, 0, 0.05);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.range-wrap {
-  height: 24px;
-  padding: 0 4px;
-  border-radius: 6px;
-  background: linear-gradient(90deg, #ff7676, #ffd166, #73d677, #67d2ff, #8f85ff, #ff7ad9);
-}
-
-.hue-range {
-  width: 100%;
-  height: 24px;
-  accent-color: hsl(var(--user-hue), 72%, 62%);
-}
-
-.setting-list {
-  display: grid;
-  gap: 4px;
-}
-
-.setting-row:disabled {
-  cursor: default;
-  opacity: 0.58;
-}
-
-.setting-icon {
-  display: grid;
-  width: 24px;
-  height: 24px;
-  place-items: center;
-}
-
-.panel-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
+.theme-panel button.active {
+  color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, transparent);
 }
 
 .music-panel {
@@ -569,8 +475,6 @@ pre {
 
 :root[data-theme="dark"] .header-actions .tool-btn,
 :root[data-theme="dark"] .theme-panel button,
-:root[data-theme="dark"] .style-panel button,
-:root[data-theme="dark"] .style-panel h2,
 :root[data-theme="dark"] .music-card h2,
 :root[data-theme="dark"] .navbar-search-results .search-result strong {
   color: var(--text);

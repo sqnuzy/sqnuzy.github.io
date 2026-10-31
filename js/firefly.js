@@ -59,22 +59,6 @@
     if (!event.target.closest('.header-actions') && !event.target.closest('.header-panel')) closePanels();
   });
 
-  var hue = localStorage.getItem('firefly-hue') || '78';
-  function applyHue(value) {
-    document.documentElement.style.setProperty('--user-hue', value);
-    localStorage.setItem('firefly-hue', value);
-    document.querySelectorAll('[data-hue-value]').forEach(function (node) {
-      node.textContent = value;
-    });
-  }
-  applyHue(hue);
-  document.querySelectorAll('[data-hue-range]').forEach(function (range) {
-    range.value = hue;
-    range.addEventListener('input', function () {
-      applyHue(range.value);
-    });
-  });
-
   var media = window.matchMedia('(prefers-color-scheme: dark)');
   media.addEventListener && media.addEventListener('change', function () {
     if ((localStorage.getItem('firefly-theme') || 'auto') === 'auto') applyTheme('auto');

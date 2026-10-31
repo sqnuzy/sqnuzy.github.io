@@ -1,12 +1,11 @@
 :root {
-  --user-hue: 78;
   --ref-bg: #f4f6f2;
   --ref-surface: #ffffff;
   --ref-ink: #161a17;
   --ref-muted: #667069;
   --ref-line: #dce2dc;
-  --ref-accent: hsl(var(--user-hue), 100%, 47%);
-  --ref-accent-ink: #202b00;
+  --ref-accent: #2563eb;
+  --ref-accent-ink: #ffffff;
   --ref-dark: #171c19;
   --ref-shadow: 0 14px 34px rgba(23, 32, 26, 0.07);
   --radius: 6px;
@@ -18,8 +17,8 @@
   --ref-ink: #f2f5f0;
   --ref-muted: #a0aaa3;
   --ref-line: #303832;
-  --ref-accent: hsl(var(--user-hue), 100%, 47%);
-  --ref-accent-ink: #172000;
+  --ref-accent: #60a5fa;
+  --ref-accent-ink: #0b1f3d;
   --ref-dark: #f0f4ef;
   --ref-shadow: 0 14px 34px rgba(0, 0, 0, 0.2);
 }
@@ -675,8 +674,8 @@ body:has(.article-grid) .site-main {
 }
 
 .article-body a {
-  color: #527000;
-  border-color: #9cbd43;
+  color: var(--ref-accent);
+  border-color: color-mix(in srgb, var(--ref-accent) 45%, transparent);
 }
 
 :root[data-theme="dark"] .article-body a {

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>复习笔记 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="按英语、数学和408整理学习笔记，遮住答案自测，记录每次复习。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css">
+  <link rel="stylesheet" href="/css/refined.css?v=7">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/archives/">归档</a>
+    
+      <a href="/categories/">分类</a>
+    
+      <a href="/tags/">标签</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+    <button class="tool-btn" type="button" data-panel-toggle="style" aria-label="显示设置">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="13.5" cy="6.5" r="2.5"></circle>
+        <circle cx="17.5" cy="12" r="2.5"></circle>
+        <circle cx="8.5" cy="12.5" r="2.5"></circle>
+        <path d="M12 3a9 9 0 0 0 0 18h1.2a2 2 0 0 0 1.55-3.27 1.5 1.5 0 0 1 1.15-2.48H17a4 4 0 0 0 4-4A8.25 8.25 0 0 0 12 3Z"></path>
+      </svg>
+    </button>
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel style-panel" data-panel="style" hidden>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>主题色相</h2>
+        <span data-hue-value>78</span>
+      </div>
+      <div class="range-wrap">
+        <input class="hue-range" type="range" min="0" max="360" step="5" value="78" data-hue-range>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>壁纸模式</h2>
+      </div>
+      <div class="setting-list">
+        <button type="button" class="setting-row active">
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v14H4z"></path><path d="m4 15 5-5 4 4 2-2 5 5"></path></svg>
+          </span>
+          <span>横幅</span>
+        </button>
+        <button type="button" class="setting-row" disabled>
+          <span class="setting-icon">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18v14H3z"></path><path d="M8 5v14M16 5v14"></path></svg>
+          </span>
+          <span>跟随当前主题</span>
+        </button>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="panel-heading">
+        <h2>文章布局</h2>
+      </div>
+      <div class="panel-grid">
+        <button type="button" data-post-layout="list">列表</button>
+        <button type="button" data-post-layout="grid">网格</button>
+      </div>
+    </section>
+  </div>
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      
+<section class="study-hub" data-study-hub>
+  <header class="study-intro">
+    <p class="article-kicker">STUDY NOTEBOOK</p>
+    <h1>复习笔记</h1>
+    <p>把知识点留下来，下次从这里继续。</p>
+    <div class="study-stats" aria-label="复习概况">
+      <span><strong>1</strong> 篇笔记</span>
+      <span><strong data-reviewed-today>0</strong> 篇今天已复习</span>
+      <span><strong data-unreviewed>1</strong> 篇尚未复习</span>
+    </div>
+  </header>
+  <div class="study-toolbar">
+    <nav class="study-subjects" aria-label="按科目筛选">
+      <button type="button" data-study-subject="全部" aria-pressed="true">全部 <span>1</span></button>
+      
+        <button type="button" data-study-subject="英语" aria-pressed="false">英语 <span>1</span></button>
+      
+        <button type="button" data-study-subject="数学" aria-pressed="false">数学 <span>0</span></button>
+      
+        <button type="button" data-study-subject="408" aria-pressed="false">408 <span>0</span></button>
+      
+    </nav>
+    <label class="study-search">
+      <span>搜索笔记</span>
+      <input type="search" data-study-search placeholder="标题、知识点或标签" autocomplete="off">
+    </label>
+  </div>
+  <p class="study-result-count" data-study-result-count aria-live="polite">共 1 篇笔记</p>
+  <div class="study-list">
+    
+      <article class="study-card" data-study-card data-subject="英语" data-note-key="/study-english-2026-10-31/" data-search-text="英语10.31｜四级翻译：15分钟便民生活圈 复习四级翻译中的常用搭配、单词拼写和句子结构，支持遮住答案逐条自测。 四级翻译 词汇短语 易错点">
+        <div class="study-card-meta">
+          <span class="study-subject-label">英语</span>
+          <time datetime="2026-10-31T08:00:00.000Z">2026-10-31</time>
+        </div>
+        <h2><a href="/study-english-2026-10-31/">英语10.31｜四级翻译：15分钟便民生活圈</a></h2>
+        <p>复习四级翻译中的常用搭配、单词拼写和句子结构，支持遮住答案逐条自测。</p>
+        <div class="study-tags"><span>#四级翻译</span><span>#词汇短语</span><span>#易错点</span></div>
+        <footer>
+          <span data-card-review-status>尚未复习</span>
+          <a class="study-button study-button-primary" href="/study-english-2026-10-31/">开始复习 <span aria-hidden="true">→</span></a>
+        </footer>
+      </article>
+    
+  </div>
+  <p class="study-empty" data-study-empty hidden>这个科目还没有笔记。</p>
+  <p class="study-footnote">复习记录保存在当前浏览器；换设备后可继续阅读和自测，记录分别保存。</p>
+  <p class="study-footnote" data-study-storage-notice hidden role="status">当前浏览器无法保存复习记录，阅读和自测仍可使用。</p>
+  <noscript><p>所有笔记已列在上方；启用 JavaScript 后可按科目筛选和记录复习。</p></noscript>
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=5"></script>
+  
+  <script src="/js/study.js?v=20261031"></script>
+  
+</body>
+</html>

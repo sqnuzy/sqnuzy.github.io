@@ -169,6 +169,18 @@
       toc.appendChild(link);
     });
     var tocLinks = Array.prototype.slice.call(toc.querySelectorAll('a'));
+    var tocFilter = document.querySelector('[data-toc-filter]');
+    if (tocFilter) {
+      tocFilter.addEventListener('input', function () {
+        var terms = tocFilter.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        var count = 0;
+        tocLinks.forEach(function (link) {
+          link.hidden = !terms.every(function (term) { return link.textContent.toLowerCase().indexOf(term) !== -1; });
+          if (!link.hidden) count++;
+        });
+        document.querySelector('[data-toc-empty]').hidden = count !== 0;
+      });
+    }
     var activeTick = 0;
     var setActiveToc = function () {
       if (activeTick) return;
@@ -199,6 +211,11 @@
     tocToggle.textContent = '目录';
     tocToggle.setAttribute('aria-label', '收起或展开文章目录');
     tocToggle.setAttribute('aria-expanded', 'true');
+    if (window.matchMedia('(max-width: 860px)').matches) {
+      tocCard.classList.add('is-collapsed');
+      if (postGrid) postGrid.classList.add('toc-collapsed');
+      tocToggle.setAttribute('aria-expanded', 'false');
+    }
     document.body.appendChild(tocToggle);
     tocToggle.addEventListener('click', function () {
       var collapsed = tocCard.classList.toggle('is-collapsed');
@@ -220,102 +237,4 @@
     backTop.classList.toggle('show', window.scrollY > 500);
   });
 
-  var navbarSearchInput = document.querySelector('[data-navbar-search-input]');
-  var navbarSearchOutput = document.querySelector('[data-navbar-search-results]');
-  var navbarSearchPanel = document.querySelector('[data-panel="search"]');
-  var navbarPosts = [];
-  function escapeHtml(value) {
-    return String(value || '').replace(/[&<>"']/g, function (char) {
-      return {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;'
-      }[char];
-    });
-  }
-
-  function openNavbarSearch() {
-    if (!navbarSearchPanel) return;
-    closePanels(navbarSearchPanel);
-    navbarSearchPanel.hidden = false;
-    navbarSearchPanel.classList.add('open');
-  }
-
-  function renderNavbarSearch(keyword) {
-    if (!navbarSearchOutput) return;
-    var query = keyword.trim().toLowerCase();
-    if (!query) {
-      navbarSearchOutput.innerHTML = '<p class="search-empty">输入关键词开始搜索。</p>';
-      return;
-    }
-
-    var results = navbarPosts.filter(function (post) {
-      return [post.title, post.content, post.tags, post.categories].join(' ').toLowerCase().indexOf(query) !== -1;
-    }).slice(0, 5);
-
-    navbarSearchOutput.innerHTML = results.length ? results.map(function (post) {
-      var title = escapeHtml(post.title || 'Untitled');
-      var url = escapeHtml(post.url || '#');
-      var text = escapeHtml((post.content || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').slice(0, 92));
-      return '<a class="search-result" href="' + url + '"><strong>' + title + '</strong><span>' + text + '</span></a>';
-    }).join('') : '<p class="search-empty">没有找到匹配结果。</p>';
-  }
-
-  if (navbarSearchInput && navbarSearchOutput) {
-    fetch('/search.json')
-      .then(function (res) { return res.json(); })
-      .then(function (data) { navbarPosts = Array.isArray(data) ? data : []; })
-      .catch(function () {
-        navbarSearchOutput.innerHTML = '<p class="search-empty">搜索索引暂不可用。</p>';
-      });
-
-    navbarSearchInput.addEventListener('focus', function () {
-      openNavbarSearch();
-      renderNavbarSearch(navbarSearchInput.value);
-    });
-    navbarSearchInput.addEventListener('input', function () {
-      openNavbarSearch();
-      renderNavbarSearch(navbarSearchInput.value);
-    });
-  }
-
-  var input = document.getElementById('search-input');
-  var output = document.getElementById('search-results');
-  if (!input || !output) return;
-
-  var posts = [];
-  fetch('/search.json')
-    .then(function (res) { return res.json(); })
-    .then(function (data) {
-      posts = Array.isArray(data) ? data : [];
-      var initialQuery = new URLSearchParams(window.location.search).get('q') || '';
-      if (initialQuery) {
-        input.value = initialQuery;
-        input.dispatchEvent(new Event('input'));
-      }
-    })
-    .catch(function () {
-      output.innerHTML = '<p class="search-empty">搜索索引暂不可用。</p>';
-    });
-
-  input.addEventListener('input', function () {
-    var keyword = input.value.trim().toLowerCase();
-    if (!keyword) {
-      output.innerHTML = '';
-      return;
-    }
-
-    var results = posts.filter(function (post) {
-      return [post.title, post.content, post.tags, post.categories].join(' ').toLowerCase().indexOf(keyword) !== -1;
-    }).slice(0, 12);
-
-    output.innerHTML = results.length ? results.map(function (post) {
-      var title = escapeHtml(post.title || '未命名文章');
-      var url = escapeHtml(post.url || '#');
-      var text = escapeHtml((post.content || '').replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').slice(0, 120));
-      return '<a class="search-result" href="' + url + '"><strong>' + title + '</strong><span>' + text + '</span></a>';
-    }).join('') : '<p class="search-empty">没有找到匹配结果。</p>';
-  });
 })();

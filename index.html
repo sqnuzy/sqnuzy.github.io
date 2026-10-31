@@ -10,6 +10,7 @@
   <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css">
   <link rel="stylesheet" href="/css/refined.css?v=7">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
   
   
   <link rel="preload" as="image" href="/images/home-banner.webp" media="(min-width: 761px)" fetchpriority="high">
@@ -45,15 +46,15 @@
     
       <a href="/">主页</a>
     
-      <a href="/archives/">归档</a>
-    
-      <a href="/categories/">分类</a>
-    
-      <a href="/tags/">标签</a>
+      <a href="/library/">内容导航</a>
     
       <a href="/study/">复习</a>
     
       <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
     
   </nav>
   <div class="header-actions">
@@ -150,7 +151,15 @@
       <section class="home-banner" aria-label="博客封面" style="--home-background-image: url('/images/home-banner.webp')"></section>
     
     <main class="site-main">
-      <section class="home-grid">
+      
+<nav class="home-shortcuts" aria-label="常用入口">
+  <a href="/library/"><strong>内容导航</strong><span>文章与章节，按主题查找</span></a>
+  <a href="/study/"><strong>复习笔记</strong><span>英语、数学与 408</span></a>
+  <a href="/todo/"><strong>训练清单</strong><span>安排任务与补题计划</span></a>
+  <a href="/todo/timer/"><strong>学习计时</strong><span>记录专注与学习时长</span></a>
+</nav>
+
+<section class="home-grid">
   <div class="post-list" id="latest-posts">
     <div class="feed-toolbar">
       <div class="section-title">
@@ -176,7 +185,7 @@
       
     </div>
     <h2>英语10.31｜四级翻译：15分钟便民生活圈</h2>
-    <p>主题：四级翻译——15分钟便民生活圈。整理必背短语、单词、易错用法和例句。</p>
+    <p>复习四级翻译中的常用搭配、单词拼写和句子结构，支持遮住答案逐条自测。</p>
     <footer class="post-card-footer">
       <div class="post-meta">
       
@@ -198,7 +207,7 @@
       
     </div>
     <h2>XCPC 近四年补题汇总（2023-2026）</h2>
-    <p>整理 2023 至 2026 年 XCPC 邀请赛与省赛的补题入口、备用入口和实时榜单，共收录 95 场比赛。</p>
+    <p>汇总 2023 至 2026 年 XCPC 邀请赛、省赛的补题入口与实时榜单。</p>
     <footer class="post-card-footer">
       <div class="post-meta">
       
@@ -220,7 +229,7 @@
       
     </div>
     <h2>sqnuzy的算法竞赛模版_1</h2>
-    <p>这篇文章整理常用的算法竞赛模版1</p>
+    <p>sqnuzy的算法竞赛模版</p>
     <footer class="post-card-footer">
       <div class="post-meta">
       
@@ -242,7 +251,7 @@
       
     </div>
     <h2>sqnuzy的算法竞赛模版_0</h2>
-    <p>这篇文章整理常用的算法竞赛模版0</p>
+    <p>sqnuzy的算法竞赛模版</p>
     <footer class="post-card-footer">
       <div class="post-meta">
       
@@ -295,13 +304,13 @@
         
           <a href="/tags/%E8%A1%A5%E9%A2%98/">补题</a>
         
-          <a href="/tags/%E6%A8%A1%E7%89%88/">模版</a>
-        
           <a href="/tags/%E5%9B%9B%E7%BA%A7%E7%BF%BB%E8%AF%91/">四级翻译</a>
         
           <a href="/tags/%E8%AF%8D%E6%B1%87%E7%9F%AD%E8%AF%AD/">词汇短语</a>
         
           <a href="/tags/%E6%98%93%E9%94%99%E7%82%B9/">易错点</a>
+        
+          <a href="/tags/%E6%A8%A1%E7%89%88/">模版</a>
         
       </div>
     </section>
@@ -319,7 +328,9 @@
 </footer>
 
   </div>
-  <script src="/js/firefly.js?v=5"></script>
+  <script src="/js/firefly.js?v=6"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
   
 </body>
 </html>

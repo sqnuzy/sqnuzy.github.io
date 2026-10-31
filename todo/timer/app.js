@@ -54,13 +54,9 @@
     return sec > 0 ? `${sec} 秒` : '0 分钟';
   }
 
-  /** 紧凑：1h20m / 25m */
-  function fmtShort(seconds) {
-    const sec = Math.max(0, Math.round(seconds));
-    const h = Math.floor(sec / 3600);
-    const m = Math.floor((sec % 3600) / 60);
-    if (h > 0) return `${h}h${m > 0 ? m + 'm' : ''}`;
-    return `${m}m`;
+  /** 小时：1.3h / 0.6h */
+  function fmtHours(seconds) {
+    return `${(Math.max(0, seconds) / 3600).toFixed(1)}h`;
   }
 
   const fmtClock = ts => {
@@ -915,20 +911,20 @@
     });
     const max = Math.max(60 * 60, ...dayTotals.map(d => d.sec));
     const sum = dayTotals.reduce((a, d) => a + d.sec, 0);
-    el.weekAvg.textContent = `日均 ${fmtShort(sum / 7)}`;
+    el.weekAvg.textContent = `日均 ${fmtHours(sum / 7)}`;
 
-    // 柱高最多占绘图区的 84%，给上方的分钟数留出位置
+    // 柱高最多占绘图区的 84%，给上方的小时数留出位置
     const TOP = 0.84;
     el.weekBars.innerHTML = dayTotals.map((d, i) => {
       const isToday = i === dayTotals.length - 1;
       const pct = d.sec > 0 ? Math.max(3, (d.sec / max) * TOP * 100) : 0;
       const parts = d.sec > 0 ? Array.from(d.bySub.entries()).map(([sid, sec]) =>
-        `<i style="--c:${esc(subjectColor(sid))};height:${(sec / d.sec * 100).toFixed(2)}%" title="${esc(subjectName(sid))} ${fmtHM(sec)}"></i>`
+        `<i style="--c:${esc(subjectColor(sid))};height:${(sec / d.sec * 100).toFixed(2)}%" title="${esc(subjectName(sid))} ${fmtHours(sec)}"></i>`
       ).join('') : '';
       const weekLabel = isToday ? '今天' : '周' + WEEK_CN[d.date.getDay()];
-      const total = d.sec >= 60 ? `<span class="bar-total" style="bottom:calc(${pct.toFixed(2)}% + 6px)">${Math.round(d.sec / 60)}</span>` : '';
+      const total = d.sec >= 60 ? `<span class="bar-total" style="bottom:calc(${pct.toFixed(2)}% + 6px)">${fmtHours(d.sec)}</span>` : '';
       const stack = `<div class="bar-stack${d.sec > 0 ? '' : ' empty'}"${d.sec > 0 ? ` style="height:${pct.toFixed(2)}%"` : ''}>${parts}</div>`;
-      return `<div class="bar-col${isToday ? ' today' : ''}" title="${d.date.getMonth() + 1}/${d.date.getDate()} 共 ${fmtHM(d.sec)}">
+      return `<div class="bar-col${isToday ? ' today' : ''}" title="${d.date.getMonth() + 1}/${d.date.getDate()} 共 ${fmtHours(d.sec)}">
         <div class="bar-plot">${total}${stack}</div>
         <span class="bar-day">${weekLabel}</span>
       </div>`;

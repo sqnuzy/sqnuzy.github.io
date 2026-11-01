@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>高数｜极限、连续、可导与介值性速记 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="从定义区分函数值、函数极限、导数与导函数极限，用三个反例速记连续、可导和介值性的关系。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=9">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031-3">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-10-31T16:00:00.000Z">2026-11-01</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>高数｜极限、连续、可导与介值性速记</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 数学</span>
+        
+        
+          <span>#高等数学 #极限 #连续 #导数 #介值性 #易错点</span>
+        
+      </div>
+      
+        <div class="study-tools study-tools-reading" data-study-note>
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <p><strong>有定义只说明有值；可导保证原函数连续；导函数存在不保证导函数连续。</strong></p>
+<p>以下讨论开区间内的点 <span
+class="math inline">\(a\)</span>，“极限存在”均指有限实数极限。</p>
+<span id="more"></span>
+<h2 id="一六个概念对照">一、六个概念对照</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>概念</th>
+<th>定义或判断条件</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>函数值 <span class="math inline">\(f(a)\)</span> 存在</td>
+<td>在这一点有确定的实数值，不保证附近有极限</td>
+</tr>
+<tr>
+<td>函数极限存在</td>
+<td><span class="math inline">\(\lim_{x\to a}f(x)=L\)</span>，不要求
+<span class="math inline">\(f(a)\)</span> 有定义</td>
+</tr>
+<tr>
+<td>原函数 <span class="math inline">\(f\)</span> 连续</td>
+<td><span class="math inline">\(f(a)\)</span> 有定义，且 <span
+class="math inline">\(\lim_{x\to a}f(x)=f(a)\)</span></td>
+</tr>
+<tr>
+<td>导数 <span class="math inline">\(f&#39;(a)\)</span> 存在</td>
+<td>差商极限 <span
+class="math inline">\(\lim_{h\to0}\frac{f(a+h)-f(a)}h\)</span>
+存在且有限</td>
+</tr>
+<tr>
+<td>导函数的极限存在</td>
+<td><span class="math inline">\(\lim_{x\to
+a}f&#39;(x)=L\)</span>，考察附近的导数值</td>
+</tr>
+<tr>
+<td>导函数 <span class="math inline">\(f&#39;\)</span> 连续</td>
+<td><span class="math inline">\(f&#39;(a)\)</span> 有定义，且 <span
+class="math inline">\(\lim_{x\to a}f&#39;(x)=f&#39;(a)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>“处处”表示区间内每一点都成立：<strong><span
+class="math inline">\(f\)</span> 处处存在＝处处有定义；<span
+class="math inline">\(f&#39;\)</span> 处处存在＝<span
+class="math inline">\(f\)</span> 处处可导。</strong></p>
+<h2 id="二用定义区分极限与连续">二、用定义区分极限与连续</h2>
+<p>两者都要求：对任意 <span
+class="math inline">\(\varepsilon&gt;0\)</span>，存在 <span
+class="math inline">\(\delta&gt;0\)</span>，使下列蕴含对所有相应的 <span
+class="math inline">\(x\)</span> 成立。</p>
+<p><span class="math display">\[
+\begin{aligned}
+\lim_{x\to a}f(x)=L:\quad
+&amp;0&lt;\lvert x-a\rvert&lt;\delta
+\Rightarrow \lvert f(x)-L\rvert&lt;\varepsilon,\\
+f\text{ 在 }a\text{ 连续}:\quad
+&amp;\lvert x-a\rvert&lt;\delta
+\Rightarrow \lvert f(x)-f(a)\rvert&lt;\varepsilon.
+\end{aligned}
+\]</span></p>
+<p>连续还要求 <span class="math inline">\(f(a)\)</span>
+有定义。<strong>极限只看附近；连续还要让极限等于点值。</strong></p>
+<p>连续的条件也可以写成 <span class="math inline">\(0&lt;\lvert
+x-a\rvert&lt;\delta\)</span>，因为 <span
+class="math inline">\(x=a\)</span> 时误差自动为零。实质区别是比较目标为
+<span class="math inline">\(L\)</span> 还是 <span
+class="math inline">\(f(a)\)</span>。</p>
+<p>分段函数检查：<strong>左极限＝右极限</strong>只保证双侧极限存在；还要<strong>等于该点的函数值</strong>才连续。</p>
+<h2 id="三可导与导函数连续">三、可导与导函数连续</h2>
+<p><span class="math display">\[
+\boxed{\text{处处可导}\Rightarrow\text{处处连续}\Rightarrow\text{处处有定义}}
+\]</span></p>
+<p>两个箭头的逆向一般都不成立。另有：连续一定有极限，有极限不一定连续。</p>
+<p><strong><span class="math inline">\(f&#39;(a)\)</span>
+存在考察差商极限；<span class="math inline">\(\lim_{x\to
+a}f&#39;(x)\)</span> 存在考察导函数的极限，二者不能混淆。</strong></p>
+<p>图片中的结论多了一个条件：若 <span class="math inline">\(f\)</span>
+在 <span class="math inline">\(a\)</span> 的某个邻域内可导（包括 <span
+class="math inline">\(a\)</span>），且</p>
+<p><span class="math display">\[
+\lim_{x\to a}f&#39;(x)=L,
+\]</span></p>
+<p>则必有 <span class="math inline">\(f&#39;(a)=L\)</span>，所以 <span
+class="math inline">\(f&#39;\)</span> 在 <span
+class="math inline">\(a\)</span>
+处连续。<strong>“导函数的极限存在”这个额外条件不能省。</strong></p>
+<details>
+<summary>
+展开一行证明：导数定义与洛必达法则
+</summary>
+<p>可导保证 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\(a\)</span> 处连续，下面的商为 <span
+class="math inline">\(0/0\)</span>
+型；题设又保证导函数的有限极限存在，因此可以使用洛必达法则：</p>
+<p><span class="math display">\[
+f&#39;(a)
+=\lim_{x\to a}\frac{f(x)-f(a)}{x-a}
+\overset{\text{洛必达}}{=}\lim_{x\to a}f&#39;(x)
+=L.
+\]</span></p>
+<p>第一个等号是导数定义，第二个等号由定理得到。</p>
+</details>
+<h2 id="四介值性取到中间的每个值">四、介值性：取到中间的每个值</h2>
+<p>区间上的函数 <span class="math inline">\(g\)</span> 有介值性，指任取
+<span class="math inline">\(u&lt;v\)</span>，对严格介于 <span
+class="math inline">\(g(u)\)</span> 与 <span
+class="math inline">\(g(v)\)</span> 之间的数 <span
+class="math inline">\(k\)</span>，都存在 <span
+class="math inline">\(c\in(u,v)\)</span>，使 <span
+class="math inline">\(g(c)=k\)</span>。</p>
+<ul>
+<li><strong>连续函数有介值性；有介值性不一定连续。</strong></li>
+<li><strong>达布定理：若 <span class="math inline">\(f\)</span>
+在一个区间内处处可导，则 <span class="math inline">\(f&#39;\)</span>
+在该区间上有介值性，即使 <span class="math inline">\(f&#39;\)</span>
+不连续。</strong></li>
+<li>因此，区间上处处存在的导函数不能有可去间断或跳跃间断，但可能振荡而不连续。</li>
+</ul>
+<p>例如 <span class="math inline">\(f&#39;(u)=1\)</span>、<span
+class="math inline">\(f&#39;(v)=5\)</span>，则 <span
+class="math inline">\(f&#39;\)</span> 在两点之间能取到 <span
+class="math inline">\((1,5)\)</span> 中的每一个数；这不要求 <span
+class="math inline">\(f&#39;\)</span> 在每一点都连续。</p>
+<h2 id="五三个反例">五、三个反例</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>函数</th>
+<th>在 <span class="math inline">\(0\)</span> 处的情况</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(g(x)=1\)</span>（<span
+class="math inline">\(x\ne0\)</span>），<span
+class="math inline">\(g(0)=0\)</span></td>
+<td>极限为 <span class="math inline">\(1\)</span>，点值为 <span
+class="math inline">\(0\)</span></td>
+<td>有定义、有极限，仍可不连续</td>
+</tr>
+<tr>
+<td><span class="math inline">\(g(x)=\lvert x\rvert\)</span></td>
+<td>连续，但左导数为 <span class="math inline">\(-1\)</span>、右导数为
+<span class="math inline">\(1\)</span></td>
+<td>连续不一定可导</td>
+</tr>
+<tr>
+<td><span class="math inline">\(f(x)=x^2\sin(1/x)\)</span>（<span
+class="math inline">\(x\ne0\)</span>），<span
+class="math inline">\(f(0)=0\)</span></td>
+<td><span
+class="math inline">\(f&#39;(0)=0\)</span>，但导函数的极限不存在</td>
+<td>处处可导，导函数仍可不连续</td>
+</tr>
+</tbody>
+</table>
+<p>第三例中，</p>
+<p><span class="math display">\[
+f&#39;(0)=\lim_{h\to0}h\sin(1/h)=0,
+\]</span></p>
+<p>而 <span class="math inline">\(x\ne0\)</span> 时，</p>
+<p><span class="math display">\[
+f&#39;(x)=2x\sin(1/x)-\cos(1/x),
+\]</span></p>
+<p>在 <span class="math inline">\(x\to0\)</span>
+时振荡。它不连续，却仍满足导函数的介值性。</p>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  <script src="/js/study.js?v=20261031-3"></script>
+  
+</body>
+</html>

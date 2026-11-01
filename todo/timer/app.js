@@ -89,7 +89,8 @@
         { id: 'math',    name: '数学',   color: '#FF6B4A' },
         { id: 'english', name: '英语',   color: '#2E8BFF' },
         { id: 'politics',name: '政治',   color: '#22C55E' },
-        { id: 'major',   name: '专业课', color: '#8B5CF6' }
+        { id: 'major',   name: '专业课', color: '#8B5CF6' },
+        { ...StudyReview.subject }
       ],
       sessions: [],
       settings: defaultSettings(),
@@ -176,6 +177,7 @@
   }
 
   let data = load();
+  if (!demoMode) StudyReview.merge(data);
   let dirty = false;
   let saveTimer = null;
 
@@ -191,6 +193,7 @@
     if (!dirty || demoMode) return;
     clearTimeout(saveTimer);
     try {
+      StudyReview.merge(data);
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
       dirty = false;
     } catch (err) {
@@ -1610,7 +1613,12 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     (Array.isArray(remote.sessions) ? remote.sessions : []).forEach(s => {
       if (s && s.id) sessions.set(String(s.id), s);
     });
-    data.sessions.forEach(s => sessions.set(s.id, s));   // 同 id 以本地为准
+    data.sessions.forEach(s => {
+      const incoming = sessions.get(s.id);
+      // 自动复习会定期更新同一段；同步时保留累计更长的快照。
+      if (String(s.id).startsWith('review-') && incoming && incoming.dur > s.dur) return;
+      sessions.set(s.id, s);   // 其余同 id 记录以本地为准
+    });
     const delS = new Set([...(data.deletedSessions || []), ...(remote.deletedSessions || [])]);
     delS.forEach(id => sessions.delete(id));
 
@@ -1649,12 +1657,14 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       next.settings.selected = next.subjects[0] ? next.subjects[0].id : '';
     }
     Object.assign(data, next);
+    if (!demoMode) StudyReview.merge(data);
     return before !== JSON.stringify(syncPayload());
   }
 
   function persistLocal() {
     if (demoMode) return;
     try {
+      StudyReview.merge(data);
       localStorage.setItem(STORE_KEY, JSON.stringify(data));
       dirty = false;
     } catch (err) { /* ignore */ }
@@ -1671,10 +1681,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     paintSync();
   }
 
+  function importReview() {
+    if (demoMode || !StudyReview.merge(data)) return;
+    save(true);
+    refreshAfterSync();
+  }
+
   async function syncNow(opts = {}) {
     if (demoMode) { if (!opts.silent) toast('预览模式不参与同步'); return false; }
     if (!syncCfg.token) { if (!opts.silent) toast('先连接 GitHub 账号'); return false; }
     if (syncing) return false;
+    importReview();
     syncing = true;
     syncError = '';
     paintSync();
@@ -2035,10 +2052,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     // 刷新 / 重新打开后，把没结束的那一段恢复成「已暂停」
     restoreSession();
 
+    // 独立日志与手动计时分开保存；切回计时页时即时更新统计。
+    window.addEventListener('storage', event => {
+      if (event.key === StudyReview.key) importReview();
+    });
+    window.addEventListener('pageshow', importReview);
+
     // 云同步：启动时拉一次；恢复网络 / 回到页面时再拉
     if (syncCfg.token && !DEMO) setTimeout(() => syncNow({ silent: true }), 1200);
     window.addEventListener('online', () => { if (syncCfg.token && !DEMO) syncNow({ silent: true }); });
     document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) importReview();
       if (!document.hidden && syncCfg.token && !DEMO) syncNow({ silent: true });
     });
 

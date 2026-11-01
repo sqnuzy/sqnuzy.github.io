@@ -125,8 +125,6 @@
     </header>
     <div class="article-body">
       <p>本篇整理本次学习中容易混淆的基础：RAM存什么，MAR和MDR存什么，以及怎样根据地址空间计算MAR位数。对应计组的计算机硬件组成、存储器容量和编址知识；学习3.3之前先把这些关系分清。</p>
-<p>继续学习：<a
-href="/study-408-co-memory-cpu/">计组3.3｜存储器扩展、片选与CPU连接</a>。</p>
 <span id="more"></span>
 <h2 id="一rammarmdr分别是什么">一、RAM、MAR、MDR分别是什么</h2>
 <p><strong>RAM是存储器；MAR和MDR是计组模型中CPU与主存交换信息所用的寄存器。</strong></p>
@@ -372,15 +370,6 @@ RAM内部偏移需要多少位？</p>
 </summary>
 <p>MAR至少26位，满足整个64MB地址空间；16MB连续存储区内部的偏移需要24位。</p>
 </details>
-<h2 id="八做题前的检查">八、做题前的检查</h2>
-<ul>
-<li>问的是RAM容量、MAR位数，还是MDR中的数据？</li>
-<li>容量单位是bit还是B？<span
-class="math inline">\(1\text{B}=8\text{bit}\)</span>。</li>
-<li>按字节编址还是按字编址？若按字，字长是多少？</li>
-<li>给出的是地址空间大小，还是实际安装容量？</li>
-<li>问芯片的逻辑地址位数，还是采用地址复用后的引脚数？</li>
-</ul>
 
     </div>
   </article>

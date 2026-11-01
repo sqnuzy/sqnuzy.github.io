@@ -992,7 +992,7 @@
       cells += `<button type="button" class="cal-cell${sec > 0 ? ' has' : ''}${isToday ? ' today' : ''}${isSel ? ' sel' : ''}"
         data-key="${k}" data-level="${level}" title="${esc(tip)}" aria-label="${esc(tip)}">
         <span class="d">${d}</span>
-        <span class="m">${sec > 0 ? Math.round(sec / 60) + 'm' : ''}</span>
+        <span class="m">${sec > 0 ? fmtHours(sec) : ''}</span>
       </button>`;
     }
 

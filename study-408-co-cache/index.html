@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>408计组｜Cache：映射、替换算法与写策略 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="整理 Cache 的局部性、命中率、地址映射、替换算法与写策略，附地址划分、访问序列和易错点，方便快速复习。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=9">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031-3">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-11-01T12:49:31.000Z">2026-11-01</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>408计组｜Cache：映射、替换算法与写策略</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 408 / 计算机组成原理</span>
+        
+        
+          <span>#408 #计算机组成原理 #存储系统 #Cache</span>
+        
+      </div>
+      
+        <div class="study-tools study-tools-reading" data-study-note>
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <p>Cache
+利用程序的局部性保存主存数据副本。本篇集中整理命中率、地址映射、替换算法和写策略，并用例题区分容易混淆的计算。</p>
+<span id="more"></span>
+<h2 id="基本原理与局部性">基本原理与局部性</h2>
+<p>Cache（高速缓冲存储器）保存部分主存数据的副本，缓和 CPU
+与主存的速度差异。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>局部性</th>
+<th>含义</th>
+<th>典型例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>时间局部性</td>
+<td>刚访问过的信息，不久后可能再次访问</td>
+<td>循环中的指令、反复使用的变量</td>
+</tr>
+<tr>
+<td>空间局部性</td>
+<td>刚访问过的地址，其附近地址可能很快被访问</td>
+<td>顺序访问数组、顺序执行指令</td>
+</tr>
+</tbody>
+</table>
+<p>主存向 Cache 调入数据以块为单位，Cache
+中的块也称为行。同一系统中，两者对应的数据块大小相等；CPU
+一次访问其中的字节或字，不等于每次使用整块。</p>
+<h2 id="命中率与平均访问时间">命中率与平均访问时间</h2>
+<p>设命中率为 <span class="math inline">\(H\)</span>，缺失率为 <span
+class="math inline">\(M\)</span>，访问一次 Cache、主存的时间分别为 <span
+class="math inline">\(t_c\)</span>、<span
+class="math inline">\(t_m\)</span>。</p>
+<p><span class="math display">\[
+H=\frac{\text{命中次数}}{\text{总访问次数}},\qquad M=1-H
+\]</span></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>访问方式</th>
+<th>命中耗时</th>
+<th>未命中耗时</th>
+<th>平均访问时间</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>先查 Cache，未命中再查主存</td>
+<td><span class="math inline">\(t_c\)</span></td>
+<td><span class="math inline">\(t_c+t_m\)</span></td>
+<td><span
+class="math inline">\(t=Ht_c+(1-H)(t_c+t_m)=t_c+Mt_m\)</span></td>
+</tr>
+<tr>
+<td>同时访问 Cache 与主存，命中则停止主存访问</td>
+<td><span class="math inline">\(t_c\)</span></td>
+<td><span class="math inline">\(t_m\)</span></td>
+<td><span class="math inline">\(t=Ht_c+(1-H)t_m\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>计算前先看题目的访问方式，以及是否另计块传输、回写等时间，不能混用公式。</p>
+<h2 id="分块与地址划分">分块与地址划分</h2>
+<p>以下按字节编址，容量和块大小均按题中二进制单位计算。</p>
+<p>设块大小为 <span class="math inline">\(B\)</span> 字节，主存地址为
+<span class="math inline">\(A\)</span>：</p>
+<p><span class="math display">\[
+\text{主存块号}=\left\lfloor\frac{A}{B}\right\rfloor,\qquad
+\text{块内地址}=A\bmod B
+\]</span></p>
+<ul>
+<li>块内地址位数为 <span class="math inline">\(b=\log_2
+B\)</span>。</li>
+<li>主存地址共 <span class="math inline">\(n\)</span> 位，则主存块号占
+<span class="math inline">\(n-b\)</span> 位。</li>
+<li>Cache 数据容量为 <span class="math inline">\(C\)</span> 字节，则
+Cache 行数为 <span class="math inline">\(L=C/B\)</span>。</li>
+</ul>
+<p>例如：主存为 <span
+class="math inline">\(4\,\mathrm{MB}=2^{22}\,\mathrm{B}\)</span>，块大小为
+<span
+class="math inline">\(1\,\mathrm{KB}=2^{10}\,\mathrm{B}\)</span>。</p>
+<ul>
+<li>主存地址为 <span class="math inline">\(22\)</span> 位，拆成 <span
+class="math inline">\(12\)</span> 位主存块号和 <span
+class="math inline">\(10\)</span> 位块内地址。</li>
+<li>主存共 <span class="math inline">\(2^{12}=4096\)</span> 块；若 Cache
+为 <span class="math inline">\(8\,\mathrm{KB}\)</span>，则共有 <span
+class="math inline">\(8\)</span> 行。</li>
+</ul>
+<h2 id="三种映射方式">三种映射方式</h2>
+<p>设待访问的主存块号为 <span class="math inline">\(j\)</span>，Cache 共
+<span class="math inline">\(L\)</span> 行。</p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>映射方式</th>
+<th>主存块可放的位置</th>
+<th>地址结构</th>
+<th>未命中时的替换范围</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全相联映射</td>
+<td>任意 Cache 行</td>
+<td>标记 + 块内地址</td>
+<td>Cache 满后，在所有行中选择</td>
+</tr>
+<tr>
+<td>直接映射</td>
+<td>唯一指定行：<span class="math inline">\(i=j\bmod L\)</span></td>
+<td>标记 + 行号 + 块内地址</td>
+<td>指定行已被其他有效块占用时，直接替换</td>
+</tr>
+<tr>
+<td>组相联映射</td>
+<td>指定组内的任意行</td>
+<td>标记 + 组号 + 块内地址</td>
+<td>指定组满后，仅在该组中选择</td>
+</tr>
+</tbody>
+</table>
+<p>对于 <span class="math inline">\(r\)</span> 路组相联：</p>
+<p><span class="math display">\[
+G=\frac{L}{r},\qquad \text{组号}=j\bmod G
+\]</span></p>
+<p>其中 <span class="math inline">\(G\)</span> 是组数，<span
+class="math inline">\(r\)</span> 是每组的行数。若 <span
+class="math inline">\(G=2^s\)</span>，则组号占 <span
+class="math inline">\(s\)</span> 位，标记占 <span
+class="math inline">\(n-s-b\)</span> 位。</p>
+<p><strong>“2 路”表示每组 2 行，不表示总共 2 组。</strong>
+主存地址中没有额外的“组内行号”字段，组内通过比较标记找到目标行。</p>
+<h3 id="命中判断">命中判断</h3>
+<p>先按行号或组号确定查找范围，再比较标记；必须满足有效位为 <span
+class="math inline">\(1\)</span>
+且标记匹配，才算命中，最后用块内地址定位数据。</p>
+<ul>
+<li>全相联：比较所有行的标记。</li>
+<li>直接映射：只检查指定行。</li>
+<li>组相联：比较指定组内各行的标记。</li>
+</ul>
+<h3 id="地址划分例题">地址划分例题</h3>
+<p>主存 <span
+class="math inline">\(256\,\mathrm{MB}=2^{28}\,\mathrm{B}\)</span>，按字节编址；Cache
+共 <span class="math inline">\(8\)</span> 行，每行 <span
+class="math inline">\(64\,\mathrm{B}=2^6\,\mathrm{B}\)</span>。</p>
+<p>主存地址共 <span class="math inline">\(28\)</span> 位，块内地址占
+<span class="math inline">\(6\)</span> 位，Cache 数据区容量为 <span
+class="math inline">\(8\times64=512\,\mathrm{B}\)</span>。</p>
+<table>
+<thead>
+<tr>
+<th>映射方式</th>
+<th>标记位数</th>
+<th>行号或组号位数</th>
+<th>块内地址位数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全相联</td>
+<td><span class="math inline">\(22\)</span></td>
+<td><span class="math inline">\(0\)</span></td>
+<td><span class="math inline">\(6\)</span></td>
+</tr>
+<tr>
+<td>直接映射（由同一组参数推得）</td>
+<td><span class="math inline">\(19\)</span></td>
+<td><span class="math inline">\(3\)</span></td>
+<td><span class="math inline">\(6\)</span></td>
+</tr>
+<tr>
+<td>2 路组相联</td>
+<td><span class="math inline">\(20\)</span></td>
+<td><span class="math inline">\(2\)</span>，因为 <span
+class="math inline">\(8/2=4\)</span> 组</td>
+<td><span class="math inline">\(6\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>以 2 路组相联为例，主存块号的末两位为 <span
+class="math inline">\(01\)</span>，因此属于第 <span
+class="math inline">\(1\)</span> 组，可放入 Cache 第 <span
+class="math inline">\(2\)</span> 或第 <span
+class="math inline">\(3\)</span> 行。块内地址 <span
+class="math inline">\(001110_2\)</span> 表示偏移量为 <span
+class="math inline">\(14\,\mathrm{B}\)</span>（从 <span
+class="math inline">\(0\)</span> 开始编号）。</p>
+<p>这里的 <span class="math inline">\(512\,\mathrm{B}\)</span>
+仅指数据区；计算 Cache
+总存储容量时，还需按题意计入标记、有效位及其他控制信息。</p>
+<h2 id="四种替换算法">四种替换算法</h2>
+<p>替换算法用于在允许放置的范围内选出要淘汰的块；有空闲行时先填入，不需要淘汰已有块。</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>算法</th>
+<th>淘汰谁</th>
+<th>记忆要点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAND：随机替换</td>
+<td>随机选一块</td>
+<td>实现简单，不利用访问历史，结果不固定</td>
+</tr>
+<tr>
+<td>FIFO：先进先出</td>
+<td>最早调入的块</td>
+<td>看装入先后；命中不改变先后顺序</td>
+</tr>
+<tr>
+<td>LRU：近期最少使用</td>
+<td>最久没有被访问的块</td>
+<td>看最近访问顺序；命中要更新顺序</td>
+</tr>
+<tr>
+<td>LFU：最不经常使用</td>
+<td>访问次数最少的块</td>
+<td>看频次；可能保留过去热门、现在不用的块</td>
+</tr>
+</tbody>
+</table>
+<p>LRU 看“多久没用”，LFU
+看“用了几次”，两者不能混淆。不同算法的效果取决于访问序列，不能认为 LRU
+在所有序列上都优于 LFU。</p>
+<h3 id="lru-的排序计数法">LRU 的排序计数法</h3>
+<p>采用排序计数法：<span class="math inline">\(0\)</span>
+表示最近使用，数值越大表示越久未使用；需要替换时淘汰最大值。</p>
+<ol type="1">
+<li>命中：该行计数清零，原先计数比它小的有效行加 <span
+class="math inline">\(1\)</span>，其他不变。</li>
+<li>未命中且有空闲行：新行计数置 <span
+class="math inline">\(0\)</span>，其他已占用行的计数加 <span
+class="math inline">\(1\)</span>。</li>
+<li>未命中且无空闲行：淘汰计数最大的行，新行计数置 <span
+class="math inline">\(0\)</span>，其他行的计数加 <span
+class="math inline">\(1\)</span>。</li>
+</ol>
+<p>组相联时，上述维护和比较只在所属组内进行。LFU
+则维护访问频次、淘汰最小值；频次相同时按题目指定的规则选择。</p>
+<h2 id="访问序列例题">访问序列例题</h2>
+<p>条件：Cache 初始为空，共 <span class="math inline">\(4\)</span>
+行，采用全相联映射。依次访问主存块：</p>
+<p><span class="math display">\[
+1,2,3,4,1,2,5,1,2,3,4,5
+\]</span></p>
+<table>
+<thead>
+<tr>
+<th>算法</th>
+<th>命中次数</th>
+<th>未命中次数</th>
+<th>替换次数</th>
+<th>命中率</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RAND，按本例指定选择</td>
+<td><span class="math inline">\(5\)</span></td>
+<td><span class="math inline">\(7\)</span></td>
+<td><span class="math inline">\(3\)</span></td>
+<td><span class="math inline">\(5/12\)</span></td>
+</tr>
+<tr>
+<td>FIFO</td>
+<td><span class="math inline">\(2\)</span></td>
+<td><span class="math inline">\(10\)</span></td>
+<td><span class="math inline">\(6\)</span></td>
+<td><span class="math inline">\(1/6\)</span></td>
+</tr>
+<tr>
+<td>LRU</td>
+<td><span class="math inline">\(4\)</span></td>
+<td><span class="math inline">\(8\)</span></td>
+<td><span class="math inline">\(4\)</span></td>
+<td><span class="math inline">\(1/3\)</span></td>
+</tr>
+<tr>
+<td>LFU，同频时选较小行号</td>
+<td><span class="math inline">\(5\)</span></td>
+<td><span class="math inline">\(7\)</span></td>
+<td><span class="math inline">\(3\)</span></td>
+<td><span class="math inline">\(5/12\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>前 <span class="math inline">\(4\)</span>
+次都是未命中，但只填入空闲行，没有发生替换。因此<strong>未命中次数不等于替换次数</strong>。</p>
+<p>LRU 的 <span class="math inline">\(4\)</span> 次命中发生在第 <span
+class="math inline">\(5\)</span>、<span
+class="math inline">\(6\)</span>、<span
+class="math inline">\(8\)</span>、<span class="math inline">\(9\)</span>
+次访问；发生替换时，淘汰顺序依次为块 <span
+class="math inline">\(3,4,5,1\)</span>。</p>
+<p>本例首次填充时按 Cache 行号从小到大放入；RAND 在三次替换时依次淘汰块
+<span class="math inline">\(3,4,1\)</span>。LFU 新装入行的频次从 <span
+class="math inline">\(0\)</span> 开始，命中加 <span
+class="math inline">\(1\)</span>，同频时优先淘汰行号较小的块。RAND 和
+LFU 在其他选择规则下可能得到不同结果。</p>
+<h2 id="cache-写策略">Cache 写策略</h2>
+<p>以下按
+Cache—主存两级模型理解。写策略分两个问题：<strong>写命中时，何时更新主存；写未命中时，要不要把目标块调入
+Cache。</strong></p>
+<h3 id="写命中全写法与回写法">写命中：全写法与回写法</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>策略</th>
+<th>怎么写</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全写法 / 写直达（Write-through）</td>
+<td>更新 Cache，同时向主存发送写入</td>
+<td>主存写操作较多，常配写缓冲</td>
+</tr>
+<tr>
+<td>回写法 / 写回法（Write-back）</td>
+<td>先只更新 Cache，并置脏位；脏块被替换时再写回主存</td>
+<td>可减少对同一块反复写主存的次数，需要维护脏位</td>
+</tr>
+</tbody>
+</table>
+<p>回写法为每行设置脏位（修改位）<span
+class="math inline">\(D\)</span>：</p>
+<ul>
+<li><span
+class="math inline">\(D=0\)</span>：该行未被写脏，替换时不必回写。</li>
+<li><span
+class="math inline">\(D=1\)</span>：该行已被修改，主存可能尚未更新，替换前需要回写。</li>
+<li>从主存装入新块时，脏位置 <span
+class="math inline">\(0\)</span>；随后按回写策略修改该块时，脏位置 <span
+class="math inline">\(1\)</span>。</li>
+</ul>
+<p><strong>有效位 <span class="math inline">\(V\)</span>
+判断“这一行是否有效”，脏位 <span class="math inline">\(D\)</span>
+判断“替换时是否需要回写”。</strong>
+即使当前操作是读未命中，若淘汰了脏块，也需要先回写旧块，再读取新块。<a
+target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html#handling-stores">原理核对：Cornell
+缓存课程</a>。</p>
+<h3 id="写未命中写分配与非写分配">写未命中：写分配与非写分配</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>策略</th>
+<th>怎么处理</th>
+<th>是否把目标块调入 Cache</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>写分配（Write-allocate）</td>
+<td>先调入目标主存块，再修改 Cache
+中的数据；主存何时更新由全写或回写策略决定</td>
+<td>是</td>
+</tr>
+<tr>
+<td>非写分配 / 不按写分配（No-write-allocate）</td>
+<td>直接写主存，不为本次写操作装入目标块</td>
+<td>否</td>
+</tr>
+</tbody>
+</table>
+<p>两者决定的是写未命中时是否装块，与写命中时的更新方式是两个可组合的选择。<a
+target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html#handling-stores">原理核对：Cornell
+缓存课程</a>。</p>
+<h3 id="常见搭配">常见搭配</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>搭配</th>
+<th>写命中</th>
+<th>写未命中</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>全写法 + 非写分配</td>
+<td>更新 Cache，并向主存写入</td>
+<td>直接写主存，不调入目标块</td>
+</tr>
+<tr>
+<td>回写法 + 写分配</td>
+<td>只更新 Cache，置 <span class="math inline">\(D=1\)</span></td>
+<td>调入目标块后修改，置 <span
+class="math inline">\(D=1\)</span>；若需淘汰脏块，先回写旧块</td>
+</tr>
+</tbody>
+</table>
+<p>这是常见搭配，并非强制绑定；做题时分别按题设判断。<a
+target="_blank" rel="noopener" href="https://csg.csail.mit.edu/6.5900/Lectures/L10handout.pdf#page=7">搭配核对：MIT
+写策略讲义，第 7 页</a>。</p>
+<h3 id="写缓冲">写缓冲</h3>
+<p>全写法常在 Cache 与主存之间设置写缓冲：先暂存待写的地址和数据，让 CPU
+继续执行，由缓冲向主存完成写入；缓冲满时仍可能等待。<a
+target="_blank" rel="noopener" href="https://www.cs.virginia.edu/~cr4bd/3130/F2025/readings/cache.html#write-through-versus-write-back">原理核对：Virginia
+缓存课程</a>。</p>
+<h2 id="易错点">易错点</h2>
+<ul>
+<li>块内地址位数看块大小；行号位数看行数；组号位数看组数。</li>
+<li>组相联先确定组，再在组内查找或替换，不能跨组随意放置。</li>
+<li>标记匹配还不够，有效位也必须为 <span
+class="math inline">\(1\)</span>。</li>
+<li>直接映射的替换对象固定，无需用 LRU、FIFO 等算法选择。</li>
+<li>FIFO 命中不调整装入顺序；LRU 命中要更新近期顺序；LFU
+命中增加访问频次。</li>
+<li>全写、回写决定何时更新主存；写分配、非写分配决定写未命中时是否装入目标块，见
+<a href="#cache-写策略">Cache 写策略</a>。</li>
+<li>非写分配策略下，写未命中只写主存，不调入目标块；不能认为每次访问主存都会将块调入
+Cache。</li>
+</ul>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  <script src="/js/study.js?v=20261031-3"></script>
+  
+</body>
+</html>

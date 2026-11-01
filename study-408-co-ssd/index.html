@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>408计组｜固态硬盘SSD：结构、读写特性与磨损均衡 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="根据课堂截图整理SSD的闪存翻译层、芯片与块页结构、按页读写和按块擦除的特点，以及动态、静态磨损均衡。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=9">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031-3">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-11-01T10:49:26.000Z">2026-11-01</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>408计组｜固态硬盘SSD：结构、读写特性与磨损均衡</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 408 / 计算机组成原理</span>
+        
+        
+          <span>#408 #计算机组成原理 #固态硬盘 #SSD #闪存 #磨损均衡</span>
+        
+      </div>
+      
+        <div class="study-tools study-tools-reading" data-study-note>
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <p>固态硬盘SSD基于闪存（Flash
+Memory）保存数据。本篇根据课堂截图整理其结构、读写特性和磨损均衡，并保留两张原图供复习对照。</p>
+<p><strong>先记住：按页读写、按块擦除；闪存翻译层负责地址映射，磨损均衡用于分散擦除次数。</strong></p>
+<span id="more"></span>
+<h2 id="一固态硬盘知识点总览">一、固态硬盘知识点总览</h2>
+<figure>
+<img src="/images/notes/co-ssd/ssd-overview.png"
+alt="固态硬盘SSD的原理、组成、读写性能、与机械硬盘的比较及磨损均衡知识图" />
+<figcaption
+aria-hidden="true">固态硬盘SSD的原理、组成、读写性能、与机械硬盘的比较及磨损均衡知识图</figcaption>
+</figure>
+<h2 id="二固态硬盘的结构">二、固态硬盘的结构</h2>
+<p>SSD主要由闪存翻译层和存储介质组成，存储介质包含多个闪存芯片。</p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>层次或部件</th>
+<th>作用与组成</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>闪存翻译层（FTL）</td>
+<td>将系统给出的逻辑块号映射到闪存中的物理地址，定位对应数据页</td>
+</tr>
+<tr>
+<td>闪存芯片（Flash Chip）</td>
+<td>SSD的存储介质，每个芯片包含多个块</td>
+</tr>
+<tr>
+<td>块（Block）</td>
+<td>每个块包含多个页，是擦除的基本单位</td>
+</tr>
+<tr>
+<td>页（Page）</td>
+<td>读写的基本单位</td>
+</tr>
+</tbody>
+</table>
+<p>结构关系：<strong>固态硬盘 → 多个闪存芯片 → 每个芯片中的多个块 →
+每个块中的多个页。</strong></p>
+<figure>
+<img src="/images/notes/co-ssd/ssd-structure.png"
+alt="固态硬盘结构示意图：I/O总线传入逻辑块号，经闪存翻译层映射到闪存芯片中的块和页" />
+<figcaption
+aria-hidden="true">固态硬盘结构示意图：I/O总线传入逻辑块号，经闪存翻译层映射到闪存芯片中的块和页</figcaption>
+</figure>
+<h2 id="三读写与擦除的单位">三、读写与擦除的单位</h2>
+<table>
+<thead>
+<tr>
+<th>操作</th>
+<th>基本单位</th>
+<th>需要记住的特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>读</td>
+<td>页</td>
+<td>支持随机访问，由电路定位数据位置</td>
+</tr>
+<tr>
+<td>写</td>
+<td>页</td>
+<td>写入前，对应位置需要处于已擦除状态，不能直接覆盖已有数据</td>
+</tr>
+<tr>
+<td>擦除</td>
+<td>块</td>
+<td>一次擦除整个块，不能只擦除其中某一页</td>
+</tr>
+</tbody>
+</table>
+<p>页中已有数据、需要更新时，按课件的简化过程理解：将块中需要保留的其他有效页复制到一个已擦除的新块，再写入更新后的数据页。</p>
+<p>因此，<strong>一次逻辑上的数据更新，可能涉及有效数据迁移和块擦除</strong>，这也是理解SSD写操作开销的关键。</p>
+<h2 id="四与机械硬盘的比较">四、与机械硬盘的比较</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>比较项</th>
+<th>固态硬盘SSD</th>
+<th>机械硬盘</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>定位数据的方式</td>
+<td>通过电路控制访问位置</td>
+<td>移动磁臂、旋转磁盘</td>
+</tr>
+<tr>
+<td>访问开销</td>
+<td>无机械寻道时间和旋转延迟，随机访问性能高</td>
+<td>存在寻道时间和旋转延迟</td>
+</tr>
+<tr>
+<td>运行特点</td>
+<td>安静、耐摔抗震、能耗低</td>
+<td>有机械运动部件</td>
+</tr>
+<tr>
+<td>成本</td>
+<td>单位容量成本较高</td>
+<td>单位容量成本较低</td>
+</tr>
+<tr>
+<td>反复写入的影响</td>
+<td>闪存块的擦写次数有限，需要管理磨损</td>
+<td>不受同样的闪存擦写次数限制</td>
+</tr>
+</tbody>
+</table>
+<h2 id="五磨损均衡技术">五、磨损均衡技术</h2>
+<p>如果总是反复写同一个块，该块会因擦除次数过多而更早损坏。磨损均衡的思路是：<strong>将擦除操作尽量分散到各个块，延长SSD的使用寿命。</strong></p>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr>
+<th>类型</th>
+<th>做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>动态磨损均衡</td>
+<td>写入数据时，优先选择累计擦除次数较少的空闲闪存块</td>
+</tr>
+<tr>
+<td>静态磨损均衡</td>
+<td>监测并迁移已有数据，让磨损较多的块承担以读取为主的任务，让磨损较少的块承担更多写入任务</td>
+</tr>
+</tbody>
+</table>
+<p>动态磨损均衡关注本次写入选择哪个空闲块；静态磨损均衡还会迁移长期不变的数据，让更多块参与磨损分摊。</p>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  <script src="/js/study.js?v=20261031-3"></script>
+  
+</body>
+</html>

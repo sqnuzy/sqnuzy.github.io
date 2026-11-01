@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>高数第6章｜中值定理、微分等式与不等式基础 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="从基础例题理解罗尔、拉格朗日与柯西中值定理，整理导数估计、绝对值、泰勒余项、最值与零点问题，附易错点和折叠自测。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=9">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261031-3">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-10-31T16:00:00.000Z">2026-11-01</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>高数第6章｜中值定理、微分等式与不等式基础</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 数学</span>
+        
+        
+          <span>#易错点 #高等数学 #中值定理 #微分等式 #微分不等式 #泰勒公式</span>
+        
+      </div>
+      
+        <div class="study-tools study-tools-reading" data-study-note>
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <p>一元函数微分学的证明题，可以先从两条主线入手：<strong>用导数的界控制函数值的变化；把目标式子认成某个辅助函数的导数。</strong>
+本篇按基础题的解题入口整理，重点说明为什么选这个函数、为什么选这个区间，以及用完定理后怎样继续。</p>
+<p>第一次复习先看拉格朗日中值定理、三个基础例题和绝对值估计，再学习罗尔、柯西与泰勒的应用。中值点先后顺序的证明放在进阶部分。</p>
+<span id="more"></span>
+<h2 id="一读完题先找什么线索">一、读完题，先找什么线索</h2>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>题目给出的条件或要求</th>
+<th>优先考虑的方法</th>
+<th>第一步做什么</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>出现两个函数值的差，或已知一点的函数值及导数的界</td>
+<td>拉格朗日中值定理</td>
+<td>找出两个自变量，确定区间</td>
+</tr>
+<tr>
+<td>两端函数值相等，要证明某处导数为零</td>
+<td>罗尔定理</td>
+<td>检查原函数或辅助函数的两端值</td>
+</tr>
+<tr>
+<td>出现两组端点差与对应的导数</td>
+<td>柯西中值定理</td>
+<td>找到配对的两个函数</td>
+</tr>
+<tr>
+<td>要证明一个具体式子的上下界</td>
+<td>单调性、最值</td>
+<td>把整个式子记作一个函数</td>
+</tr>
+<tr>
+<td>要估计函数与近似式之间的误差</td>
+<td>泰勒公式</td>
+<td>把差写成余项，再估计余项</td>
+</tr>
+</tbody>
+</table>
+<p>这些是选择方法的线索。正式使用时，还要检查连续、可导等条件。</p>
+<h2
+id="二拉格朗日中值定理连接函数差与导数">二、拉格朗日中值定理：连接函数差与导数</h2>
+<h3 id="定理的条件和公式">1. 定理的条件和公式</h3>
+<p>若函数 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([a,b]\)</span> 上连续，在 <span
+class="math inline">\((a,b)\)</span> 内可导，则存在 <span
+class="math inline">\(\xi\in(a,b)\)</span>，使</p>
+<p><span class="math display">\[
+f(b)-f(a)=f&#39;(\xi)(b-a).
+\]</span></p>
+<p>也可以写成</p>
+<p><span class="math display">\[
+\boxed{\frac{f(b)-f(a)}{b-a}=f&#39;(\xi)}.
+\]</span></p>
+<p>左边是整段的平均变化率；定理说明，它等于中间某一点的导数。</p>
+<p>对于两个不同的点 <span
+class="math inline">\(c,x\)</span>，同样可以写成</p>
+<p><span class="math display">\[
+\boxed{f(x)-f(c)=f&#39;(\xi)(x-c)},
+\]</span></p>
+<p>其中 <span class="math inline">\(\xi\)</span> 介于 <span
+class="math inline">\(c\)</span> 与 <span
+class="math inline">\(x\)</span> 之间。若 <span
+class="math inline">\(x&lt;c\)</span>，就在 <span
+class="math inline">\([x,c]\)</span> 上使用定理，整理后仍是这个等式。若
+<span class="math inline">\(x=c\)</span>，直接代入验证。</p>
+<p>注意三个字母的角色：</p>
+<ul>
+<li><span
+class="math inline">\(x\)</span>：题目中任意选定的一个数，使用定理时先把它看作固定端点。</li>
+<li><span class="math inline">\(t\)</span>：表示区间上的自变量，例如
+<span class="math inline">\(f(t)=\sin t\)</span>。</li>
+<li><span
+class="math inline">\(\xi\)</span>：区间内部的某个点，只知道它的位置，通常无须求出具体值。</li>
+</ul>
+<p>定理不要求导函数连续。区间端点只需要满足连续条件，导数取在内部的
+<span class="math inline">\(\xi\)</span> 处。</p>
+<h3 id="怎样选择函数和区间">2. 怎样选择函数和区间</h3>
+<p>先把式子补成两个函数值的差：</p>
+<table>
+<thead>
+<tr>
+<th>题目中的式子</th>
+<th>补成函数差</th>
+<th>选什么函数</th>
+<th>在哪个区间用定理</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(e^x-1\)</span>，<span
+class="math inline">\(x&gt;0\)</span></td>
+<td><span class="math inline">\(e^x-e^0\)</span></td>
+<td><span class="math inline">\(f(t)=e^t\)</span></td>
+<td><span class="math inline">\([0,x]\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\sin x\)</span>，<span
+class="math inline">\(x&gt;0\)</span></td>
+<td><span class="math inline">\(\sin x-\sin0\)</span></td>
+<td><span class="math inline">\(f(t)=\sin t\)</span></td>
+<td><span class="math inline">\([0,x]\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\ln(1+x)\)</span>，<span
+class="math inline">\(x&gt;0\)</span></td>
+<td><span class="math inline">\(\ln(1+x)-\ln1\)</span></td>
+<td><span class="math inline">\(f(t)=\ln t\)</span></td>
+<td><span class="math inline">\([1,1+x]\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(f(x)-f(1)\)</span></td>
+<td>已经是函数差</td>
+<td>题目给出的 <span class="math inline">\(f\)</span></td>
+<td>连接 <span class="math inline">\(1\)</span> 与 <span
+class="math inline">\(x\)</span> 的区间</td>
+</tr>
+</tbody>
+</table>
+<p><strong>已知哪个点的函数值，就优先考虑用那个点作比较的起点。</strong></p>
+<h3 id="用完定理后怎样继续">3. 用完定理后怎样继续</h3>
+<p>用中值定理得到等式之后，再利用 <span
+class="math inline">\(\xi\)</span> 所在的区间估计 <span
+class="math inline">\(f&#39;(\xi)\)</span>。</p>
+<p>例如，对 <span
+class="math inline">\(x&gt;c\)</span>，若区间内部满足</p>
+<p><span class="math display">\[
+m\le f&#39;(t)\le M,
+\]</span></p>
+<p>则</p>
+<p><span class="math display">\[
+m(x-c)\le f(x)-f(c)\le M(x-c).
+\]</span></p>
+<p>这里使用了 <span
+class="math inline">\(x-c&gt;0\)</span>。如果乘的是负数，不等号需要反向；使用绝对值估计时可以统一处理两种方向。</p>
+<h2
+id="三三个基础不等式从定理走到结论">三、三个基础不等式：从定理走到结论</h2>
+<h3 id="例1指数函数">例1：指数函数</h3>
+<p>设 <span class="math inline">\(x&gt;0\)</span>，证明</p>
+<p><span class="math display">\[
+x&lt;e^x-1&lt;xe^x.
+\]</span></p>
+<p><strong>思路：两边都有正数 <span
+class="math inline">\(x\)</span>，先除以 <span
+class="math inline">\(x\)</span>，观察中间的式子。</strong></p>
+<p>目标等价于</p>
+<p><span class="math display">\[
+1&lt;\frac{e^x-1}{x}&lt;e^x.
+\]</span></p>
+<p>而</p>
+<p><span class="math display">\[
+\frac{e^x-1}{x}=\frac{e^x-e^0}{x-0}
+\]</span></p>
+<p>正好是两个函数值之差除以两个自变量之差。</p>
+<p>取 <span class="math inline">\(f(t)=e^t\)</span>，在 <span
+class="math inline">\([0,x]\)</span> 上用拉格朗日中值定理，存在 <span
+class="math inline">\(\xi\in(0,x)\)</span>，使</p>
+<p><span class="math display">\[
+\frac{e^x-1}{x}=f&#39;(\xi)=e^\xi.
+\]</span></p>
+<p>因为指数函数递增，</p>
+<p><span class="math display">\[
+0&lt;\xi&lt;x
+\quad\Longrightarrow\quad
+1&lt;e^\xi&lt;e^x.
+\]</span></p>
+<p>代回后乘以正数 <span class="math inline">\(x\)</span>，得到</p>
+<p><span class="math display">\[
+\boxed{x&lt;e^x-1&lt;xe^x}.
+\]</span></p>
+<h3
+id="例2正弦函数重点区分函数值与导数值">例2：正弦函数，重点区分函数值与导数值</h3>
+<p>设 <span
+class="math inline">\(0&lt;x&lt;\frac{\pi}{2}\)</span>，证明</p>
+<p><span class="math display">\[
+x\cos x&lt;\sin x&lt;x.
+\]</span></p>
+<p>取 <span class="math inline">\(f(t)=\sin t\)</span>，在 <span
+class="math inline">\([0,x]\)</span> 上用拉格朗日中值定理，存在 <span
+class="math inline">\(\xi\in(0,x)\)</span>，使</p>
+<p><span class="math display">\[
+\frac{\sin x-\sin0}{x-0}=f&#39;(\xi).
+\]</span></p>
+<p>因为</p>
+<p><span class="math display">\[
+f&#39;(t)=\cos t,
+\]</span></p>
+<p>所以</p>
+<p><span class="math display">\[
+\boxed{\frac{\sin x}{x}=\cos\xi}.
+\]</span></p>
+<p>接下来比较的是 <span class="math inline">\(\cos\xi\)</span>
+的大小。由</p>
+<p><span class="math display">\[
+0&lt;\xi&lt;x&lt;\frac{\pi}{2},
+\]</span></p>
+<p>以及余弦函数在这个区间上单调递减，得到</p>
+<p><span class="math display">\[
+\cos0&gt;\cos\xi&gt;\cos x.
+\]</span></p>
+<p>于是</p>
+<p><span class="math display">\[
+\cos x&lt;\frac{\sin x}{x}&lt;1.
+\]</span></p>
+<p>乘以正数 <span class="math inline">\(x\)</span>，得到</p>
+<p><span class="math display">\[
+\boxed{x\cos x&lt;\sin x&lt;x}.
+\]</span></p>
+<blockquote>
+<p>易错点：选 <span class="math inline">\(f(t)=\sin t\)</span>
+后，中值定理右边是 <span
+class="math inline">\(f&#39;(\xi)=\cos\xi\)</span>。后面应当利用余弦函数的单调性。<span
+class="math inline">\(\sin t\)</span> 递增这个判断虽然正确，但不能直接把
+<span class="math inline">\(\sin x/x\)</span> 当成 <span
+class="math inline">\(\sin\xi\)</span>。</p>
+</blockquote>
+<h3 id="例3对数函数">例3：对数函数</h3>
+<p>设 <span class="math inline">\(x&gt;0\)</span>，证明</p>
+<p><span class="math display">\[
+\frac{x}{1+x}&lt;\ln(1+x)&lt;x.
+\]</span></p>
+<p>取 <span class="math inline">\(f(t)=\ln t\)</span>，在 <span
+class="math inline">\([1,1+x]\)</span> 上用拉格朗日中值定理，存在 <span
+class="math inline">\(\xi\in(1,1+x)\)</span>，使</p>
+<p><span class="math display">\[
+\ln(1+x)-\ln1=\frac{x}{\xi}.
+\]</span></p>
+<p>因为 <span class="math inline">\(1&lt;\xi&lt;1+x\)</span>，所以</p>
+<p><span class="math display">\[
+\frac1{1+x}&lt;\frac1\xi&lt;1.
+\]</span></p>
+<p>乘以 <span class="math inline">\(x&gt;0\)</span>，即得</p>
+<p><span class="math display">\[
+\boxed{\frac{x}{1+x}&lt;\ln(1+x)&lt;x}.
+\]</span></p>
+<p>同样的结论也可以用作差法证明。例如，证明 <span
+class="math inline">\(\ln(1+x)\le x\)</span> 时，令</p>
+<p><span class="math display">\[
+F(x)=x-\ln(1+x).
+\]</span></p>
+<p>对于 <span class="math inline">\(x\ge0\)</span>，</p>
+<p><span class="math display">\[
+F&#39;(x)=\frac{x}{1+x}\ge0,\qquad F(0)=0.
+\]</span></p>
+<p>因此 <span
+class="math inline">\(F(x)\ge0\)</span>。这个方法的关键是：<strong>作差后找一个已知函数值，再利用单调性比较。</strong></p>
+<h2 id="四导数的界与绝对值估计">四、导数的界与绝对值估计</h2>
+<h3 id="通用推导">1. 通用推导</h3>
+<p>若 <span
+class="math inline">\(f(c)=A\)</span>，函数满足中值定理条件，并且连接
+<span class="math inline">\(c,x\)</span> 的区间内部有</p>
+<p><span class="math display">\[
+|f&#39;(t)|\le M,\qquad M\ge0,
+\]</span></p>
+<p>则</p>
+<p><span class="math display">\[
+f(x)-A=f&#39;(\xi)(x-c).
+\]</span></p>
+<p>取绝对值得</p>
+<p><span class="math display">\[
+\boxed{|f(x)-A|\le M|x-c|}.
+\]</span></p>
+<p>这首先控制了函数相对于已知值 <span class="math inline">\(A\)</span>
+的变化。再用三角不等式：</p>
+<p><span class="math display">\[
+\begin{aligned}
+|f(x)|
+&amp;=|A+[f(x)-A]|\\
+&amp;\le |A|+|f(x)-A|\\
+&amp;\le |A|+M|x-c|.
+\end{aligned}
+\]</span></p>
+<p>因此</p>
+<p><span class="math display">\[
+\boxed{|f(x)|\le |A|+M|x-c|}.
+\]</span></p>
+<h3 id="具体例题已知一个点的函数值">2. 具体例题：已知一个点的函数值</h3>
+<p>设 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([0,2]\)</span> 上连续，在 <span
+class="math inline">\((0,2)\)</span> 内可导，且</p>
+<p><span class="math display">\[
+f(1)=2,\qquad |f&#39;(t)|\le3.
+\]</span></p>
+<p>证明对所有 <span class="math inline">\(x\in[0,2]\)</span>，都有</p>
+<p><span class="math display">\[
+|f(x)|\le2+3|x-1|.
+\]</span></p>
+<p>任取 <span class="math inline">\(x\in[0,2]\)</span>。当 <span
+class="math inline">\(x\ne1\)</span> 时，在连接 <span
+class="math inline">\(1\)</span> 与 <span
+class="math inline">\(x\)</span> 的区间上使用中值定理，得到</p>
+<p><span class="math display">\[
+f(x)-2=f&#39;(\xi)(x-1).
+\]</span></p>
+<p>于是</p>
+<p><span class="math display">\[
+|f(x)-2|\le3|x-1|,
+\]</span></p>
+<p>继而</p>
+<p><span class="math display">\[
+|f(x)|\le2+|f(x)-2|\le2+3|x-1|.
+\]</span></p>
+<p>当 <span class="math inline">\(x=1\)</span>
+时直接代入，结论也成立。</p>
+<p>“任取 <span class="math inline">\(x\)</span>”要求覆盖整个区间：</p>
+<table>
+<thead>
+<tr>
+<th><span class="math inline">\(x\)</span> 的位置</th>
+<th>使用的区间或方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(0\le x&lt;1\)</span></td>
+<td>在 <span class="math inline">\([x,1]\)</span> 上使用中值定理</td>
+</tr>
+<tr>
+<td><span class="math inline">\(x=1\)</span></td>
+<td>直接验证</td>
+</tr>
+<tr>
+<td><span class="math inline">\(1&lt;x\le2\)</span></td>
+<td>在 <span class="math inline">\([1,x]\)</span> 上使用中值定理</td>
+</tr>
+</tbody>
+</table>
+<p>不同的 <span class="math inline">\(x\)</span> 可以对应不同的 <span
+class="math inline">\(\xi\)</span>。</p>
+<p>另一个基础例子是 <span class="math inline">\(f(0)=1\)</span>、<span
+class="math inline">\(|f&#39;(t)|\le1\)</span>。对于 <span
+class="math inline">\(0&lt;x&lt;1\)</span>，同理有</p>
+<p><span class="math display">\[
+|f(x)-1|\le x,\qquad |f(x)|\le1+x.
+\]</span></p>
+<h3 id="绝对值的常用规则">3. 绝对值的常用规则</h3>
+<p><span class="math display">\[
+|uv|=|u|\,|v|,
+\qquad
+|u+v|\le|u|+|v|.
+\]</span></p>
+<p>当 <span class="math inline">\(M\ge0\)</span> 时，</p>
+<p><span class="math display">\[
+|u|\le M\iff -M\le u\le M.
+\]</span></p>
+<p>例如：</p>
+<p><span class="math display">\[
+|x-1|=
+\begin{cases}
+1-x,&amp;x&lt;1,\\
+x-1,&amp;x\ge1.
+\end{cases}
+\]</span></p>
+<p><strong>去掉绝对值之前先判断内部的符号。符号不确定时，可以保留绝对值继续推导。</strong></p>
+<h2 id="五罗尔定理与辅助函数">五、罗尔定理与辅助函数</h2>
+<h3 id="定理">1. 定理</h3>
+<p>若 <span class="math inline">\(F\)</span> 在 <span
+class="math inline">\([a,b]\)</span> 上连续，在 <span
+class="math inline">\((a,b)\)</span> 内可导，且</p>
+<p><span class="math display">\[
+F(a)=F(b),
+\]</span></p>
+<p>则存在 <span class="math inline">\(\xi\in(a,b)\)</span>，使</p>
+<p><span class="math display">\[
+\boxed{F&#39;(\xi)=0}.
+\]</span></p>
+<h3 id="辅助函数怎么想到">2. 辅助函数怎么想到</h3>
+<p>要证明“存在一个点，使某个含导数的式子等于零”，可以把目标式子当成
+<span class="math inline">\(F&#39;(x)\)</span>，倒着认求导公式：</p>
+<p><span class="math display">\[
+[xf(x)]&#39;=f(x)+xf&#39;(x),
+\]</span></p>
+<p><span class="math display">\[
+[x^2f(x)]&#39;=2xf(x)+x^2f&#39;(x).
+\]</span></p>
+<p>找到 <span class="math inline">\(F\)</span>
+后，还要检查它的两端值是否相等。</p>
+<h3 id="基础例题">3. 基础例题</h3>
+<p>设 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([1,2]\)</span> 上连续，在 <span
+class="math inline">\((1,2)\)</span> 内可导，且 <span
+class="math inline">\(f(1)=f(2)=0\)</span>。证明存在 <span
+class="math inline">\(\xi\in(1,2)\)</span>，使</p>
+<p><span class="math display">\[
+f(\xi)+\xi f&#39;(\xi)=0.
+\]</span></p>
+<p>目标式子对应乘积 <span class="math inline">\(xf(x)\)</span>
+的导数，所以令</p>
+<p><span class="math display">\[
+F(x)=xf(x).
+\]</span></p>
+<p><span class="math inline">\(F\)</span> 满足连续、可导条件，并且</p>
+<p><span class="math display">\[
+F(1)=F(2)=0.
+\]</span></p>
+<p>由罗尔定理，存在 <span
+class="math inline">\(\xi\in(1,2)\)</span>，使</p>
+<p><span class="math display">\[
+F&#39;(\xi)=f(\xi)+\xi f&#39;(\xi)=0.
+\]</span></p>
+<p>若目标变成 <span class="math inline">\(2\xi
+f(\xi)+\xi^2f&#39;(\xi)=0\)</span>，就考虑 <span
+class="math inline">\(F(x)=x^2f(x)\)</span>。</p>
+<h2
+id="六柯西中值定理识别两组端点差">六、柯西中值定理：识别两组端点差</h2>
+<h3 id="定理与比值形式">1. 定理与比值形式</h3>
+<p>若 <span class="math inline">\(f,g\)</span> 都在 <span
+class="math inline">\([a,b]\)</span> 上连续，在 <span
+class="math inline">\((a,b)\)</span> 内可导，则存在 <span
+class="math inline">\(\xi\in(a,b)\)</span>，使</p>
+<p><span class="math display">\[
+\boxed{
+[f(b)-f(a)]g&#39;(\xi)
+=[g(b)-g(a)]f&#39;(\xi)
+}.
+\]</span></p>
+<p>若进一步有 <span class="math inline">\(g&#39;(t)\ne0\)</span> 对所有
+<span class="math inline">\(t\in(a,b)\)</span> 成立，则 <span
+class="math inline">\(g(b)-g(a)\ne0\)</span>，可以写成</p>
+<p><span class="math display">\[
+\frac{f(b)-f(a)}{g(b)-g(a)}
+=\frac{f&#39;(\xi)}{g&#39;(\xi)}.
+\]</span></p>
+<h3 id="典型配对平方函数">2. 典型配对：平方函数</h3>
+<p>要证明在 <span class="math inline">\((a,b)\)</span> 内，方程</p>
+<p><span class="math display">\[
+2x[f(b)-f(a)]=(b^2-a^2)f&#39;(x)
+\]</span></p>
+<p>至少有一个实根，其中 <span
+class="math inline">\(0&lt;a&lt;b\)</span>。</p>
+<p>观察：</p>
+<p><span class="math display">\[
+b^2-a^2=g(b)-g(a),\qquad 2x=g&#39;(x).
+\]</span></p>
+<p>这提示取 <span class="math inline">\(g(x)=x^2\)</span>。对 <span
+class="math inline">\(f,g\)</span> 使用柯西中值定理，存在 <span
+class="math inline">\(\xi\in(a,b)\)</span>，使</p>
+<p><span class="math display">\[
+2\xi[f(b)-f(a)]=(b^2-a^2)f&#39;(\xi).
+\]</span></p>
+<p>所求的“至少一个实根”就是这个 <span
+class="math inline">\(\xi\)</span>。</p>
+<h3 id="典型配对对数函数">3. 典型配对：对数函数</h3>
+<p>若 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([1,e]\)</span> 上连续，在 <span
+class="math inline">\((1,e)\)</span> 内可导，要证明存在 <span
+class="math inline">\(\xi\in(1,e)\)</span>，使</p>
+<p><span class="math display">\[
+f(e)-f(1)=\xi f&#39;(\xi),
+\]</span></p>
+<p>可以配 <span class="math inline">\(g(x)=\ln x\)</span>，因为</p>
+<p><span class="math display">\[
+g(e)-g(1)=1,\qquad g&#39;(\xi)=\frac1\xi.
+\]</span></p>
+<p>由柯西中值定理，</p>
+<p><span class="math display">\[
+\frac{f(e)-f(1)}1=\frac{f&#39;(\xi)}{1/\xi}=\xi f&#39;(\xi).
+\]</span></p>
+<p><strong>柯西中值定理与柯西不等式是不同的知识点，写定理名称时要分清。</strong></p>
+<h2 id="七泰勒公式与余项估计">七、泰勒公式与余项估计</h2>
+<h3 id="一阶展开">1. 一阶展开</h3>
+<p>在满足泰勒定理条件时，例如 <span class="math inline">\(f\)</span>
+在包含 <span class="math inline">\(0\)</span> 和 <span
+class="math inline">\(x\)</span> 的区间上二阶连续可导，有</p>
+<p><span class="math display">\[
+\boxed{
+f(x)=f(0)+f&#39;(0)x+\frac{f&#39;&#39;(\xi)}2x^2
+},
+\]</span></p>
+<p>其中 <span class="math inline">\(\xi\)</span> 介于 <span
+class="math inline">\(0\)</span> 与 <span
+class="math inline">\(x\)</span> 之间。</p>
+<p>一阶展开保留到 <span class="math inline">\(x\)</span>
+项；这里的余项含有 <span class="math inline">\(x^2\)</span>
+和某个中间点处的二阶导数。</p>
+<p>若这一段上 <span class="math inline">\(|f&#39;&#39;(t)|\le
+M\)</span>，则</p>
+<p><span class="math display">\[
+\left|f(x)-f(0)-f&#39;(0)x\right|
+\le\frac M2|x|^2.
+\]</span></p>
+<h3 id="正弦函数的误差估计">2. 正弦函数的误差估计</h3>
+<p>对 <span class="math inline">\(f(x)=\sin x\)</span>，</p>
+<p><span class="math display">\[
+f(0)=0,\qquad f&#39;(0)=1,\qquad f&#39;&#39;(t)=-\sin t.
+\]</span></p>
+<p>所以</p>
+<p><span class="math display">\[
+\sin x=x-\frac{\sin\xi}{2}x^2.
+\]</span></p>
+<p>当 <span class="math inline">\(x\ne0\)</span> 时，</p>
+<p><span class="math display">\[
+\frac{\sin x}{x}-1=-\frac{\sin\xi}{2}x.
+\]</span></p>
+<p>利用 <span class="math inline">\(|\sin\xi|\le1\)</span>，得到</p>
+<p><span class="math display">\[
+\boxed{
+\left|\frac{\sin x}{x}-1\right|
+\le\frac12|x|
+}.
+\]</span></p>
+<p>这个推导同时适用于正、负的 <span
+class="math inline">\(x\)</span>。对于负数，只需说 <span
+class="math inline">\(\xi\)</span> 介于 <span
+class="math inline">\(0\)</span> 与 <span
+class="math inline">\(x\)</span> 之间，不能写成 <span
+class="math inline">\(0&lt;\xi&lt;x\)</span>。</p>
+<h2 id="八用单调性求最值讨论零点">八、用单调性求最值、讨论零点</h2>
+<h3 id="不等式转成最值问题">1. 不等式转成最值问题</h3>
+<p>证明 <span class="math inline">\(L\le F(x)\le
+U\)</span>，可以通过求指定区间上的最小值和最大值来完成。</p>
+<p>步骤是：求导、判断导数符号、确定单调区间，最后比较内部极值与端点值。</p>
+<p><span class="math display">\[
+F&#39;(x)&gt;0\Rightarrow F\text{在相应区间上递增},
+\]</span></p>
+<p><span class="math display">\[
+F&#39;(x)&lt;0\Rightarrow F\text{在相应区间上递减}.
+\]</span></p>
+<p>只有 <span class="math inline">\(F&#39;(x)=0\)</span>
+还不能直接判定极值；需要继续判断两侧的变化情况。</p>
+<h3 id="幂函数不等式">2. 幂函数不等式</h3>
+<p>设 <span class="math inline">\(0\le x\le1\)</span>、<span
+class="math inline">\(p&gt;1\)</span>，证明</p>
+<p><span class="math display">\[
+\frac1{2^{p-1}}\le x^p+(1-x)^p\le1.
+\]</span></p>
+<p>令</p>
+<p><span class="math display">\[
+F(x)=x^p+(1-x)^p.
+\]</span></p>
+<p>对于 <span class="math inline">\(0&lt;x&lt;1\)</span>，</p>
+<p><span class="math display">\[
+F&#39;(x)=p\left[x^{p-1}-(1-x)^{p-1}\right].
+\]</span></p>
+<p>因为 <span class="math inline">\(p-1&gt;0\)</span>，所以</p>
+<p><span class="math display">\[
+\begin{cases}
+F&#39;(x)&lt;0,&amp;0&lt;x&lt;\frac12,\\
+F&#39;(x)=0,&amp;x=\frac12,\\
+F&#39;(x)&gt;0,&amp;\frac12&lt;x&lt;1.
+\end{cases}
+\]</span></p>
+<p>因此先减后增，最小值为</p>
+<p><span class="math display">\[
+F\left(\frac12\right)=2\left(\frac12\right)^p=\frac1{2^{p-1}}.
+\]</span></p>
+<p>最大值在端点取得：</p>
+<p><span class="math display">\[
+F(0)=F(1)=1.
+\]</span></p>
+<p>下界等号在 <span class="math inline">\(x=\frac12\)</span>
+取得，上界等号在 <span class="math inline">\(x=0\)</span> 或 <span
+class="math inline">\(x=1\)</span> 取得。</p>
+<h3 id="三次方程实根个数">3. 三次方程实根个数</h3>
+<p>对方程</p>
+<p><span class="math display">\[
+x^3-3x+k=0,
+\]</span></p>
+<p>令 <span class="math inline">\(H(x)=x^3-3x+k\)</span>。由</p>
+<p><span class="math display">\[
+H&#39;(x)=3(x^2-1)
+\]</span></p>
+<p>可知，<span class="math inline">\(H\)</span> 在 <span
+class="math inline">\((-\infty,-1)\)</span> 上递增，在 <span
+class="math inline">\((-1,1)\)</span> 上递减，在 <span
+class="math inline">\((1,+\infty)\)</span> 上递增。</p>
+<p>两个极值为</p>
+<p><span class="math display">\[
+H(-1)=k+2,\qquad H(1)=k-2.
+\]</span></p>
+<p>再结合</p>
+<p><span class="math display">\[
+\lim_{x\to-\infty}H(x)=-\infty,\qquad
+\lim_{x\to+\infty}H(x)=+\infty,
+\]</span></p>
+<p>可得：</p>
+<table>
+<thead>
+<tr>
+<th>参数范围</th>
+<th>不同实根的个数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(-2&lt;k&lt;2\)</span></td>
+<td><span class="math inline">\(3\)</span> 个</td>
+</tr>
+<tr>
+<td><span class="math inline">\(k=2\)</span> 或 <span
+class="math inline">\(k=-2\)</span></td>
+<td><span class="math inline">\(2\)</span> 个，其中一个是二重根</td>
+</tr>
+<tr>
+<td><span class="math inline">\(k&gt;2\)</span> 或 <span
+class="math inline">\(k&lt;-2\)</span></td>
+<td><span class="math inline">\(1\)</span> 个</td>
+</tr>
+</tbody>
+</table>
+<p>其中，连续性和介值定理用来保证根存在；严格单调性用来说明相应区间内至多有一个根。</p>
+<h2
+id="九进阶怎样证明两个中值点的先后顺序">九、进阶：怎样证明两个中值点的先后顺序</h2>
+<p>设 <span
+class="math inline">\(a&lt;c&lt;b\)</span>，函数满足所需的连续、可导条件。先由拉格朗日中值定理，在
+<span class="math inline">\((a,c)\)</span> 内找到 <span
+class="math inline">\(\xi\)</span>，使</p>
+<p><span class="math display">\[
+f(c)-f(a)=f&#39;(\xi)(c-a).
+\]</span></p>
+<p>进一步要求找到 <span
+class="math inline">\(\eta\in(a,b)\)</span>，满足</p>
+<p><span class="math display">\[
+f(b)-f(a)=f&#39;(\eta)(b-a),\qquad \eta&gt;\xi.
+\]</span></p>
+<p>难点在于：<strong>还要建立两个中值点的位置关系。</strong>
+分别使用两次中值定理，只能先得到各自存在，还需要补上顺序的论证。</p>
+<details>
+<summary>
+展开完整证明：减去首尾连线，利用内部极值点
+</summary>
+<p>令</p>
+<p><span class="math display">\[
+m=\frac{f(b)-f(a)}{b-a},
+\qquad
+G(x)=f(x)-f(a)-m(x-a).
+\]</span></p>
+<p>这个辅助函数减去了连接首尾两点的直线，因此</p>
+<p><span class="math display">\[
+G(a)=G(b)=0.
+\]</span></p>
+<p>由前面选出的 <span class="math inline">\(\xi\)</span>，</p>
+<p><span class="math display">\[
+\begin{aligned}
+G&#39;(\xi)
+&amp;=f&#39;(\xi)-m\\
+&amp;=\frac{f(c)-f(a)}{c-a}-m\\
+&amp;=\frac{G(c)}{c-a}.
+\end{aligned}
+\]</span></p>
+<p>分三种情况：</p>
+<ol type="1">
+<li>若 <span class="math inline">\(G(c)=0\)</span>，在 <span
+class="math inline">\([c,b]\)</span> 上使用罗尔定理，得到 <span
+class="math inline">\(\eta\in(c,b)\)</span>，使 <span
+class="math inline">\(G&#39;(\eta)=0\)</span>，且 <span
+class="math inline">\(\eta&gt;\xi\)</span>。</li>
+<li>若 <span class="math inline">\(G(c)&gt;0\)</span>，则 <span
+class="math inline">\(G&#39;(\xi)&gt;0\)</span>。<span
+class="math inline">\(G\)</span> 在 <span
+class="math inline">\([\xi,b]\)</span> 上连续，存在最大值。因为 <span
+class="math inline">\(G&#39;(\xi)&gt;0\)</span>，左端点 <span
+class="math inline">\(\xi\)</span> 不是最大值点；因为 <span
+class="math inline">\(G(b)=0&lt;G(c)\)</span>，右端点 <span
+class="math inline">\(b\)</span> 也不是最大值点。因此最大值在某个内点
+<span class="math inline">\(\eta\in(\xi,b)\)</span> 取得，由费马定理有
+<span class="math inline">\(G&#39;(\eta)=0\)</span>。</li>
+<li>若 <span class="math inline">\(G(c)&lt;0\)</span>，则 <span
+class="math inline">\(G&#39;(\xi)&lt;0\)</span>。同理考虑 <span
+class="math inline">\([\xi,b]\)</span>
+上的最小值：左右端点都不能是最小值点，故存在内点 <span
+class="math inline">\(\eta&gt;\xi\)</span>，使 <span
+class="math inline">\(G&#39;(\eta)=0\)</span>。</li>
+</ol>
+<p>于是</p>
+<p><span class="math display">\[
+f&#39;(\eta)=m=\frac{f(b)-f(a)}{b-a},
+\]</span></p>
+<p>所需等式和顺序同时成立。</p>
+</details>
+<p>题面检查：拉格朗日中值定理中的左边应是函数差 <span
+class="math inline">\(f(c)-f(a)\)</span>。若误写成 <span
+class="math inline">\(f(c)+f(a)\)</span>，一般不成立，例如取常函数 <span
+class="math inline">\(f(x)=1\)</span> 即可发现问题。</p>
+<h2 id="十四道自测">十、四道自测</h2>
+<p>先独立写出“选哪个函数、选哪个区间或辅助函数”，再展开解析核对。</p>
+<h3 id="自测1换元使用已有不等式">自测1：换元使用已有不等式</h3>
+<p>已知对所有 <span class="math inline">\(u&gt;0\)</span>，</p>
+<p><span class="math display">\[
+\frac{u}{1+u}&lt;\ln(1+u)&lt;u.
+\]</span></p>
+<p>证明对所有 <span class="math inline">\(x&gt;0\)</span>，</p>
+<p><span class="math display">\[
+\frac1{1+x}&lt;\ln\left(1+\frac1x\right)&lt;\frac1x.
+\]</span></p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>因为 <span class="math inline">\(x&gt;0\)</span>，可令 <span
+class="math inline">\(u=1/x&gt;0\)</span>。代入已有结论：</p>
+<p><span class="math display">\[
+\frac{\frac1x}{1+\frac1x}
+&lt;\ln\left(1+\frac1x\right)&lt;\frac1x.
+\]</span></p>
+<p>左端化简为 <span
+class="math inline">\(1/(1+x)\)</span>，即得结论。</p>
+</details>
+<h3 id="自测2导数有界与绝对值">自测2：导数有界与绝对值</h3>
+<p>设 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([0,2]\)</span> 上连续，在 <span
+class="math inline">\((0,2)\)</span> 内可导，<span
+class="math inline">\(f(1)=2\)</span>，且 <span
+class="math inline">\(|f&#39;(t)|\le3\)</span>。证明</p>
+<p><span class="math display">\[
+|f(x)|\le2+3|x-1|,\qquad x\in[0,2].
+\]</span></p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>对于任意 <span class="math inline">\(x\ne1\)</span>，在连接 <span
+class="math inline">\(1\)</span> 和 <span
+class="math inline">\(x\)</span> 的闭区间上使用拉格朗日中值定理：</p>
+<p><span class="math display">\[
+f(x)-2=f&#39;(\xi)(x-1).
+\]</span></p>
+<p>所以</p>
+<p><span class="math display">\[
+|f(x)-2|\le3|x-1|.
+\]</span></p>
+<p>再由三角不等式，</p>
+<p><span class="math display">\[
+|f(x)|\le2+|f(x)-2|\le2+3|x-1|.
+\]</span></p>
+<p>当 <span class="math inline">\(x=1\)</span> 时，直接代入也成立。对于
+<span class="math inline">\(x=0,2\)</span>，连续性条件已满足，<span
+class="math inline">\(\xi\)</span> 仍在开区间内部。</p>
+</details>
+<h3 id="自测3最值与等号条件">自测3：最值与等号条件</h3>
+<p>设 <span class="math inline">\(0\le x\le1\)</span>，用导数证明</p>
+<p><span class="math display">\[
+\frac18\le x^4+(1-x)^4\le1,
+\]</span></p>
+<p>并指出两边等号分别何时成立。</p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>令 <span class="math inline">\(F(x)=x^4+(1-x)^4\)</span>，则</p>
+<p><span class="math display">\[
+F&#39;(x)=4[x^3-(1-x)^3].
+\]</span></p>
+<p>在 <span class="math inline">\((0,1/2)\)</span> 上导数为负，在 <span
+class="math inline">\((1/2,1)\)</span> 上导数为正，因此最小值为</p>
+<p><span class="math display">\[
+F(1/2)=2(1/2)^4=\frac18.
+\]</span></p>
+<p>最大值为 <span class="math inline">\(F(0)=F(1)=1\)</span>。下界等号在
+<span class="math inline">\(x=1/2\)</span> 成立，上界等号在 <span
+class="math inline">\(x=0\)</span> 或 <span
+class="math inline">\(x=1\)</span> 成立。</p>
+</details>
+<h3
+id="自测4识别柯西中值定理中的另一个函数">自测4：识别柯西中值定理中的另一个函数</h3>
+<p>设 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([1,e]\)</span> 上连续，在 <span
+class="math inline">\((1,e)\)</span> 内可导。证明存在 <span
+class="math inline">\(\xi\in(1,e)\)</span>，使</p>
+<p><span class="math display">\[
+f(e)-f(1)=\xi f&#39;(\xi).
+\]</span></p>
+<details>
+<summary>
+查看答案与解析
+</summary>
+<p>取 <span class="math inline">\(g(x)=\ln x\)</span>，在 <span
+class="math inline">\([1,e]\)</span> 上对 <span
+class="math inline">\(f,g\)</span> 使用柯西中值定理，存在 <span
+class="math inline">\(\xi\in(1,e)\)</span>，使</p>
+<p><span class="math display">\[
+[f(e)-f(1)]\frac1\xi
+=[\ln e-\ln1]f&#39;(\xi)=f&#39;(\xi).
+\]</span></p>
+<p>因为 <span class="math inline">\(\xi&gt;0\)</span>，乘以 <span
+class="math inline">\(\xi\)</span> 即得结论。</p>
+<p>也可令 <span class="math inline">\(F(x)=f(x)-[f(e)-f(1)]\ln
+x\)</span>，检查 <span
+class="math inline">\(F(1)=F(e)\)</span>，再使用罗尔定理。</p>
+</details>
+<h2 id="十一写完证明后的检查">十一、写完证明后的检查</h2>
+<ul>
+<li>是否说明了在哪个闭区间连续、在哪个开区间可导？</li>
+<li>用的是罗尔、拉格朗日还是柯西中值定理？定理名称与公式是否对应？</li>
+<li>已经求导了吗？<span class="math inline">\(f(\xi)\)</span> 与 <span
+class="math inline">\(f&#39;(\xi)\)</span> 是否混淆？</li>
+<li>用完定理之后，比较的是哪个函数的大小？它在当前区间递增还是递减？</li>
+<li>乘除一个量之前，是否确认了它的正负与是否为零？</li>
+<li>去绝对值之前，是否判断了内部符号？</li>
+<li>要证明整个区间成立，是否任取了 <span
+class="math inline">\(x\)</span>，并覆盖了 <span
+class="math inline">\(x=c\)</span> 与端点？</li>
+<li>辅助函数的两端值是否真的相等？</li>
+<li>若题目要求两个中值点有先后顺序，是否补上了位置关系的证明？</li>
+</ul>
+<p>练习时，先把基础步骤练熟：识别函数差，确定区间，写出中值定理的等式，再根据导数与中值点的位置比较大小。接着练绝对值估计、辅助函数与余项估计，最后处理多步构造和中值点顺序问题。</p>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  <script src="/js/study.js?v=20261031-3"></script>
+  
+</body>
+</html>

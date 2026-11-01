@@ -55,8 +55,9 @@
   var suspended = false;
   function persist() {
     if (!active) return;
-    var seconds = Math.floor((performance.now() - active.since) / 1000);
-    if (seconds <= 0) return;
+    var elapsedMs = performance.now() - active.since;
+    if (elapsedMs <= 10000) return; // 超过 10 秒才记录，达标后计入整段时间。
+    var seconds = Math.floor(elapsedMs / 1000);
     var entry = {
       id: active.id,
       ts: Date.now(),

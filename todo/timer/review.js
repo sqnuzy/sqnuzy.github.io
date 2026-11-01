@@ -3,6 +3,28 @@
   'use strict';
   var KEY = 'kaoyan-study-review-v1';
   var SUBJECT = { id: 'note-review', name: '笔记复习', color: '#06B6D4' };
+  var MANUAL_PREFIX = 'kaoyan-study-timer-active-v1:';
+  var manualKey = MANUAL_PREFIX + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+
+  function setManualRunning(running) {
+    try {
+      if (running) localStorage.setItem(manualKey, String(Date.now()));
+      else localStorage.removeItem(manualKey);
+    } catch (err) { /* 存储不可用时保持静默。 */ }
+  }
+
+  function hasManualRunning() {
+    try {
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+        if (!key || key.indexOf(MANUAL_PREFIX) !== 0) continue;
+        var updatedAt = Number(localStorage.getItem(key));
+        // 兼容后台标签页的定时器节流；异常退出留下的状态会自动失效。
+        if (updatedAt > 0 && Date.now() - updatedAt < 120000) return true;
+      }
+    } catch (err) { /* ignore */ }
+    return false;
+  }
 
   function readEntries() {
     try {
@@ -47,11 +69,10 @@
     return changed;
   }
 
-  window.StudyReview = { key: KEY, subject: SUBJECT, merge: merge };
+  window.StudyReview = { key: KEY, subject: SUBJECT, merge: merge, setManualRunning: setManualRunning };
   if (!document.querySelector('[data-study-hub], [data-study-note]')) return;
 
   var active = null;
-  var ticker = 0;
   var suspended = false;
   function persist() {
     if (!active) return;
@@ -75,23 +96,24 @@
   function pause() {
     persist();
     active = null;
-    clearInterval(ticker);
-    ticker = 0;
   }
   function update() {
-    if (suspended || document.hidden || !document.hasFocus()) { pause(); return; }
+    if (suspended || document.hidden || !document.hasFocus() || hasManualRunning()) { pause(); return; }
     if (active) return;
     active = {
       id: 'review-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10),
       beganAt: Date.now(),
       since: performance.now()
     };
-    ticker = setInterval(persist, 5000);
   }
   document.addEventListener('visibilitychange', update);
   window.addEventListener('focus', update);
   window.addEventListener('blur', pause);
+  window.addEventListener('storage', function (event) {
+    if (event.key === null || (event.key && event.key.indexOf(MANUAL_PREFIX) === 0)) update();
+  });
   window.addEventListener('pagehide', function () { suspended = true; pause(); });
   window.addEventListener('pageshow', function () { suspended = false; update(); });
+  setInterval(function () { update(); persist(); }, 5000);
   update();
 }());

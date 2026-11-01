@@ -380,7 +380,7 @@
       state.minuteSweep = 0;
       state.lastPaintSec = -1;
       state.sessionSubject = null;   // 这一段丢掉了，科目回到「当前选中」
-      try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
+      persistSession();
       hideToast();
       paintAll();
       toast('不到 10 秒，已忽略');
@@ -403,7 +403,7 @@
     state.minuteSweep = 0;
     state.lastPaintSec = -1;
     state.sessionSubject = null;   // 这一段落账了，科目回到「当前选中」
-    try { localStorage.removeItem(SESSION_KEY); } catch (err) { /* ignore */ }
+    persistSession();
     el.noteInput.value = '';
     data.settings.note = '';
     state.sessionNote = '';
@@ -423,6 +423,7 @@
   const SESSION_KEY = 'kaoyan-study-timer-session-v1';
 
   function persistSession() {
+    if (!demoMode) StudyReview.setManualRunning(state.running);
     try {
       const ms = elapsedMs();
       if (ms < MIN_RECORD_SEC * 1000) { localStorage.removeItem(SESSION_KEY); return; }
@@ -457,8 +458,12 @@
     } catch (err) { /* ignore */ }
   }
 
-  window.addEventListener('pagehide', persistSession);
-  window.addEventListener('beforeunload', persistSession);
+  function suspendSession() {
+    if (state.running) pause();
+    else persistSession();
+  }
+  window.addEventListener('pagehide', suspendSession);
+  window.addEventListener('beforeunload', suspendSession);
   document.addEventListener('visibilitychange', () => { if (document.hidden) persistSession(); });
 
   function loop() {

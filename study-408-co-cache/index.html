@@ -497,9 +497,7 @@ class="math inline">\(1\)</span>。</li>
 <p><strong>有效位 <span class="math inline">\(V\)</span>
 判断“这一行是否有效”，脏位 <span class="math inline">\(D\)</span>
 判断“替换时是否需要回写”。</strong>
-即使当前操作是读未命中，若淘汰了脏块，也需要先回写旧块，再读取新块。<a
-target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html#handling-stores">原理核对：Cornell
-缓存课程</a>。</p>
+即使当前操作是读未命中，若淘汰了脏块，也需要先回写旧块，再读取新块。</p>
 <h3 id="写未命中写分配与非写分配">写未命中：写分配与非写分配</h3>
 <table>
 <colgroup>
@@ -528,9 +526,7 @@ target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs3410/2
 </tr>
 </tbody>
 </table>
-<p>两者决定的是写未命中时是否装块，与写命中时的更新方式是两个可组合的选择。<a
-target="_blank" rel="noopener" href="https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html#handling-stores">原理核对：Cornell
-缓存课程</a>。</p>
+<p>两者决定的是写未命中时是否装块，与写命中时的更新方式是两个可组合的选择。</p>
 <h3 id="常见搭配">常见搭配</h3>
 <table>
 <colgroup>
@@ -559,28 +555,10 @@ class="math inline">\(D=1\)</span>；若需淘汰脏块，先回写旧块</td>
 </tr>
 </tbody>
 </table>
-<p>这是常见搭配，并非强制绑定；做题时分别按题设判断。<a
-target="_blank" rel="noopener" href="https://csg.csail.mit.edu/6.5900/Lectures/L10handout.pdf#page=7">搭配核对：MIT
-写策略讲义，第 7 页</a>。</p>
+<p>这是常见搭配，并非强制绑定；做题时分别按题设判断。</p>
 <h3 id="写缓冲">写缓冲</h3>
 <p>全写法常在 Cache 与主存之间设置写缓冲：先暂存待写的地址和数据，让 CPU
-继续执行，由缓冲向主存完成写入；缓冲满时仍可能等待。<a
-target="_blank" rel="noopener" href="https://www.cs.virginia.edu/~cr4bd/3130/F2025/readings/cache.html#write-through-versus-write-back">原理核对：Virginia
-缓存课程</a>。</p>
-<h2 id="易错点">易错点</h2>
-<ul>
-<li>块内地址位数看块大小；行号位数看行数；组号位数看组数。</li>
-<li>组相联先确定组，再在组内查找或替换，不能跨组随意放置。</li>
-<li>标记匹配还不够，有效位也必须为 <span
-class="math inline">\(1\)</span>。</li>
-<li>直接映射的替换对象固定，无需用 LRU、FIFO 等算法选择。</li>
-<li>FIFO 命中不调整装入顺序；LRU 命中要更新近期顺序；LFU
-命中增加访问频次。</li>
-<li>全写、回写决定何时更新主存；写分配、非写分配决定写未命中时是否装入目标块，见
-<a href="#cache-写策略">Cache 写策略</a>。</li>
-<li>非写分配策略下，写未命中只写主存，不调入目标块；不能认为每次访问主存都会将块调入
-Cache。</li>
-</ul>
+继续执行，由缓冲向主存完成写入；缓冲满时仍可能等待。</p>
 
     </div>
   </article>

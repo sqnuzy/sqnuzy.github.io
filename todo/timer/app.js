@@ -12,6 +12,7 @@
                    '#EF4444', '#64748B'];
   const WEEK_CN = ['日', '一', '二', '三', '四', '五', '六'];
   const MIN_RECORD_SEC = 10;       // 低于 10 秒直接忽略，10 秒及以上直接记账
+  const MAX_PAUSE_MS = 30 * 60 * 1000;
   const DEFAULT_MOTTO = '还有多少个明天可以浪费，还有多少个夜晚可以忏悔';
   // 旧版默认配色 → 新版高饱和配色（只在颜色没被用户改过时替换）
   const LEGACY_COLORS = { math: '#E8613C', english: '#3F8FBF', politics: '#7FB069', major: '#8667D8' };
@@ -215,6 +216,9 @@
     elapsedMs: 0,     // 暂停时累计的毫秒
     startedAt: 0,     // 本段开始的时间戳（用于展示与记录）
     runSince: 0,      // 本次「继续」时的 performance.now()
+    pausedAt: 0,      // 最后暂停的时间戳，刷新后仍沿用同一个超时起点
+    pauseTimer: 0,
+    sessionId: null,
     sessionSubject: null,
     sessionNote: '',
     raf: 0,
@@ -331,13 +335,32 @@
     return ms > 0 ? Math.round(ms / 1000) : 0;
   };
 
+  function finishExpiredPause() {
+    if (state.running || !state.pausedAt || Date.now() - state.pausedAt <= MAX_PAUSE_MS) return false;
+    finish({ automatic: true });
+    return true;
+  }
+
+  function schedulePauseFinish() {
+    clearTimeout(state.pauseTimer);
+    state.pauseTimer = 0;
+    if (state.running || !state.pausedAt || finishExpiredPause()) return;
+    state.pauseTimer = setTimeout(schedulePauseFinish,
+      Math.max(1, state.pausedAt + MAX_PAUSE_MS + 1 - Date.now()));
+  }
+
   function start() {
     if (state.running) return;
+    if (finishExpiredPause()) return;
+    clearTimeout(state.pauseTimer);
+    state.pauseTimer = 0;
+    state.pausedAt = 0;
     // 新的一段直接跟着当前选中的科目；只有「继续」暂停中的那一段才沿用原来的科目
     if (Math.round(elapsedSec()) === 0 || !state.sessionSubject || !subjectById(state.sessionSubject)) {
       state.sessionSubject = data.settings.selected;
     }
     if (!state.startedAt) state.startedAt = Date.now();
+    if (!state.sessionId) state.sessionId = uid();
     state.sessionNote = el.noteInput.value.trim();
     state.runSince = nowMs();
     state.running = true;
@@ -352,10 +375,12 @@
     if (!state.running) return;
     state.elapsedMs = elapsedMs();
     state.running = false;
+    state.pausedAt = Date.now();
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
     paintAll();
     persistSession();
+    schedulePauseFinish();
   }
 
   function toggle() {
@@ -366,9 +391,11 @@
 
 
   /** 结束并记账 */
-  function finish() {
+  function finish({ automatic = false } = {}) {
     const sec = Math.round(elapsedSec());
-    if (sec <= 0 && !state.running) { toast('还没有开始计时'); return; }
+    if (sec <= 0 && !state.running && !automatic) { toast('还没有开始计时'); return; }
+    clearTimeout(state.pauseTimer);
+    state.pauseTimer = 0;
     if (sec < MIN_RECORD_SEC) {
       // 不到 10 秒：直接忽略，不弹提示
       cancelAnimationFrame(state.raf);
@@ -377,9 +404,11 @@
       state.elapsedMs = 0;
       state.startedAt = 0;
       state.runSince = 0;
+      state.pausedAt = 0;
       state.minuteSweep = 0;
       state.lastPaintSec = -1;
       state.sessionSubject = null;   // 这一段丢掉了，科目回到「当前选中」
+      state.sessionId = null;
       persistSession();
       hideToast();
       paintAll();
@@ -390,19 +419,21 @@
     const subjectId = state.sessionSubject || data.settings.selected;
     // 备注优先取输入框（可能暂停后还在编辑），其次取开始计时时记下的
     const note = el.noteInput.value.trim() || state.sessionNote;
-    // 结束时间取真实时刻；持续时间用单调时钟
-    const endedAt = Date.now();
+    // 自动记账归入最后暂停的时刻，暂停等待时间不计入学习时长。
+    const endedAt = automatic ? state.pausedAt : Date.now();
     const beganAt = endedAt - sec * 1000;
-    recordSession(subjectId, sec, note, endedAt, beganAt);
+    recordSession(subjectId, sec, note, endedAt, beganAt, state.sessionId || uid());
     cancelAnimationFrame(state.raf);
     clearInterval(state.ticker);
     state.running = false;
     state.elapsedMs = 0;
     state.startedAt = 0;
     state.runSince = 0;
+    state.pausedAt = 0;
     state.minuteSweep = 0;
     state.lastPaintSec = -1;
     state.sessionSubject = null;   // 这一段落账了，科目回到「当前选中」
+    state.sessionId = null;
     persistSession();
     el.noteInput.value = '';
     data.settings.note = '';
@@ -414,12 +445,12 @@
     renderWeekBars();
     renderFlow();
     if (!el.historySheet.hidden) renderHistory();
-    toast(`已记录 ${fmtHM(sec)} · ${subjectName(subjectId)}`);
+    toast(`${automatic ? '暂停已超过 30 分钟，已记录' : '已记录'} ${fmtHM(sec)} · ${subjectName(subjectId)}`);
     playChime();
     flashRing();
   }
 
-  /** 刷新 / 关页面时把“正在计的这一段”存下来，下次打开恢复为暂停状态（不自动记账） */
+  /** 刷新 / 关页时保存当前段；重开后恢复暂停，已超过暂停期限则补记。 */
   const SESSION_KEY = 'kaoyan-study-timer-session-v1';
 
   function persistSession() {
@@ -428,8 +459,10 @@
       const ms = elapsedMs();
       if (ms < MIN_RECORD_SEC * 1000) { localStorage.removeItem(SESSION_KEY); return; }
       localStorage.setItem(SESSION_KEY, JSON.stringify({
+        id: state.sessionId,
         elapsedMs: ms,
         running: state.running,
+        pausedAt: state.pausedAt,
         subjectId: state.sessionSubject || data.settings.selected,
         note: el.noteInput.value,
         savedAt: Date.now()
@@ -444,23 +477,32 @@
       const s = JSON.parse(raw);
       localStorage.removeItem(SESSION_KEY);
       if (!s || !(s.elapsedMs >= MIN_RECORD_SEC * 1000)) return;
-      if (Date.now() - (s.savedAt || 0) > 12 * 3600 * 1000) return;
       state.elapsedMs = s.elapsedMs;
       state.running = false;
       state.runSince = 0;
+      state.pausedAt = Number(s.pausedAt) || Number(s.savedAt) || Date.now();
+      state.sessionId = s.id || uid();
       state.sessionSubject = s.subjectId || data.settings.selected;
       if (s.note) {
         el.noteInput.value = s.note;
         state.sessionNote = s.note.trim();
       }
+      if (finishExpiredPause()) return;
       paintAll();
-      setTimeout(() => toast(`已恢复上一段 ${fmtHM(s.elapsedMs / 1000)}，点「继续」接着计`), 700);
+      persistSession();
+      schedulePauseFinish();
+      const pausedAt = state.pausedAt;
+      setTimeout(() => {
+        if (!state.running && state.pausedAt === pausedAt) {
+          toast(`已恢复上一段 ${fmtHM(s.elapsedMs / 1000)}，点「继续」接着计`);
+        }
+      }, 700);
     } catch (err) { /* ignore */ }
   }
 
   function suspendSession() {
     if (state.running) pause();
-    else persistSession();
+    else if (!finishExpiredPause()) persistSession();
   }
   window.addEventListener('pagehide', suspendSession);
   window.addEventListener('beforeunload', suspendSession);
@@ -494,13 +536,22 @@
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) return;
     if (state.running) { paintTime(); loop(); }
+    else schedulePauseFinish();
   });
+  window.addEventListener('focus', schedulePauseFinish);
+  window.addEventListener('pageshow', schedulePauseFinish);
 
   /* ---------------- 记录 ---------------- */
-  function recordSession(subjectId, seconds, note, endedAt, beganAt) {
+  function recordSession(subjectId, seconds, note, endedAt, beganAt, id = uid()) {
+    // 多个标签页恢复同一暂停段时，沿用同一 id，合并最新记录后只记账一次。
+    if (!demoMode) {
+      try { mergeRemote(JSON.parse(localStorage.getItem(STORE_KEY) || 'null')); }
+      catch (err) { /* ignore */ }
+    }
+    if (data.sessions.some(session => session.id === id) || (data.deletedSessions || []).includes(id)) return;
     const dur = Math.max(1, Math.round(seconds));
     data.sessions.push({
-      id: uid(),
+      id,
       ts: endedAt || Date.now(),
       dur,
       beganAt: beganAt || (endedAt || Date.now()) - dur * 1000,
@@ -596,7 +647,7 @@
 
     const locked = running || sec > 0;
     el.lockHint.hidden = !locked;
-    el.lockHint.textContent = running ? '计时中不可切换' : '已暂停，可继续计时';
+    el.lockHint.textContent = running ? '计时中不可切换' : '已暂停，超过 30 分钟自动记录';
     $$('.pill', el.subjectPills).forEach(p => { p.disabled = locked; });
     el.btnFinish.disabled = sec <= 0 && !running;
 

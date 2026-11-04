@@ -8,8 +8,10 @@
   var GIST_FILE = 'vocabulary-review.json';
   var catalog = null;
   var progress = readProgress();
+  var dailyBatch = readDailyBatch();
   var queue = [];
   var day = core.reviewDay();
+  var selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
   var rolloverTimer;
   var syncTimer;
   var loading = false;
@@ -27,9 +29,20 @@
     try { return JSON.parse(localStorage.getItem(KEY) || '{}').progress || {}; }
     catch (error) { return {}; }
   }
+  function readDailyBatch() {
+    try { return JSON.parse(localStorage.getItem(KEY) || '{}').daily_batch || null; }
+    catch (error) { return null; }
+  }
+  function payload() { return { version: 2, progress: progress, daily_batch: dailyBatch }; }
+  function queueSync() {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(function () { sync(false); }, 1000);
+  }
   function save() {
     progress = core.mergeProgress(readProgress(), progress);
-    try { localStorage.setItem(KEY, JSON.stringify({ version: 1, progress: progress })); return true; }
+    dailyBatch = core.mergeDailyBatches(dailyBatch, readDailyBatch());
+    if (catalog && selectionReady) dailyBatch = core.selectDaily(catalog.words, progress, Date.now(), dailyBatch);
+    try { localStorage.setItem(KEY, JSON.stringify(payload())); return true; }
     catch (error) { find('feedback').textContent = '浏览器未能保存进度，请允许网站存储后重试。'; return false; }
   }
   function config() {
@@ -60,17 +73,30 @@
     var header = document.querySelector('.site-header');
     scrollTarget.style.scrollMarginTop = ((header ? header.offsetHeight : 0) + 16) + 'px';
     scrollTarget.scrollIntoView({ block: 'nearest' });
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(function () { sync(false); }, 1000);
+    queueSync();
   }
   function render() {
     find('day').textContent = day;
     find('day').dateTime = day;
     if (!catalog) return;
-    var today = core.plan(catalog.words, progress, Date.now());
+    if (!selectionReady) {
+      find('total').textContent = catalog.words.length;
+      find('empty').hidden = false;
+      find('empty').textContent = '正在同步学习进度，随后安排今日选词…';
+      return;
+    }
+    dailyBatch = core.mergeDailyBatches(dailyBatch, readDailyBatch());
+    var today = core.plan(catalog.words, progress, Date.now(), dailyBatch);
+    if (JSON.stringify(dailyBatch) !== JSON.stringify(today.daily_batch)) {
+      dailyBatch = today.daily_batch;
+      save();
+      if (!syncing) queueSync();
+    }
     find('due').textContent = today.due.length;
     find('completed').textContent = today.completed;
     find('total').textContent = today.total;
+    find('selected').textContent = today.rotation_total;
+    find('extra').textContent = today.extra_due;
     var dueIds = new Set(today.due.map(function (word) { return word.id; }));
     queue = queue.filter(function (id) { return dueIds.has(id); });
     var queued = new Set(queue);
@@ -88,7 +114,7 @@
       var title = element('h3', '', word.word);
       title.tabIndex = -1;
       heading.appendChild(title);
-      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : '今日到期'));
+      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : '今日轮换'));
       card.appendChild(heading);
       card.appendChild(element('p', 'vocabulary-meta', word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : '初学 ' + word.first_learned_on));
       var details = element('details', 'vocabulary-answer');
@@ -117,7 +143,7 @@
     var empty = find('empty');
     empty.hidden = today.due.length > 0;
     empty.textContent = today.total === 0 ? '词库还没有单词。把学过的单词和原句发给助手录入后，这里会自动安排复习。' :
-      (today.completed ? '今天的到期单词已复习完。' : '今天没有到期单词。') + (today.next ? '下次复习：' + today.next + ' 05:00。' : '');
+      (today.completed ? '今天的选词和到期任务已复习完。' : '今天没有待复习单词。') + (today.next ? '下次更新：' + today.next + ' 05:00。' : '');
   }
   async function refresh(force) {
     if (loading || (!force && Date.now() - lastLoadedAt < 60000)) return;
@@ -142,38 +168,53 @@
   }
   async function sync(manual) {
     var cfg = config();
-    if (!cfg.token || !cfg.gistId || syncing) { paintSync(); return; }
+    if (!cfg.token || !cfg.gistId) {
+      var waiting = !selectionReady;
+      selectionReady = true;
+      paintSync();
+      if (waiting) render();
+      return;
+    }
+    if (syncing) { paintSync(); return; }
     syncing = true;
     paintSync();
     var sent = '';
+    var controller = new AbortController();
+    var syncTimeout = setTimeout(function () { controller.abort(); }, 15000);
     try {
       var url = 'https://api.github.com/gists/' + encodeURIComponent(cfg.gistId);
       var headers = { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + cfg.token, 'X-GitHub-Api-Version': '2022-11-28' };
-      var response = await fetch(url, { headers: headers, cache: 'no-store' });
+      var response = await fetch(url, { headers: headers, cache: 'no-store', signal: controller.signal });
       if (!response.ok) throw new Error('读取同步数据失败');
       var gist = await response.json();
       var file = gist.files && gist.files[GIST_FILE];
       var remote = {};
+      var remoteBatch = null;
       if (file) {
         var content = file.content;
         if (file.truncated) {
           if (new URL(file.raw_url).origin !== 'https://gist.githubusercontent.com') throw new Error('同步地址无效');
-          var raw = await fetch(file.raw_url);
+          var raw = await fetch(file.raw_url, { signal: controller.signal });
           if (!raw.ok) throw new Error('读取完整进度失败');
           content = await raw.text();
         }
-        remote = JSON.parse(content).progress;
+        var parsed = JSON.parse(content);
+        remote = parsed.progress;
+        remoteBatch = parsed.daily_batch || null;
         if (!remote || typeof remote !== 'object' || Array.isArray(remote)) throw new Error('同步数据格式错误');
       }
-      var before = JSON.stringify(progress);
+      var before = JSON.stringify(payload());
+      var wasReady = selectionReady;
       progress = core.mergeProgress(core.mergeProgress(remote, readProgress()), progress);
+      dailyBatch = core.mergeDailyBatches(dailyBatch, remoteBatch);
+      selectionReady = true;
       save();
-      if (JSON.stringify(progress) !== before) render();
-      sent = JSON.stringify({ version: 1, progress: progress });
-      if (!file || JSON.stringify(remote) !== JSON.stringify(progress)) {
+      if (!wasReady || JSON.stringify(payload()) !== before) render();
+      sent = JSON.stringify(payload());
+      if (!file || JSON.stringify({ version: 2, progress: remote, daily_batch: remoteBatch }) !== sent) {
         var files = {};
         files[GIST_FILE] = { content: sent };
-        var written = await fetch(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }) });
+        var written = await fetch(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }), signal: controller.signal });
         if (!written.ok) throw new Error('保存同步数据失败');
       }
       lastSyncedAt = Date.now();
@@ -181,14 +222,13 @@
     } catch (error) {
       paintSync('云同步暂未成功，进度仍保存在此设备，可稍后重试。');
     } finally {
+      clearTimeout(syncTimeout);
       syncing = false;
+      if (!selectionReady) { selectionReady = true; render(); }
       find('sync').disabled = false;
       find('sync').textContent = '同步进度';
       // 同步期间刚提交的反馈要再推送，不能被旧快照覆盖。
-      if (sent && sent !== JSON.stringify({ version: 1, progress: progress })) {
-        clearTimeout(syncTimer);
-        syncTimer = setTimeout(function () { sync(false); }, 1000);
-      }
+      if (sent && sent !== JSON.stringify(payload())) queueSync();
     }
   }
   function checkDay() {
@@ -196,9 +236,11 @@
     if (current !== day) {
       day = current;
       queue = [];
+      selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
       find('feedback').textContent = '';
       render();
       refresh(true);
+      if (!selectionReady) sync(false);
     }
     clearTimeout(rolloverTimer);
     rolloverTimer = setTimeout(checkDay, Math.max(1, core.nextRollover() - Date.now()));
@@ -216,7 +258,7 @@
   window.addEventListener('focus', resume);
   window.addEventListener('online', resume);
   window.addEventListener('storage', function (event) {
-    if (event.key === KEY || event.key === null) { progress = core.mergeProgress(progress, readProgress()); render(); }
+    if (event.key === KEY || event.key === null) { progress = core.mergeProgress(progress, readProgress()); dailyBatch = core.mergeDailyBatches(dailyBatch, readDailyBatch()); render(); }
     if (event.key === SYNC_KEY || event.key === null) { paintSync(); sync(false); }
   });
   paintSync();

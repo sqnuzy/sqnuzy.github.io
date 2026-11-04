@@ -124,8 +124,10 @@
     <span>待复习 <strong data-vocabulary-due>—</strong></span>
     <span>今日完成 <strong data-vocabulary-completed>—</strong></span>
     <span>词库 <strong data-vocabulary-total>—</strong></span>
+    <span>今日选词 <strong data-vocabulary-selected>—</strong> / 100</span>
+    <span>额外复习 <strong data-vocabulary-extra>—</strong></span>
   </div>
-  <p class="vocabulary-hint">每次复习一个单词：先回忆，再展开原句核对，点“记得 / 模糊 / 忘了”后继续下一个。新词当天复习，完成首轮后次日再复习。</p>
+  <p class="vocabulary-hint">每天选取100个最久没复习的词，不足100个则全选；到期和未完成的旧词额外保留，重复词合并。每次一个，核对后评分继续。</p>
   <p class="vocabulary-feedback" data-vocabulary-feedback role="status"></p>
   <p class="vocabulary-feedback" data-vocabulary-load-status role="status"></p>
   <div class="vocabulary-list" data-vocabulary-list></div>
@@ -335,8 +337,8 @@
   
   <script src="/todo/timer/review.js?v=20261101-3"></script>
   <script src="/js/study.js?v=20261031-3"></script>
-  <script src="/js/vocabulary-core.js?v=20261104-3"></script>
-  <script src="/js/vocabulary.js?v=20261104-4"></script>
+  <script src="/js/vocabulary-core.js?v=20261104-5"></script>
+  <script src="/js/vocabulary.js?v=20261104-5"></script>
   
 </body>
 </html>

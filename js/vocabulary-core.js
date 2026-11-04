@@ -51,7 +51,7 @@
       review_count: current.review_count + (sameDay ? 0 : 1),
       lapse_count: current.lapse_count + (rating === 'forgotten' && !sameDay ? 1 : 0),
       same_day_retest_pending: rating === 'forgotten' || (sameDay && current.same_day_retest_pending && rating === 'hesitant'),
-      updated_at: Math.max(at === undefined ? Date.now() : Number(at), (current.updated_at || 0) + 1)
+      updated_at: Math.max(at === undefined ? Date.now() : Number(at), (current.updated_at || 0) + 1, (word.progress_updated_at || 0) + 1)
     };
   }
   function plan(words, progress, at) {

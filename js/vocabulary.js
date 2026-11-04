@@ -110,11 +110,12 @@
       if (!response.ok) throw new Error('词库加载失败');
       var loaded = await response.json();
       if (!Array.isArray(loaded.words)) throw new Error('词库格式错误');
+      find('load-status').textContent = '';
       catalog = loaded;
       lastLoadedAt = Date.now();
       render();
     } catch (error) {
-      if (catalog) find('feedback').textContent = '暂时无法获取新词，当前清单仍可复习；联网后点击“更新清单”。';
+      if (catalog) find('load-status').textContent = '暂时无法获取新词，当前清单仍可复习；联网后点击“更新清单”。';
       else find('empty').textContent = '暂时无法加载词库，请联网后点击“更新清单”重试。';
     } finally {
       loading = false;

@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>复习笔记 | sqnuzy 的算法小站</title>
   
-  <meta name="description" content="按英语、数学及408的数据结构、计算机组成原理、操作系统、计算机网络分别整理笔记，按科目查找、阅读和自测。">
+  <meta name="description" content="每天北京时间05:00更新到期单词，结合原句复习并记录掌握情况；按英语、数学及408各科查找笔记、阅读和自测。">
   <meta name="theme-color" content="#f4f6f2">
   <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css?v=2">
   <link rel="stylesheet" href="/css/refined.css?v=9">
   <link rel="stylesheet" href="/css/navigation.css?v=20261031">
   
-  <link rel="stylesheet" href="/css/study.css?v=20261031-3">
+  <link rel="stylesheet" href="/css/study.css?v=20261104-1">
   
   
   <script>
@@ -111,6 +111,32 @@
       <span><strong>11</strong> 篇笔记</span>
     </div>
   </header>
+  <section class="vocabulary-review" data-vocabulary-review data-source="/study/vocabulary.json" aria-labelledby="vocabulary-title">
+  <header class="vocabulary-header">
+    <div>
+      <p class="article-kicker">DAILY VOCABULARY</p>
+      <h2 id="vocabulary-title">今日单词复习</h2>
+      <p class="vocabulary-schedule"><time data-vocabulary-day></time> · 每天 05:00 更新 · 北京时间</p>
+    </div>
+    <button type="button" class="study-button" data-vocabulary-refresh>更新清单</button>
+  </header>
+  <div class="vocabulary-stats" aria-label="单词复习概况">
+    <span>待复习 <strong data-vocabulary-due>—</strong></span>
+    <span>今日完成 <strong data-vocabulary-completed>—</strong></span>
+    <span>词库 <strong data-vocabulary-total>—</strong></span>
+  </div>
+  <p class="vocabulary-hint">先回忆词义，再展开原句核对。根据“记得 / 模糊 / 忘了”调整下次复习，未完成的词会继续保留。</p>
+  <p class="vocabulary-feedback" data-vocabulary-feedback role="status"></p>
+  <div class="vocabulary-list" data-vocabulary-list></div>
+  <p class="vocabulary-empty" data-vocabulary-empty>正在加载单词清单…</p>
+  <footer class="vocabulary-footer">
+    <p data-vocabulary-sync-status>复习进度保存在此设备。</p>
+    <button type="button" class="study-button" data-vocabulary-sync hidden>同步进度</button>
+    <a class="vocabulary-sync-link" href="/todo/timer/" data-vocabulary-connect>连接已有的学习同步</a>
+  </footer>
+  <noscript><p>启用 JavaScript 后可查看当天到期单词并记录复习结果。</p></noscript>
+</section>
+
   <div class="study-toolbar">
     <nav class="study-subjects" aria-label="按科目筛选">
       <div class="study-subject-group">
@@ -308,6 +334,8 @@
   
   <script src="/todo/timer/review.js?v=20261101-3"></script>
   <script src="/js/study.js?v=20261031-3"></script>
+  <script src="/js/vocabulary-core.js?v=20261104-1"></script>
+  <script src="/js/vocabulary.js?v=20261104-1"></script>
   
 </body>
 </html>

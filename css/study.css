@@ -41,7 +41,39 @@
 .study-quiz-status { margin: 12px 0 0; color: var(--ref-muted); font-size: 13px; line-height: 1.7; }
 .article-body [data-answer-toggle] { display: block; white-space: nowrap; margin: 4px 0; font-size: 12px; padding: 6px 10px; min-height: 34px; }
 .article-body [data-study-answer] { overflow-wrap: anywhere; }
+.vocabulary-review { margin: 0 0 38px; padding: 28px; border: 1px solid var(--glass-line, var(--ref-line)); border-radius: 22px; background: color-mix(in srgb, var(--ref-surface) 76%, transparent); box-shadow: var(--ref-shadow); }
+.vocabulary-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.vocabulary-header h2 { margin: 8px 0; font-size: clamp(23px, 3vw, 30px); letter-spacing: -.03em; }
+.vocabulary-schedule, .vocabulary-hint, .vocabulary-meta, .vocabulary-footer, .vocabulary-translation { color: var(--ref-muted); font-size: 13px; line-height: 1.8; }
+.vocabulary-schedule { margin: 0; }
+.vocabulary-stats { display: flex; flex-wrap: wrap; gap: 12px 24px; padding: 22px 0 16px; font-size: 13px; color: var(--ref-muted); }
+.vocabulary-stats strong { padding-left: 5px; color: var(--ref-ink); font-size: 24px; font-variant-numeric: tabular-nums; }
+.vocabulary-hint { margin: 0 0 16px; }
+.vocabulary-feedback { margin: 0; color: var(--ref-ink); font-size: 13px; line-height: 1.8; }
+.vocabulary-feedback:not(:empty) { margin: 0 0 16px; padding: 12px 16px; border-radius: 12px; background: color-mix(in srgb, var(--ref-accent) 9%, transparent); }
+.vocabulary-list { display: grid; gap: 14px; }
+.vocabulary-card { min-width: 0; padding: 20px; border: 1px solid var(--ref-line); border-radius: 16px; }
+.vocabulary-word { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; }
+.vocabulary-word h3 { margin: 0; font-size: 24px; line-height: 1.5; overflow-wrap: anywhere; }
+.vocabulary-badge { flex-shrink: 0; padding: 3px 8px; border-radius: 7px; background: color-mix(in srgb, var(--ref-accent) 12%, transparent); color: var(--ref-ink); font-size: 11px; }
+.vocabulary-meta { margin: 6px 0 14px; font-size: 12px; }
+.vocabulary-answer summary { width: fit-content; padding: 6px 0; cursor: pointer; color: var(--ref-ink); font-size: 13px; }
+.vocabulary-answer summary:focus-visible { outline: 3px solid var(--ref-ink); outline-offset: 3px; border-radius: 4px; }
+.vocabulary-meaning { font-size: 14px; line-height: 1.8; }
+.vocabulary-example { margin: 14px 0; padding: 0 0 0 16px; border-left: 2px solid var(--ref-accent); overflow-wrap: anywhere; }
+.vocabulary-example p { margin: 6px 0; line-height: 1.8; }
+.vocabulary-ratings { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+.vocabulary-ratings button { flex: 1 1 70px; }
+.vocabulary-empty { margin: 0; padding: 28px 20px; border: 1px dashed var(--ref-line); border-radius: 14px; color: var(--ref-muted); font-size: 14px; line-height: 1.9; text-align: center; }
+.vocabulary-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--ref-line); }
+.vocabulary-footer p { flex: 1 1 250px; margin: 0; font-size: 12px; }
+.vocabulary-sync-link { color: var(--ref-ink); font-size: 12px; text-underline-offset: 3px; }
 @media (max-width: 640px) {
+  .vocabulary-review { padding: 20px; }
+  .vocabulary-card { padding: 16px; }
+  .vocabulary-word h3 { font-size: 22px; }
+  .vocabulary-stats { gap: 10px 18px; }
+  .vocabulary-stats strong { font-size: 21px; }
   .study-hub { margin-top: 8px; }
   .study-toolbar, .study-search { width: 100%; }
   .study-subjects { flex-basis: 100%; }

@@ -8,6 +8,7 @@
   var GIST_FILE = 'vocabulary-review.json';
   var catalog = null;
   var progress = readProgress();
+  var queue = [];
   var day = core.reviewDay();
   var rolloverTimer;
   var syncTimer;
@@ -48,10 +49,17 @@
     progress[word.id] = core.feedback(word, progress, rating, Date.now());
     var saved = save();
     var result = core.state(word, progress);
+    queue = queue.filter(function (id) { return id !== word.id; });
+    if (result.same_day_retest_pending) queue.push(word.id);
     render();
     if (saved) find('feedback').textContent = word.word + (result.same_day_retest_pending ? '：加入当日巩固，稍后再回忆一次；明天仍会复习。' : '：已记录，下次复习 ' + result.next_review_on + ' 05:00。');
-    var next = find('list').querySelector('summary');
-    if (next) next.focus({ preventScroll: true });
+    var nextCard = find('list').querySelector('.vocabulary-card');
+    var next = nextCard ? nextCard.querySelector('h3') : find('empty');
+    next.focus({ preventScroll: true });
+    var scrollTarget = nextCard || next;
+    var header = document.querySelector('.site-header');
+    scrollTarget.style.scrollMarginTop = ((header ? header.offsetHeight : 0) + 16) + 'px';
+    scrollTarget.scrollIntoView({ block: 'nearest' });
     clearTimeout(syncTimer);
     syncTimer = setTimeout(function () { sync(false); }, 1000);
   }
@@ -63,13 +71,23 @@
     find('due').textContent = today.due.length;
     find('completed').textContent = today.completed;
     find('total').textContent = today.total;
+    var dueIds = new Set(today.due.map(function (word) { return word.id; }));
+    queue = queue.filter(function (id) { return dueIds.has(id); });
+    var queued = new Set(queue);
+    today.due.forEach(function (word) {
+      if (!queued.has(word.id)) { queue.push(word.id); queued.add(word.id); }
+    });
+    var currentWord = today.due.find(function (word) { return word.id === queue[0]; });
     var list = find('list');
     list.replaceChildren();
-    today.due.forEach(function (word) {
+    if (currentWord) {
+      var word = currentWord;
       var card = element('article', 'vocabulary-card');
       card.dataset.wordId = word.id;
       var heading = element('div', 'vocabulary-word');
-      heading.appendChild(element('h3', '', word.word));
+      var title = element('h3', '', word.word);
+      title.tabIndex = -1;
+      heading.appendChild(title);
       heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : '今日到期'));
       card.appendChild(heading);
       card.appendChild(element('p', 'vocabulary-meta', word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : '初学 ' + word.first_learned_on));
@@ -95,7 +113,7 @@
       details.appendChild(actions);
       card.appendChild(details);
       list.appendChild(card);
-    });
+    }
     var empty = find('empty');
     empty.hidden = today.due.length > 0;
     empty.textContent = today.total === 0 ? '词库还没有单词。把学过的单词和原句发给助手录入后，这里会自动安排复习。' :
@@ -177,6 +195,7 @@
     var current = core.reviewDay();
     if (current !== day) {
       day = current;
+      queue = [];
       find('feedback').textContent = '';
       render();
       refresh(true);

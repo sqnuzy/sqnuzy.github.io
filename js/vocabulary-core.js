@@ -19,7 +19,7 @@
   }
   function state(word, progress) {
     var result = Object.assign({ interval_step: 0, review_count: 0, lapse_count: 0, same_day_retest_pending: false }, word);
-    if (!result.next_review_on && word.first_learned_on) result.next_review_on = addDays(word.first_learned_on, 1);
+    if (!result.next_review_on && word.first_learned_on) result.next_review_on = word.first_learned_on;
     var saved = progress && progress[word.id];
     if (saved && saved.updated_at > (word.progress_updated_at || 0)) {
       FIELDS.forEach(function (key) { if (saved[key] !== undefined) result[key] = saved[key]; });
@@ -41,8 +41,9 @@
     var day = reviewDay(at);
     var sameDay = current.last_reviewed_on === day;
     var step = current.interval_step;
+    var firstReview = !current.last_reviewed_on && current.review_count === 0 && step === 0;
     if (rating === 'forgotten') step = 0;
-    else if (!sameDay) step = Math.max(0, Math.min(INTERVALS.length - 1, step + (rating === 'remembered' ? 1 : -1)));
+    else if (!sameDay && !firstReview) step = Math.max(0, Math.min(INTERVALS.length - 1, step + (rating === 'remembered' ? 1 : -1)));
     return {
       interval_step: step,
       last_reviewed_on: day,

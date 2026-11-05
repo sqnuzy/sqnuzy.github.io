@@ -9,7 +9,7 @@
   <meta name="theme-color" content="#f4f6f2">
   <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css?v=2">
-  <link rel="stylesheet" href="/css/refined.css?v=9">
+  <link rel="stylesheet" href="/css/refined.css?v=10">
   <link rel="stylesheet" href="/css/navigation.css?v=20261031">
   
   <link rel="stylesheet" href="/css/study.css?v=20261104-1">
@@ -127,6 +127,9 @@
       <p>Cache
 利用程序的局部性保存主存数据副本。本篇集中整理命中率、地址映射、替换算法和写策略，并用例题区分容易混淆的计算。</p>
 <span id="more"></span>
+<p><strong>SRAM</strong> = 静态随机存取存储器（静态RAM）</p>
+<p><strong>DRAM</strong> = 动态随机存取存储器（动态RAM）</p>
+<p>Cache的设计基于程序访问的局部性原理，包括时间局部性和空间</p>
 <h2 id="基本原理与局部性">基本原理与局部性</h2>
 <p>Cache（高速缓冲存储器）保存部分主存数据的副本，缓和 CPU
 与主存的速度差异。</p>
@@ -164,9 +167,9 @@
 class="math inline">\(M\)</span>，访问一次 Cache、主存的时间分别为 <span
 class="math inline">\(t_c\)</span>、<span
 class="math inline">\(t_m\)</span>。</p>
-<p><span class="math display">\[
-H=\frac{\text{命中次数}}{\text{总访问次数}},\qquad M=1-H
-\]</span></p>
+<p><span
+class="math inline">\(H=\frac{\text{命中次数}}{\text{总访问次数}},\qquad
+M=1-H\)</span></p>
 <table>
 <colgroup>
 <col style="width: 25%" />
@@ -203,10 +206,9 @@ class="math inline">\(t=Ht_c+(1-H)(t_c+t_m)=t_c+Mt_m\)</span></td>
 <p>以下按字节编址，容量和块大小均按题中二进制单位计算。</p>
 <p>设块大小为 <span class="math inline">\(B\)</span> 字节，主存地址为
 <span class="math inline">\(A\)</span>：</p>
-<p><span class="math display">\[
-\text{主存块号}=\left\lfloor\frac{A}{B}\right\rfloor,\qquad
-\text{块内地址}=A\bmod B
-\]</span></p>
+<p><span
+class="math inline">\(\text{主存块号}=\left\lfloor\frac{A}{B}\right\rfloor,\qquad
+\text{块内地址}=A\bmod B\)</span></p>
 <ul>
 <li>块内地址位数为 <span class="math inline">\(b=\log_2
 B\)</span>。</li>
@@ -267,9 +269,8 @@ class="math inline">\(8\)</span> 行。</li>
 </tbody>
 </table>
 <p>对于 <span class="math inline">\(r\)</span> 路组相联：</p>
-<p><span class="math display">\[
-G=\frac{L}{r},\qquad \text{组号}=j\bmod G
-\]</span></p>
+<p><span class="math inline">\(G=\frac{L}{r},\qquad \text{组号}=j\bmod
+G\)</span></p>
 <p>其中 <span class="math inline">\(G\)</span> 是组数，<span
 class="math inline">\(r\)</span> 是每组的行数。若 <span
 class="math inline">\(G=2^s\)</span>，则组号占 <span
@@ -338,6 +339,12 @@ class="math inline">\(0\)</span> 开始编号）。</p>
 总存储容量时，还需按题意计入标记、有效位及其他控制信息。</p>
 <h2 id="四种替换算法">四种替换算法</h2>
 <p>替换算法用于在允许放置的范围内选出要淘汰的块；有空闲行时先填入，不需要淘汰已有块。</p>
+<p><strong>LRU</strong>：<strong>Least Recently
+Used</strong>，中文常译作
+<strong>最近最少使用</strong>（更准确说：最近最久未使用）。</p>
+<p><strong>LFU</strong>：<strong>Least Frequently
+Used</strong>，中文常译作
+<strong>最不经常使用</strong>（访问频率最低）。</p>
 <table>
 <colgroup>
 <col style="width: 33%" />
@@ -395,9 +402,7 @@ class="math inline">\(1\)</span>。</li>
 <h2 id="访问序列例题">访问序列例题</h2>
 <p>条件：Cache 初始为空，共 <span class="math inline">\(4\)</span>
 行，采用全相联映射。依次访问主存块：</p>
-<p><span class="math display">\[
-1,2,3,4,1,2,5,1,2,3,4,5
-\]</span></p>
+<p><span class="math inline">\(1,2,3,4,1,2,5,1,2,3,4,5\)</span></p>
 <table>
 <thead>
 <tr>
@@ -559,6 +564,135 @@ class="math inline">\(D=1\)</span>；若需淘汰脏块，先回写旧块</td>
 <h3 id="写缓冲">写缓冲</h3>
 <p>全写法常在 Cache 与主存之间设置写缓冲：先暂存待写的地址和数据，让 CPU
 继续执行，由缓冲向主存完成写入；缓冲满时仍可能等待。</p>
+<h3 id="地址划分">地址划分</h3>
+<p>做题前，先区分：<strong>题目问的是“编号是多少”，还是“需要多少位”。</strong></p>
+<p>以下默认按字节编址，相关容量和数量为 <span
+class="math inline">\(2\)</span> 的整数次幂。</p>
+<ol type="1">
+<li><p><strong>Cache：根据访问地址，求块号、组号、Tag
+和偏移。</strong></p>
+<p>设访问地址为 <span class="math inline">\(A\)</span>，每块大小为 <span
+class="math inline">\(B\)</span> 字节，Cache 共有 <span
+class="math inline">\(S\)</span> 组。</p>
+<p><strong>先确定组数：</strong></p>
+<p><span
+class="math inline">\(\text{Cache总行数}=\frac{\text{Cache数据容量}}{\text{每块大小}}\)</span></p>
+<table>
+<thead>
+<tr>
+<th>映射方式</th>
+<th>Cache 组数 <span class="math inline">\(S\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>直接映射</td>
+<td>Cache 总行数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(E\)</span> 路组相联</td>
+<td>Cache 总行数 ÷ <span class="math inline">\(E\)</span></td>
+</tr>
+<tr>
+<td>全相联</td>
+<td><span class="math inline">\(1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p><strong>再做两次除法：</strong></p>
+<table>
+<thead>
+<tr>
+<th>运算</th>
+<th>商</th>
+<th>余数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>访问地址 ÷ 块大小</td>
+<td>主存块号 <span class="math inline">\(q\)</span></td>
+<td>块内偏移</td>
+</tr>
+<tr>
+<td>主存块号 ÷ Cache 组数</td>
+<td>Tag 值</td>
+<td>Cache 组号</td>
+</tr>
+</tbody>
+</table>
+<p>对应公式为：</p>
+<p><span class="math inline">\(q=\lfloor A/B\rfloor,\qquad
+\text{块内偏移}=A\bmod B\)</span></p>
+<p><span class="math inline">\(\text{Tag值}=\lfloor q/S\rfloor,\qquad
+\text{组号}=q\bmod S\)</span></p>
+<p>直接映射时，<strong>组号就是 Cache 行号</strong>。</p>
+<p>例如：地址为 <span class="math inline">\(2593\)</span>，块大小为
+<span class="math inline">\(32\,\mathrm{B}\)</span>，共 <span
+class="math inline">\(16\)</span> 组。</p>
+<p><span class="math inline">\(2593=32\times81+1\)</span></p>
+<p>得到：主存块号为 <strong><span
+class="math inline">\(81\)</span></strong>，块内偏移为 <strong><span
+class="math inline">\(1\)</span></strong>。</p>
+<p><span class="math inline">\(81=16\times5+1\)</span></p>
+<p>得到：Tag 值为 <strong><span
+class="math inline">\(5\)</span></strong>，Cache 组号为 <strong><span
+class="math inline">\(1\)</span></strong>。</p>
+<p><strong>如果题目问字段位数：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">主存地址：| Tag | 组号 | 块内偏移 |</span><br></pre></td></tr></table></figure>
+<p><span class="math inline">\(\text{偏移位数}=\log_2 B\)</span></p>
+<p><span class="math inline">\(\text{组号位数}=\log_2 S\)</span></p>
+<p><span
+class="math inline">\(\text{Tag位数}=\text{主存地址位数}-\text{组号位数}-\text{偏移位数}\)</span></p>
+<p>注意：<strong>Tag 值和 Tag 位数是两个问题。</strong></p></li>
+<li><p><strong>分页：根据页数、物理块数和页大小，求地址位数。</strong></p>
+<p>设逻辑空间有 <span class="math inline">\(N\)</span> 页，物理空间有
+<span class="math inline">\(F\)</span> 个物理块，每页大小为 <span
+class="math inline">\(P\)</span>
+字节。分页中的物理块也称<strong>页框</strong>，大小与页相同。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">逻辑地址：| 逻辑页号 | 页内偏移 |</span><br><span class="line">物理地址：| 物理块号 | 页内偏移 |</span><br></pre></td></tr></table></figure>
+<table>
+<thead>
+<tr>
+<th>所求字段</th>
+<th>计算方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>逻辑页号位数</td>
+<td><span class="math inline">\(\log_2 N\)</span></td>
+</tr>
+<tr>
+<td>物理块号位数</td>
+<td><span class="math inline">\(\log_2 F\)</span></td>
+</tr>
+<tr>
+<td>页内偏移位数</td>
+<td><span class="math inline">\(\log_2 P\)</span></td>
+</tr>
+<tr>
+<td>逻辑地址总位数</td>
+<td>页号位数＋页内偏移位数</td>
+</tr>
+<tr>
+<td>物理地址总位数</td>
+<td>物理块号位数＋页内偏移位数</td>
+</tr>
+</tbody>
+</table>
+<p>例如：逻辑空间 <span class="math inline">\(8\)</span> 页，物理空间
+<span class="math inline">\(32\)</span> 块，每页 <span
+class="math inline">\(1024\,\mathrm{B}\)</span>。</p>
+<p><span class="math inline">\(\text{逻辑地址位数}=\log_2 8+\log_2
+1024=3+10=13\)</span></p>
+<p><span class="math inline">\(\text{物理地址位数}=\log_2 32+\log_2
+1024=5+10=15\)</span></p>
+<p><strong>逻辑地址转换为物理地址时，页内偏移不变，逻辑页号通过页表转换为物理块号。</strong>物理块号需要查页表，不能像
+Cache 组号那样直接取余。</p></li>
+</ol>
+<p>按字编址时，计算偏移或进行地址除法，要把块大小、页大小换成所包含的<strong>字数</strong>。另外，<strong>Cache
+的主存块与分页的页框是不同层次的划分</strong>，大小分别按题设确定。</p>
 
     </div>
   </article>

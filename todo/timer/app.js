@@ -1571,7 +1571,6 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
   }
   let syncCfg = loadSyncCfg();
   let syncing = false;
-  let syncTimer = 0;
   let syncError = '';
 
   function saveSyncCfg() {
@@ -1749,6 +1748,8 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     if (demoMode) { if (!opts.silent) toast('预览模式不参与同步'); return false; }
     if (!syncCfg.token) { if (!opts.silent) toast('先连接 GitHub 账号'); return false; }
     if (syncing) return false;
+    if (opts.silent && !opts.manual && !gistSync.automatic('timer', () => syncNow({ silent: true }))) return false;
+    if (!opts.silent || opts.manual) gistSync.started('timer');
     importReview();
     syncing = true;
     syncError = '';
@@ -1784,10 +1785,9 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     }
   }
 
-  function scheduleSync(delay = 10000) {
+  function scheduleSync() {
     if (!syncCfg.token || demoMode) return;
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => syncNow({ silent: true }), Math.max(delay, gistSync.retryAt() - Date.now()));
+    gistSync.schedule('timer', () => syncNow({ silent: true }));
   }
 
   gistSync.onRetry(() => syncNow({ silent: true }));
@@ -1812,7 +1812,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       }
       syncing = false;
       if (found) {
-        await syncNow({ silent: true });
+        await syncNow({ silent: true, manual: true });
         toast(`已从其他 ${found} 个 Gist 合并记录`);
       } else {
         toast('没有找到其他带记录的 Gist');
@@ -1890,7 +1890,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
 
   function disconnectSync() {
     if (!window.confirm('断开云同步？本机数据会保留，但不再与其他设备同步。')) return;
-    clearTimeout(syncTimer);
+    gistSync.cancel('timer');
     syncCfg = { token: '', gistId: '', lastSyncAt: 0 };
     saveSyncCfg();
     paintSync();

@@ -4,6 +4,34 @@
   var state = { retryAt: 0, attempts: 0 };
   var callbacks = [];
   var timer;
+  var INTERVAL = 5 * 60000;
+  var autoTimers = {};
+  var autoAttempts = {};
+  function lastAttempt(channel) {
+    try {
+      var saved = Number(localStorage.getItem('kaoyan-study-sync-auto-v1:' + channel));
+      if (Number.isFinite(saved) && saved > 0) autoAttempts[channel] = saved;
+    } catch (error) { /* 存储不可用时使用当前页面的时间。 */ }
+    return autoAttempts[channel] || 0;
+  }
+  function cancel(channel) { clearTimeout(autoTimers[channel]); delete autoTimers[channel]; }
+  function started(channel) {
+    cancel(channel);
+    autoAttempts[channel] = Date.now();
+    try { localStorage.setItem('kaoyan-study-sync-auto-v1:' + channel, String(autoAttempts[channel])); } catch (error) { /* 保留内存中的时间。 */ }
+  }
+  function schedule(channel, callback) {
+    cancel(channel);
+    if (read().attempts > 3) return;
+    var until = Math.max(lastAttempt(channel) + INTERVAL, retryAt());
+    autoTimers[channel] = setTimeout(function () { delete autoTimers[channel]; callback(); }, Math.max(0, until - Date.now()));
+  }
+  function automatic(channel, callback) {
+    if (read().attempts > 3) return false;
+    if (Math.max(lastAttempt(channel) + INTERVAL, retryAt()) > Date.now()) { schedule(channel, callback); return false; }
+    started(channel);
+    return true;
+  }
   function read() {
     try {
       var saved = JSON.parse(localStorage.getItem(KEY) || 'null');
@@ -19,7 +47,7 @@
   function failure() {
     var current = read();
     var time = new Date(current.retryAt + 8 * 3600000).toISOString().slice(5, 19).replace('T', ' ');
-    var error = new Error('GitHub 请求过于频繁，' + (current.attempts <= 3 ? '将于北京时间 ' + time + ' 自动重试。' : '可于北京时间 ' + time + ' 后手动重试。'));
+    var error = new Error('GitHub 请求过于频繁，' + (current.attempts <= 3 ? '最早可于北京时间 ' + time + ' 再同步；将按5分钟间隔自动重试。' : '可于北京时间 ' + time + ' 后手动重试。'));
     error.rateLimited = true;
     error.syncMessage = error.message;
     error.retryAt = current.retryAt;
@@ -59,6 +87,10 @@
   window.StudyGistSync = {
     request: request,
     retryAt: retryAt,
+    automatic: automatic,
+    schedule: schedule,
+    started: started,
+    cancel: cancel,
     onRetry: function (callback) { callbacks.push(callback); arm(); },
     succeeded: function () { if (!retryAt()) write({ retryAt: 0, attempts: 0 }); }
   };

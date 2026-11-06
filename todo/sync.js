@@ -16,7 +16,6 @@
 
   let cfg = readCfg();
   let syncing = false;
-  let scheduleTimer = 0;
   let syncError = '';
   let lastSyncAt = cfg.lastSyncAt || 0;
   let lastSnap = new Map();
@@ -223,6 +222,8 @@
       return false;
     }
     if (syncing) return false;
+    if (opts.silent && !opts.manual && !gistSync.automatic('todo', () => syncNow({ silent: true }))) return false;
+    if (!opts.silent || opts.manual) gistSync.started('todo');
     syncing = true;
     syncError = '';
     renderChip();
@@ -253,10 +254,9 @@
     return !syncError;
   }
 
-  function scheduleSync(delay = 10000) {
+  function scheduleSync() {
     if (!cfg.token) return;
-    clearTimeout(scheduleTimer);
-    scheduleTimer = setTimeout(() => syncNow({ silent: true }), Math.max(delay, gistSync.retryAt() - Date.now()));
+    gistSync.schedule('todo', () => syncNow({ silent: true }));
   }
 
   gistSync.onRetry(() => syncNow({ silent: true }));
@@ -281,7 +281,7 @@
       }
       syncing = false;
       if (found) {
-        await syncNow({ silent: true });
+        await syncNow({ silent: true, manual: true });
         toastBox(`已从其他 ${found} 个 Gist 合并数据`);
       } else {
         toastBox('没有找到其他带任务的 Gist');
@@ -502,6 +502,7 @@
       });
       body.querySelector('#todoSyncDisconnect').addEventListener('click', () => {
         if (!confirm('断开云同步？本机数据会保留，但不再与其他设备同步。')) return;
+        gistSync.cancel('todo');
         cfg.token = '';
         cfg.gistId = '';
         writeCfg();
@@ -531,7 +532,7 @@
     });
     if (cfg.token) {
       setTimeout(() => syncNow({ silent: true }), 900);
-      window.addEventListener('online', () => scheduleSync(300));
+      window.addEventListener('online', () => scheduleSync());
       document.addEventListener('visibilitychange', () => {
         if (!document.hidden) syncNow({ silent: true });
       });

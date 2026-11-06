@@ -14,12 +14,10 @@
   var day = core.reviewDay();
   var selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
   var rolloverTimer;
-  var syncTimer;
   var loading = false;
   var syncing = false;
   var syncMessage = '';
   var lastLoadedAt = 0;
-  var lastSyncedAt = 0;
   function find(name) { return panel.querySelector('[data-vocabulary-' + name + ']'); }
   function element(tag, className, text) {
     var node = document.createElement(tag);
@@ -37,8 +35,8 @@
   }
   function payload() { return { version: 2, progress: progress, daily_batch: dailyBatch }; }
   function queueSync() {
-    clearTimeout(syncTimer);
-    syncTimer = setTimeout(function () { sync(false); }, Math.max(10000, gistSync.retryAt() - Date.now()));
+    if (!config().token || !config().gistId) return;
+    gistSync.schedule('vocabulary', function () { sync(false); });
   }
   function save() {
     progress = core.mergeProgress(readProgress(), progress);
@@ -59,7 +57,7 @@
     find('sync').textContent = syncing ? '同步中…' : '同步进度';
     find('connect').hidden = false;
     find('connect').textContent = connected ? '管理学习同步' : '连接已有的学习同步';
-    find('sync-status').textContent = syncing ? '正在同步学习进度…' : syncMessage || (connected ? '已连接学习同步，复习结果会自动保存到云端。' : '进度保存在此设备；连接学习同步后可跨设备继续。');
+    find('sync-status').textContent = syncing ? '正在同步学习进度…' : syncMessage || (connected ? '已连接学习同步；有新进度时，最多每5分钟自动同步一次。' : '进度保存在此设备；连接学习同步后可跨设备继续。');
   }
   function syncFailure(message) {
     var error = new Error(message);
@@ -199,6 +197,11 @@
       return;
     }
     if (syncing) { paintSync(); return; }
+    if (!manual && !gistSync.automatic('vocabulary', function () { sync(false); })) {
+      if (!selectionReady) { selectionReady = true; render(); }
+      return;
+    }
+    if (manual) gistSync.started('vocabulary');
     syncing = true;
     paintSync('');
     var sent = '';
@@ -239,7 +242,6 @@
         files[GIST_FILE] = { content: sent };
         await syncRequest(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }), signal: controller.signal }, '保存云端进度');
       }
-      lastSyncedAt = Date.now();
       gistSync.succeeded();
       paintSync(manual ? '复习进度已同步。' : '');
     } catch (error) {
@@ -272,7 +274,7 @@
     if (document.hidden) return;
     checkDay();
     refresh(false);
-    if (Date.now() - lastSyncedAt > 60000) sync(false);
+    queueSync();
   }
   find('refresh').addEventListener('click', function () { checkDay(); refresh(true); sync(false); });
   find('sync').addEventListener('click', function () { sync(true); });

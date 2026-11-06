@@ -16,6 +16,7 @@
   var syncTimer;
   var loading = false;
   var syncing = false;
+  var syncMessage = '';
   var lastLoadedAt = 0;
   var lastSyncedAt = 0;
   function find(name) { return panel.querySelector('[data-vocabulary-' + name + ']'); }
@@ -50,12 +51,39 @@
     catch (error) { return {}; }
   }
   function paintSync(message) {
+    if (message !== undefined) syncMessage = message;
     var connected = !!(config().token && config().gistId);
     find('sync').hidden = !connected;
     find('sync').disabled = syncing;
     find('sync').textContent = syncing ? '同步中…' : '同步进度';
-    find('connect').hidden = connected;
-    find('sync-status').textContent = message || (connected ? '已连接学习同步，复习结果会自动保存到云端。' : '进度保存在此设备；连接学习同步后可跨设备继续。');
+    find('connect').hidden = false;
+    find('connect').textContent = connected ? '管理学习同步' : '连接已有的学习同步';
+    find('sync-status').textContent = syncing ? '正在同步学习进度…' : syncMessage || (connected ? '已连接学习同步，复习结果会自动保存到云端。' : '进度保存在此设备；连接学习同步后可跨设备继续。');
+  }
+  function syncFailure(message) {
+    var error = new Error(message);
+    error.syncMessage = message;
+    return error;
+  }
+  async function syncRequest(url, options, action) {
+    var response;
+    try { response = await fetch(url, options); }
+    catch (error) {
+      if (error.name === 'AbortError') throw error;
+      throw syncFailure('此设备暂时连不上 GitHub，请检查网络或代理后重试。');
+    }
+    if (response.ok) return response;
+    var status = response.status;
+    if (status === 401) throw syncFailure('学习同步授权无效或已过期，请打开“管理学习同步”重新连接。');
+    if (status === 403 || status === 429) {
+      var detail = {};
+      try { detail = await response.json(); } catch (error) { /* 错误响应可能不是 JSON。 */ }
+      var limited = status === 429 || response.headers.get('x-ratelimit-remaining') === '0' || response.headers.get('retry-after') || /rate limit|abuse/i.test(detail && detail.message || '');
+      if (limited) throw syncFailure('GitHub 请求过于频繁，请稍后重试（HTTP ' + status + '）。');
+      throw syncFailure('学习同步授权缺少 Gist 读写权限，请打开“管理学习同步”检查授权。');
+    }
+    if (status === 404) throw syncFailure('找不到已连接的云端数据，或当前授权无权访问，请打开“管理学习同步”检查连接。');
+    throw syncFailure(action + '失败（HTTP ' + status + '），' + (status >= 500 ? 'GitHub 暂时无法处理，请稍后重试。' : '请检查学习同步设置。'));
   }
   function rate(word, rating) {
     checkDay();
@@ -171,21 +199,20 @@
     if (!cfg.token || !cfg.gistId) {
       var waiting = !selectionReady;
       selectionReady = true;
-      paintSync();
+      paintSync('');
       if (waiting) render();
       return;
     }
     if (syncing) { paintSync(); return; }
     syncing = true;
-    paintSync();
+    paintSync('');
     var sent = '';
     var controller = new AbortController();
     var syncTimeout = setTimeout(function () { controller.abort(); }, 15000);
     try {
       var url = 'https://api.github.com/gists/' + encodeURIComponent(cfg.gistId);
       var headers = { 'Accept': 'application/vnd.github+json', 'Authorization': 'Bearer ' + cfg.token, 'X-GitHub-Api-Version': '2022-11-28' };
-      var response = await fetch(url, { headers: headers, cache: 'no-store', signal: controller.signal });
-      if (!response.ok) throw new Error('读取同步数据失败');
+      var response = await syncRequest(url, { headers: headers, cache: 'no-store', signal: controller.signal }, '读取云端进度');
       var gist = await response.json();
       var file = gist.files && gist.files[GIST_FILE];
       var remote = {};
@@ -193,15 +220,16 @@
       if (file) {
         var content = file.content;
         if (file.truncated) {
-          if (new URL(file.raw_url).origin !== 'https://gist.githubusercontent.com') throw new Error('同步地址无效');
-          var raw = await fetch(file.raw_url, { signal: controller.signal });
-          if (!raw.ok) throw new Error('读取完整进度失败');
+          var rawUrl;
+          try { rawUrl = new URL(file.raw_url); } catch (error) { throw syncFailure('云端完整进度的地址无效，请检查学习同步设置。'); }
+          if (rawUrl.origin !== 'https://gist.githubusercontent.com') throw syncFailure('云端完整进度的地址无效，请检查学习同步设置。');
+          var raw = await syncRequest(file.raw_url, { signal: controller.signal }, '读取完整进度');
           content = await raw.text();
         }
         var parsed = JSON.parse(content);
-        remote = parsed.progress;
+        remote = parsed && parsed.progress;
+        if (!remote || typeof remote !== 'object' || Array.isArray(remote)) throw syncFailure('云端复习进度格式异常，请在“管理学习同步”中检查云端文件。');
         remoteBatch = parsed.daily_batch || null;
-        if (!remote || typeof remote !== 'object' || Array.isArray(remote)) throw new Error('同步数据格式错误');
       }
       var before = JSON.stringify(payload());
       var wasReady = selectionReady;
@@ -214,19 +242,18 @@
       if (!file || JSON.stringify({ version: 2, progress: remote, daily_batch: remoteBatch }) !== sent) {
         var files = {};
         files[GIST_FILE] = { content: sent };
-        var written = await fetch(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }), signal: controller.signal });
-        if (!written.ok) throw new Error('保存同步数据失败');
+        await syncRequest(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }), signal: controller.signal }, '保存云端进度');
       }
       lastSyncedAt = Date.now();
-      paintSync(manual ? '复习进度已同步。' : undefined);
+      paintSync(manual ? '复习进度已同步。' : '');
     } catch (error) {
-      paintSync('云同步暂未成功，进度仍保存在此设备，可稍后重试。');
+      var message = error.syncMessage || (error.name === 'AbortError' ? '连接 GitHub 超时，请检查网络后重试。' : error.name === 'SyntaxError' ? '云端复习进度格式异常，请在“管理学习同步”中检查云端文件。' : '同步未完成，请稍后重试。');
+      paintSync('云同步失败：' + message + ' 进度仍保存在此设备。');
     } finally {
       clearTimeout(syncTimeout);
       syncing = false;
       if (!selectionReady) { selectionReady = true; render(); }
-      find('sync').disabled = false;
-      find('sync').textContent = '同步进度';
+      paintSync();
       // 同步期间刚提交的反馈要再推送，不能被旧快照覆盖。
       if (sent && sent !== JSON.stringify(payload())) queueSync();
     }

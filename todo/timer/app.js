@@ -1554,6 +1554,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
   const GIST_FILE = 'study-time.json';
   const GIST_DESC = '学习时长记录 · 同步数据';
   const GIST_API = 'https://api.github.com';
+  const gistSync = window.StudyGistSync;
 
   function loadSyncCfg() {
     try {
@@ -1605,12 +1606,13 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     if (opts.body) headers['Content-Type'] = 'application/json';
     let res;
     try {
-      res = await fetch(GIST_API + path, { method: opts.method || 'GET', headers, body: opts.body });
+      res = await gistSync.request(GIST_API + path, { method: opts.method || 'GET', headers, body: opts.body });
     } catch (err) {
+      if (err.rateLimited) throw err;
       throw new Error('网络连不上 GitHub');
     }
     if (res.status === 401) throw new Error('token 无效或没有 gist 权限');
-    if (res.status === 403) throw new Error('GitHub 触发频率限制，稍后再试');
+    if (res.status === 403) throw new Error('GitHub 授权缺少 Gist 读写权限，请检查授权');
     if (res.status === 404) return null;
     if (!res.ok) throw new Error('GitHub 返回 ' + res.status);
     return res.status === 204 ? null : res.json();
@@ -1768,6 +1770,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
         });
       }
       syncCfg.lastSyncAt = Date.now();
+      gistSync.succeeded();
       saveSyncCfg();
       if (!opts.silent) toast('已同步');
       return true;
@@ -1781,11 +1784,13 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     }
   }
 
-  function scheduleSync(delay = 4000) {
+  function scheduleSync(delay = 10000) {
     if (!syncCfg.token || demoMode) return;
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(() => syncNow({ silent: true }), delay);
+    syncTimer = setTimeout(() => syncNow({ silent: true }), Math.max(delay, gistSync.retryAt() - Date.now()));
   }
+
+  gistSync.onRetry(() => syncNow({ silent: true }));
 
   /** 账号里可能有多个 Gist（不同设备各建了一个），全部合并回来 */
   async function recoverFromAllGists() {

@@ -3,6 +3,7 @@
   var panel = document.querySelector('[data-vocabulary-review]');
   if (!panel) return;
   var core = window.VocabularyReviewCore;
+  var gistSync = window.StudyGistSync;
   var KEY = 'sqnuzy-vocabulary-review-v1';
   var SYNC_KEY = 'kaoyan-study-timer-sync-v1';
   var GIST_FILE = 'vocabulary-review.json';
@@ -37,7 +38,7 @@
   function payload() { return { version: 2, progress: progress, daily_batch: dailyBatch }; }
   function queueSync() {
     clearTimeout(syncTimer);
-    syncTimer = setTimeout(function () { sync(false); }, 1000);
+    syncTimer = setTimeout(function () { sync(false); }, Math.max(10000, gistSync.retryAt() - Date.now()));
   }
   function save() {
     progress = core.mergeProgress(readProgress(), progress);
@@ -67,21 +68,15 @@
   }
   async function syncRequest(url, options, action) {
     var response;
-    try { response = await fetch(url, options); }
+    try { response = await gistSync.request(url, options); }
     catch (error) {
-      if (error.name === 'AbortError') throw error;
+      if (error.rateLimited || error.name === 'AbortError') throw error;
       throw syncFailure('此设备暂时连不上 GitHub，请检查网络或代理后重试。');
     }
     if (response.ok) return response;
     var status = response.status;
     if (status === 401) throw syncFailure('学习同步授权无效或已过期，请打开“管理学习同步”重新连接。');
-    if (status === 403 || status === 429) {
-      var detail = {};
-      try { detail = await response.json(); } catch (error) { /* 错误响应可能不是 JSON。 */ }
-      var limited = status === 429 || response.headers.get('x-ratelimit-remaining') === '0' || response.headers.get('retry-after') || /rate limit|abuse/i.test(detail && detail.message || '');
-      if (limited) throw syncFailure('GitHub 请求过于频繁，请稍后重试（HTTP ' + status + '）。');
-      throw syncFailure('学习同步授权缺少 Gist 读写权限，请打开“管理学习同步”检查授权。');
-    }
+    if (status === 403) throw syncFailure('学习同步授权缺少 Gist 读写权限，请打开“管理学习同步”检查授权。');
     if (status === 404) throw syncFailure('找不到已连接的云端数据，或当前授权无权访问，请打开“管理学习同步”检查连接。');
     throw syncFailure(action + '失败（HTTP ' + status + '），' + (status >= 500 ? 'GitHub 暂时无法处理，请稍后重试。' : '请检查学习同步设置。'));
   }
@@ -245,6 +240,7 @@
         await syncRequest(url, { method: 'PATCH', headers: Object.assign({ 'Content-Type': 'application/json' }, headers), body: JSON.stringify({ files: files }), signal: controller.signal }, '保存云端进度');
       }
       lastSyncedAt = Date.now();
+      gistSync.succeeded();
       paintSync(manual ? '复习进度已同步。' : '');
     } catch (error) {
       var message = error.syncMessage || (error.name === 'AbortError' ? '连接 GitHub 超时，请检查网络后重试。' : error.name === 'SyntaxError' ? '云端复习进度格式异常，请在“管理学习同步”中检查云端文件。' : '同步未完成，请稍后重试。');
@@ -280,6 +276,7 @@
   }
   find('refresh').addEventListener('click', function () { checkDay(); refresh(true); sync(false); });
   find('sync').addEventListener('click', function () { sync(true); });
+  gistSync.onRetry(function () { sync(false); });
   document.addEventListener('visibilitychange', resume);
   window.addEventListener('pageshow', resume);
   window.addEventListener('focus', resume);

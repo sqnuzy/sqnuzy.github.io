@@ -9,6 +9,7 @@
   const CFG_KEY = 'kaoyan-study-timer-sync-v1';   // 与计时页共用
   const FILE = 'todo.json';
   const API = 'https://api.github.com';
+  const gistSync = window.StudyGistSync;
   const DELETED_KEY = 'sqnuzy_blog_todo_deleted';
   const TIMERS_UPDATED_KEY = 'sqnuzy_blog_timers_updated';
   const store = window.todoStore;
@@ -122,12 +123,13 @@
     if (opts.body) headers['Content-Type'] = 'application/json';
     let res;
     try {
-      res = await fetch(API + path, { method: opts.method || 'GET', headers, body: opts.body });
+      res = await gistSync.request(API + path, { method: opts.method || 'GET', headers, body: opts.body });
     } catch (err) {
+      if (err.rateLimited) throw err;
       throw new Error('网络连不上 GitHub');
     }
     if (res.status === 401) throw new Error('token 无效或没有 gist 权限');
-    if (res.status === 403) throw new Error('GitHub 触发频率限制，稍后再试');
+    if (res.status === 403) throw new Error('GitHub 授权缺少 Gist 读写权限，请检查授权');
     if (res.status === 404) return null;
     if (!res.ok) throw new Error('GitHub 返回 ' + res.status);
     return res.status === 204 ? null : res.json();
@@ -237,6 +239,7 @@
         });
       }
       lastSyncAt = Date.now();
+      gistSync.succeeded();
       writeCfg();
       if (!opts.silent) toastBox('已同步');
     } catch (err) {
@@ -250,11 +253,13 @@
     return !syncError;
   }
 
-  function scheduleSync(delay = 4000) {
+  function scheduleSync(delay = 10000) {
     if (!cfg.token) return;
     clearTimeout(scheduleTimer);
-    scheduleTimer = setTimeout(() => syncNow({ silent: true }), delay);
+    scheduleTimer = setTimeout(() => syncNow({ silent: true }), Math.max(delay, gistSync.retryAt() - Date.now()));
   }
+
+  gistSync.onRetry(() => syncNow({ silent: true }));
 
   /** 账号里可能有多个 Gist（例如两台设备各自建了一个），把它们全部合并回来 */
   async function recoverFromAllGists() {

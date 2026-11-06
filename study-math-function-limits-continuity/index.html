@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>高数｜函数的极限与连续 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="整理函数基础、函数极限定义、无穷小比较、七种未定式、常用展开式与重要极限，配三角函数和反三角函数图像。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=10">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261104-1">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid study-note-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-11-06T12:07:06.000Z">2026-11-06</time>
+      <p class="article-kicker">STUDY NOTES</p>
+      <h1>高数｜函数的极限与连续</h1>
+      <div class="post-meta">
+        
+          <span>学习笔记 / 数学</span>
+        
+        
+          <span>#高等数学 #连续 #函数极限 #等价无穷小 #洛必达法则 #未定式</span>
+        
+      </div>
+      
+        <div class="study-tools study-tools-reading" data-study-note>
+  <a class="study-back" href="/study/">← 复习笔记</a>
+  
+</div>
+
+      
+    </header>
+    <div class="article-body">
+      <h2 id="函数的极限与连续">函数的极限与连续</h2>
+<h3 id="均值不等式链">均值不等式链</h3>
+<p><span class="math display">\[
+\frac{2}{\frac{1}{a}+\frac{1}{b}}
+\le \sqrt{ab}
+\le \frac{a+b}{2}
+\le \sqrt{\frac{a^2+b^2}{2}},
+\qquad (a,b&gt;0).
+\]</span></p>
+<h3 id="均值不等式">均值不等式</h3>
+<p><span class="math display">\[
+\sqrt{\frac{a^2+b^2}{2}}\geq\frac{a+b}{2}\geq\sqrt{ab}\geq\frac{2}{\frac1a+\frac1b}
+\]</span></p>
+<h3 id="函数图像口诀">函数图像口诀</h3>
+<blockquote>
+<p>铅直定单、多，水平定反，直</p>
+</blockquote>
+<h3 id="复合函数的奇偶性">复合函数的奇偶性</h3>
+<p>对于 <span class="math inline">\(f[\varphi(x)]\)</span>：</p>
+<blockquote>
+<p><strong>内偶则偶，内奇同外。</strong></p>
+</blockquote>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 18%" />
+<col style="width: 52%" />
+</colgroup>
+<thead>
+<tr>
+<th>复合情况：外函数[内函数]</th>
+<th>复合函数的奇偶性</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>奇[偶]</td>
+<td>偶</td>
+<td>如 <span class="math inline">\(\sin x^2\)</span></td>
+</tr>
+<tr>
+<td>偶[奇]</td>
+<td>偶</td>
+<td>如 <span class="math inline">\(\cos(\sin x)\)</span>、<span
+class="math inline">\(\lvert\sin x\rvert\)</span></td>
+</tr>
+<tr>
+<td>奇[奇]</td>
+<td>奇</td>
+<td>如 <span class="math inline">\(\sin\frac{1}{x}\)</span>、<span
+class="math inline">\(\sqrt[3]{\tan x}\)</span></td>
+</tr>
+<tr>
+<td>偶[偶]</td>
+<td>偶</td>
+<td>如 <span class="math inline">\(\cos\lvert x\rvert\)</span>、<span
+class="math inline">\(\lvert\cos x\rvert\)</span></td>
+</tr>
+<tr>
+<td>非奇非偶[偶]</td>
+<td>偶</td>
+<td>如 <span class="math inline">\(e^{x^2}\)</span>、<span
+class="math inline">\(\ln\lvert x\rvert\)</span></td>
+</tr>
+</tbody>
+</table>
+<h3 id="复合函数的奇偶性-1">复合函数的奇偶性</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">奇[偶] ⇒ 偶</span><br><span class="line">偶[奇] ⇒ 偶</span><br><span class="line">奇[奇] ⇒ 奇</span><br><span class="line">偶[偶] ⇒ 偶</span><br><span class="line">非奇非偶[偶] ⇒ 偶</span><br></pre></td></tr></table></figure>
+<h3 id="初等函数的定义域">初等函数的定义域</h3>
+<p><strong>注（1）：</strong>
+初等函数的定义域可以是一个区间，也可以是几个区间的并集，甚至可以是些孤立的点。</p>
+<p>例如，<span class="math inline">\(y=\sqrt{\cos\pi x-1}\)</span>
+的定义域是</p>
+<p><span class="math display">\[
+\{x\mid x=0,\pm2,\pm4,\dots\}.
+\]</span></p>
+<h3 id="三角函数">三角函数</h3>
+<h4 id="函数关系">函数关系</h4>
+<p><span class="math display">\[
+\tan x=\frac{\sin x}{\cos x},
+\qquad
+\cot x=\frac{\cos x}{\sin x}=\frac{1}{\tan x}.
+\]</span></p>
+<p><span class="math display">\[
+\sec x=\frac{1}{\cos x},
+\qquad
+\csc x=\frac{1}{\sin x}.
+\]</span></p>
+<h4 id="六种三角函数的图像">六种三角函数的图像</h4>
+<p>图像均使用<strong>弧度制</strong>；橙色虚线表示渐近线，<span
+class="math inline">\(k\in\mathbb{Z}\)</span>。</p>
+<figure>
+<img
+src="/images/math/function-limits-continuity/trigonometric-functions.png"
+alt="正弦、余弦、正切、余切、正割、余割函数图像" />
+<figcaption
+aria-hidden="true">正弦、余弦、正切、余切、正割、余割函数图像</figcaption>
+</figure>
+<h4 id="看图速查">看图速查</h4>
+<p>以下各式中的 <span
+class="math inline">\(k\in\mathbb{Z}\)</span>。</p>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 44%" />
+<col style="width: 30%" />
+<col style="width: 10%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr>
+<th>函数</th>
+<th>定义域</th>
+<th>值域</th>
+<th>最小正周期</th>
+<th>奇偶性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(\sin x\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span class="math inline">\([-1,1]\)</span></td>
+<td><span class="math inline">\(2\pi\)</span></td>
+<td>奇函数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\cos x\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span class="math inline">\([-1,1]\)</span></td>
+<td><span class="math inline">\(2\pi\)</span></td>
+<td>偶函数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\tan x\)</span></td>
+<td><span
+class="math inline">\(\mathbb{R}\setminus\{\frac{\pi}{2}+k\pi\}\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span class="math inline">\(\pi\)</span></td>
+<td>奇函数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\cot x\)</span></td>
+<td><span
+class="math inline">\(\mathbb{R}\setminus\{k\pi\}\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span class="math inline">\(\pi\)</span></td>
+<td>奇函数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\sec x\)</span></td>
+<td><span
+class="math inline">\(\mathbb{R}\setminus\{\frac{\pi}{2}+k\pi\}\)</span></td>
+<td><span
+class="math inline">\((-\infty,-1]\cup[1,+\infty)\)</span></td>
+<td><span class="math inline">\(2\pi\)</span></td>
+<td>偶函数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\csc x\)</span></td>
+<td><span
+class="math inline">\(\mathbb{R}\setminus\{k\pi\}\)</span></td>
+<td><span
+class="math inline">\((-\infty,-1]\cup[1,+\infty)\)</span></td>
+<td><span class="math inline">\(2\pi\)</span></td>
+<td>奇函数</td>
+</tr>
+</tbody>
+</table>
+<h3 id="反三角函数">反三角函数</h3>
+<h4 id="图像与主值范围">图像与主值范围</h4>
+<figure>
+<img
+src="/images/math/function-limits-continuity/inverse-trigonometric-functions.png"
+alt="反正弦、反余弦、反正切、反余切函数图像与主值范围" />
+<figcaption
+aria-hidden="true">反正弦、反余弦、反正切、反余切函数图像与主值范围</figcaption>
+</figure>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 15%" />
+<col style="width: 42%" />
+<col style="width: 10%" />
+</colgroup>
+<thead>
+<tr>
+<th>函数</th>
+<th>定义域</th>
+<th>主值范围</th>
+<th>单调性</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(\arcsin x\)</span></td>
+<td><span class="math inline">\([-1,1]\)</span></td>
+<td><span
+class="math inline">\([-\frac{\pi}{2},\frac{\pi}{2}]\)</span></td>
+<td>严格递增</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\arccos x\)</span></td>
+<td><span class="math inline">\([-1,1]\)</span></td>
+<td><span class="math inline">\([0,\pi]\)</span></td>
+<td>严格递减</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\arctan x\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span
+class="math inline">\((-\frac{\pi}{2},\frac{\pi}{2})\)</span></td>
+<td>严格递增</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\operatorname{arccot}x\)</span></td>
+<td><span class="math inline">\(\mathbb{R}\)</span></td>
+<td><span class="math inline">\((0,\pi)\)</span></td>
+<td>严格递减</td>
+</tr>
+</tbody>
+</table>
+<h4 id="反三角函数的恒等式">反三角函数的恒等式</h4>
+<h5 id="正弦与反三角函数">① 正弦与反三角函数</h5>
+<p><span class="math display">\[
+\sin(\arcsin x)=x,
+\qquad x\in[-1,1].
+\]</span></p>
+<p><span class="math display">\[
+\sin(\arccos x)=\sqrt{1-x^2},
+\qquad x\in[-1,1].
+\]</span></p>
+<blockquote>
+<p><strong>手写笔记：</strong> 令 <span class="math inline">\(t=\arccos
+x\in[0,\pi]\)</span>，则 <span class="math inline">\(x=\cos t,\ \sin
+t\ge0\)</span>，又 <span
+class="math inline">\(\sin^2t+\cos^2t=1\)</span>，故 <span
+class="math inline">\(\sin t=\sqrt{1-x^2}\)</span>，即 <span
+class="math inline">\(\sin(\arccos x)=\sqrt{1-x^2}\)</span>。</p>
+</blockquote>
+<h5 id="余弦与反三角函数">② 余弦与反三角函数</h5>
+<p><span class="math display">\[
+\cos(\arccos x)=x,
+\qquad x\in[-1,1].
+\]</span></p>
+<p><span class="math display">\[
+\cos(\arcsin x)=\sqrt{1-x^2},
+\qquad x\in[-1,1].
+\]</span></p>
+<h5 id="反三角函数与三角函数">③ 反三角函数与三角函数</h5>
+<p><span class="math display">\[
+\arcsin(\sin x)=x,
+\qquad x\in\left[-\frac{\pi}{2},\frac{\pi}{2}\right].
+\]</span></p>
+<p><span class="math display">\[
+\arccos(\cos x)=x,
+\qquad x\in[0,\pi].
+\]</span></p>
+<h5 id="反正弦与反余弦的关系">④ 反正弦与反余弦的关系</h5>
+<p><span class="math display">\[
+\arcsin x+\arccos x=\frac{\pi}{2},
+\qquad (-1\le x\le1).
+\]</span></p>
+<hr />
+<h3 id="取整函数">取整函数</h3>
+<h4 id="定义与例子">定义与例子</h4>
+<p><span class="math inline">\(y=[x]\)</span>
+称为取整函数。先给出定义：设 <span class="math inline">\(x\)</span>
+为任一实数，不超过 <span class="math inline">\(x\)</span> 的最大整数称为
+<span class="math inline">\(x\)</span> 的整数部分，记作 <span
+class="math inline">\([x]\)</span>。如：</p>
+<p><span class="math display">\[
+[0.99]=0,\qquad [\pi]=3,\qquad [-1]=-1,\qquad [-1.99]=-2.
+\]</span></p>
+<p>因此，取整函数 <span class="math inline">\(y=[x]\)</span> 的定义域为
+<span class="math inline">\(\mathbf{R}\)</span>，值域为 <span
+class="math inline">\(\mathbf{Z}\)</span>。它的图形如图1-17所示，在
+<span class="math inline">\(x\)</span> 为整数值处图形发生跳跃。</p>
+<h4 id="性质与记忆点">性质与记忆点</h4>
+<ol type="1">
+<li><strong>★★★</strong> <span
+class="math inline">\([x+n]=[x]+n\)</span>，其中 <span
+class="math inline">\(n\)</span> 为整数。</li>
+<li><strong>★</strong> <span class="math inline">\(x-1&lt;[x]\le
+x\)</span>。</li>
+<li><strong>★</strong> <span
+class="math inline">\(\lim_{x\to0^+}[x]=0\)</span>；<span
+class="math inline">\(\lim_{x\to0^-}[x]=-1\)</span>。</li>
+<li><strong>★★★</strong> 换一种说法，“<span
+class="math inline">\(Y=i+1\)</span> 当且仅当 <span
+class="math inline">\(i\le X&lt;i+1\)</span>，<span
+class="math inline">\(i\)</span> 为整数，则 <span
+class="math inline">\(Y=[X]+1\)</span>”考生要牢记。</li>
+</ol>
+<h3 id="函数极限的定义">函数极限的定义</h3>
+<h4 id="文字定义">文字定义</h4>
+<p>设函数 <span class="math inline">\(f(x)\)</span> 在点 <span
+class="math inline">\(x_0\)</span> 的某一去心邻域内有定义。若存在常数
+<span class="math inline">\(A\)</span>，对于任意给定的 <span
+class="math inline">\(\varepsilon&gt;0\)</span>（不论它多么小），总存在正数
+<span class="math inline">\(\delta\)</span>，使得当</p>
+<p><span class="math display">\[
+0&lt;|x-x_0|&lt;\delta
+\]</span></p>
+<p>时，对应的函数值 <span class="math inline">\(f(x)\)</span>
+都满足不等式</p>
+<p><span class="math display">\[
+|f(x)-A|&lt;\varepsilon,
+\]</span></p>
+<p>则 <span class="math inline">\(A\)</span> 叫作函数 <span
+class="math inline">\(f(x)\)</span> 当 <span class="math inline">\(x\to
+x_0\)</span> 时的极限，记为</p>
+<p><span class="math display">\[
+\lim_{x\to x_0}f(x)=A
+\qquad\text{或}\qquad
+f(x)\to A\quad(x\to x_0).
+\]</span></p>
+<h4 id="varepsilon-delta-语言"><span
+class="math inline">\(\varepsilon-\delta\)</span> 语言</h4>
+<p>写成“<span class="math inline">\(\varepsilon-\delta\)</span>
+语言”：</p>
+<p><span class="math display">\[
+\begin{aligned}
+&amp;\lim_{x\to x_0}f(x)=A\\
+&amp;\quad\Leftrightarrow\quad
+\forall\varepsilon&gt;0,\ \exists\delta&gt;0,\quad
+\bigl(0&lt;|x-x_0|&lt;\delta\Rightarrow|f(x)-A|&lt;\varepsilon\bigr).
+\end{aligned}
+\]</span></p>
+<blockquote>
+<p>任给的 <span
+class="math inline">\(\varepsilon&gt;0\)</span>，总能找到去心 <span
+class="math inline">\(\delta\)</span> 邻域，使得 <span
+class="math inline">\(|f(x)-A|\)</span> 的距离小于尺度 <span
+class="math inline">\(\varepsilon\)</span>。</p>
+</blockquote>
+<p>提取整理如下，重复公式已合并。</p>
+<h3 id="无穷小的比较">无穷小的比较</h3>
+<p>① 若 <span class="math inline">\(\lim \frac{\alpha(x)}{\beta(x)} =
+0\)</span>，则称 <span class="math inline">\(\alpha(x)\)</span> 是比
+<span class="math inline">\(\beta(x)\)</span> 高阶的无穷小，记为 <span
+class="math inline">\(\alpha(x) = o(\beta(x))\)</span>；</p>
+<p>② 若 <span class="math inline">\(\lim \frac{\alpha(x)}{\beta(x)} =
+\infty\)</span>，则称 <span class="math inline">\(\alpha(x)\)</span>
+是比 <span class="math inline">\(\beta(x)\)</span> 低阶的无穷小；</p>
+<p>★③ 若 <span class="math inline">\(\lim \frac{\alpha(x)}{\beta(x)} = c
+\neq 0\)</span>，则称 <span class="math inline">\(\alpha(x)\)</span> 与
+<span class="math inline">\(\beta(x)\)</span> 是同阶无穷小；</p>
+<p>★④ 若 <span class="math inline">\(\lim \frac{\alpha(x)}{\beta(x)} =
+1\)</span>，则称 <span class="math inline">\(\alpha(x)\)</span> 与 <span
+class="math inline">\(\beta(x)\)</span> 是等价无穷小，记为 <span
+class="math inline">\(\alpha(x) \sim \beta(x)\)</span>；</p>
+<p>“等价”不是相等，如 <span class="math inline">\(\lim_{x \to 0}
+\frac{\sin x}{x} = 1 \neq 0\)</span>，而 <span
+class="math inline">\(\lim_{x \to 0} \frac{x - \boxed{\sin x}}{x^3} =
+\frac{1}{6}\)</span>。</p>
+<p>⑤ 若 <span class="math inline">\(\lim \frac{\alpha(x)}{[\beta(x)]^k}
+= c \neq 0, k &gt; 0\)</span>，则称 <span
+class="math inline">\(\alpha(x)\)</span> 是 <span
+class="math inline">\(\beta(x)\)</span> 的 <span
+class="math inline">\(k\)</span> 阶无穷小。</p>
+<p>当 <span class="math inline">\(x \to 0\)</span>
+时，常用的等价无穷小有</p>
+<p><span class="math display">\[
+\sin x \sim x, \tan x \sim x, \arcsin x \sim x, \arctan x \sim x,
+\ln(1+x) \sim x, e^x - 1 \sim x,
+\]</span></p>
+<p><span class="math display">\[
+a^x - 1 \sim x \ln a, 1 - \cos x \sim \frac{1}{2}x^2, (1+x)^a - 1 \sim
+ax .
+\]</span></p>
+<h3 id="常用等价无穷小">常用等价无穷小</h3>
+<p>当 <span class="math inline">\(x\to0\)</span> 时：</p>
+<table>
+<thead>
+<tr>
+<th>表达式</th>
+<th>等价无穷小</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(\sin x\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\tan x\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\arcsin x\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\arctan x\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\ln(1+x)\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(e^x-1\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(a^x-1\)</span></td>
+<td><span class="math inline">\(x\ln a\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(1-\cos x\)</span></td>
+<td><span class="math inline">\(\frac12x^2\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\((1+x)^a-1\)</span></td>
+<td><span class="math inline">\(ax\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\ln(1+x)-x\)</span></td>
+<td><span class="math inline">\(-\frac12x^2\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(x-\sin x\)</span></td>
+<td><span class="math inline">\(\frac{x^3}{6}\)</span></td>
+</tr>
+<tr>
+<td><span
+class="math inline">\(\ln\left(x+\sqrt{1+x^2}\right)\)</span></td>
+<td><span class="math inline">\(x\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(1-(\cos x)^a\)</span></td>
+<td><span class="math inline">\(\frac12ax^2\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>图中还写有：</p>
+<p><span class="math display">\[
+\ln\left(x+\sqrt{1+x^2}\right)\sim x\sim\sin x\sim\tan x\sim\arctan
+x\sim e^x-1\sim\ln(1+x)
+\]</span></p>
+<h3 id="洛必达法则">洛必达法则</h3>
+<p>用来处理 <span class="math inline">\(\frac00\)</span> 型或 <span
+class="math inline">\(\frac{\infty}{\infty}\)</span> 型未定式。</p>
+<h3 id="七种未定式">七种未定式</h3>
+<p>七种<strong>未定式</strong>可以按四类记：</p>
+<p><strong>分式找主项，乘积改分式，相减先合并，幂指先取对数。</strong></p>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 34%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>未定式</th>
+<th>第一步怎么做</th>
+<th>常用方法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math inline">\(\frac00\)</span></td>
+<td>先化简，找分子、分母的首个非零项</td>
+<td>约分、等价无穷小、泰勒展开、洛必达</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\frac{\infty}{\infty}\)</span></td>
+<td>比较分子、分母的主导项</td>
+<td>提最高次幂、比较增长速度、洛必达</td>
+</tr>
+<tr>
+<td><span class="math inline">\(0\cdot\infty\)</span></td>
+<td>把乘积改成分式</td>
+<td><span class="math inline">\(fg=\frac{f}{1/g}\)</span> 或 <span
+class="math inline">\(\frac{g}{1/f}\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(\infty-\infty\)</span></td>
+<td>先把相减的两项合并</td>
+<td>分式通分、根式有理化、提公因式</td>
+</tr>
+<tr>
+<td><span class="math inline">\(1^\infty\)</span></td>
+<td>取对数，或利用 <span class="math inline">\(\ln u\sim
+u-1\)</span></td>
+<td>计算 <span class="math inline">\(v\ln u\)</span>，也可简化为 <span
+class="math inline">\(v(u-1)\)</span></td>
+</tr>
+<tr>
+<td><span class="math inline">\(0^0\)</span></td>
+<td>取对数</td>
+<td>计算 <span class="math inline">\(v\ln u\)</span>，再还原指数</td>
+</tr>
+<tr>
+<td><span class="math inline">\(\infty^0\)</span></td>
+<td>取对数</td>
+<td>计算 <span class="math inline">\(v\ln u\)</span>，再还原指数</td>
+</tr>
+</tbody>
+</table>
+<p><strong>变形后能直接求值，就直接计算；需要用洛必达时，先转成 <span
+class="math inline">\(\frac00\)</span> 或 <span
+class="math inline">\(\frac{\infty}{\infty}\)</span> 型。</strong><a
+target="_blank" rel="noopener" href="https://openstax.org/books/calculus-volume-1/pages/4-8-lhopitals-rule">参考：OpenStax
+微积分教材</a></p>
+<h4 id="乘积型选变形后更容易计算的分式">1.
+乘积型：选变形后更容易计算的分式。</h4>
+<p>没有固定的“对数优先放分母”规则。例如，当 <span
+class="math inline">\(x\to0^+\)</span> 时：</p>
+<p><span class="math display">\[
+x\ln x=\frac{\ln x}{1/x}
+\]</span></p>
+<p>对数保留在分子，求导后反而更简单。</p>
+<h4 id="相减型先处理抵消">2. 相减型：先处理抵消。</h4>
+<p>分式相减先通分；根式相减先乘共轭。例如：</p>
+<p><span class="math display">\[
+\sqrt{x^2+x}-x=\frac{x}{\sqrt{x^2+x}+x}
+\]</span></p>
+<p>合并后重新判断极限类型，再选择方法。</p>
+<h4 id="三种幂指型统一先求对数的极限">3.
+三种幂指型：统一先求对数的极限。</h4>
+<p>对 <span class="math inline">\(y=u(x)^{v(x)}\)</span>，在底数 <span
+class="math inline">\(u(x)&gt;0\)</span> 的条件下：</p>
+<p><span class="math display">\[
+\ln y=v(x)\ln u(x)
+\]</span></p>
+<p>若 <span class="math inline">\(A=\lim v(x)\ln u(x)\)</span>
+存在，则：</p>
+<p><span class="math display">\[
+\boxed{\lim u(x)^{v(x)}=e^A}
+\]</span></p>
+<p>其中，<span class="math inline">\(A=+\infty\)</span> 时结果为 <span
+class="math inline">\(+\infty\)</span>；<span
+class="math inline">\(A=-\infty\)</span> 时结果为 <span
+class="math inline">\(0\)</span>。</p>
+<p>对于 <strong><span class="math inline">\(1^\infty\)</span>
+型</strong>，因为 <span class="math inline">\(u\to1\)</span>，有 <span
+class="math inline">\(\ln u\sim u-1\)</span>，所以若右侧极限存在：</p>
+<p><span class="math display">\[
+\boxed{\lim u^v=e^{\,\lim v(u-1)}}
+\]</span></p>
+<p><strong><span class="math inline">\(0^0\)</span> 和 <span
+class="math inline">\(\infty^0\)</span> 型继续计算 <span
+class="math inline">\(v\ln u\)</span>，不套用这个简化。</strong></p>
+<h3 id="常用展开式">常用展开式</h3>
+<p>当 <span class="math inline">\(x\to0\)</span> 时：</p>
+<p><span class="math display">\[
+\sin x=x-\frac{x^3}{3!}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+\cos x=1-\frac{x^2}{2!}+\frac{x^4}{4!}+o(x^4)
+\]</span></p>
+<p><span class="math display">\[
+\arcsin x=x+\frac{x^3}{3!}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+\tan x=x+\frac{x^3}{3}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+\arctan x=x-\frac{x^3}{3}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+e^x=1+x+\frac{x^2}{2!}+\frac{x^3}{3!}+o(x^3)
+\]</span></p>
+<p><span class="math display">\[
+(1+x)^a=1+ax+\frac{a(a-1)}{2!}x^2+o(x^2)
+\]</span></p>
+<h3 id="重要极限">重要极限</h3>
+<p><span class="math display">\[
+\displaystyle\lim_{x\to0}\frac{\sin x}{x}=1
+\]</span></p>
+<p><span class="math display">\[
+\displaystyle\lim_{x\to\infty}\left(1+\frac1x\right)^x=e
+\]</span></p>
+<p><span class="math display">\[
+\displaystyle\lim_{x\to0}(1+x)^{1/x}=e
+\]</span></p>
+<p>注：原图左侧将 <span class="math inline">\(1-\cos x\)</span> 与 <span
+class="math inline">\(\frac12x^2\)</span>
+之间写成了等号；按等价无穷小的语境，上文已整理为 <span
+class="math inline">\(\sim\)</span>。</p>
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  <script src="/js/study.js?v=20261031-3"></script>
+  
+</body>
+</html>

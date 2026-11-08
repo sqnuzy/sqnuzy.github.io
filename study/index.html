@@ -118,7 +118,10 @@
       <h2 id="vocabulary-title">今日单词复习</h2>
       <p class="vocabulary-schedule"><time data-vocabulary-day></time> · 每天 05:00 更新 · 北京时间</p>
     </div>
-    <button type="button" class="study-button" data-vocabulary-refresh>更新清单</button>
+    <div class="study-actions">
+      <button type="button" class="study-button study-button-primary" data-vocabulary-restart disabled title="再练一轮今日清单，保留学习记录">重新复习今日单词</button>
+      <button type="button" class="study-button" data-vocabulary-refresh>更新清单</button>
+    </div>
   </header>
   <div class="vocabulary-stats" aria-label="单词复习概况">
     <span>待复习 <strong data-vocabulary-due>—</strong></span>
@@ -365,7 +368,7 @@
   <script src="/js/study.js?v=20261031-3"></script>
   <script src="/todo/gist-sync.js?v=20261106-3"></script>
   <script src="/js/vocabulary-core.js?v=20261104-5"></script>
-  <script src="/js/vocabulary.js?v=20261106-3"></script>
+  <script src="/js/vocabulary.js?v=20261108-1"></script>
   
 </body>
 </html>

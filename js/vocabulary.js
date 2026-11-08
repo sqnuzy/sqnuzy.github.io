@@ -5,12 +5,14 @@
   var core = window.VocabularyReviewCore;
   var gistSync = window.StudyGistSync;
   var KEY = 'sqnuzy-vocabulary-review-v1';
+  var REPLAY_KEY = 'sqnuzy-vocabulary-replay-v1';
   var SYNC_KEY = 'kaoyan-study-timer-sync-v1';
   var GIST_FILE = 'vocabulary-review.json';
   var catalog = null;
   var progress = readProgress();
   var dailyBatch = readDailyBatch();
-  var queue = [];
+  var replay = readReplay();
+  var queue = replay ? replay.ids.slice() : [];
   var day = core.reviewDay();
   var selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
   var rolloverTimer;
@@ -32,6 +34,18 @@
   function readDailyBatch() {
     try { return JSON.parse(localStorage.getItem(KEY) || '{}').daily_batch || null; }
     catch (error) { return null; }
+  }
+  function readReplay() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(REPLAY_KEY) || 'null');
+      return saved && saved.day === core.reviewDay() && Array.isArray(saved.ids) && saved.ids.every(function (id) { return typeof id === 'string'; }) ? saved : null;
+    } catch (error) { return null; }
+  }
+  function saveReplay() {
+    try {
+      if (replay) localStorage.setItem(REPLAY_KEY, JSON.stringify(replay));
+      else localStorage.removeItem(REPLAY_KEY);
+    } catch (error) { find('feedback').textContent = '浏览器未能保存本轮重练进度，刷新后可能需要重新开始。'; }
   }
   function payload() { return { version: 2, progress: progress, daily_batch: dailyBatch }; }
   function queueSync() {
@@ -85,8 +99,13 @@
     var result = core.state(word, progress);
     queue = queue.filter(function (id) { return id !== word.id; });
     if (result.same_day_retest_pending) queue.push(word.id);
+    if (replay) { replay.ids = queue.slice(); saveReplay(); }
     render();
     if (saved) find('feedback').textContent = word.word + (result.same_day_retest_pending ? '：加入当日巩固，稍后再回忆一次；明天仍会复习。' : '：已记录，下次复习 ' + result.next_review_on + ' 05:00。');
+    focusCurrent();
+    queueSync();
+  }
+  function focusCurrent() {
     var nextCard = find('list').querySelector('.vocabulary-card');
     var next = nextCard ? nextCard.querySelector('h3') : find('empty');
     next.focus({ preventScroll: true });
@@ -94,11 +113,27 @@
     var header = document.querySelector('.site-header');
     scrollTarget.style.scrollMarginTop = ((header ? header.offsetHeight : 0) + 16) + 'px';
     scrollTarget.scrollIntoView({ block: 'nearest' });
-    queueSync();
+  }
+  function restart() {
+    checkDay();
+    if (!catalog || !selectionReady) return;
+    var today = core.plan(catalog.words, progress, Date.now(), dailyBatch);
+    var ids = new Set(today.daily_batch.ids.concat(today.due.map(function (word) { return word.id; })));
+    catalog.words.forEach(function (word) {
+      if (core.state(word, progress).last_reviewed_on === day) ids.add(word.id);
+    });
+    queue = Array.from(ids);
+    if (!queue.length) return;
+    replay = { day: day, ids: queue.slice() };
+    render();
+    find('feedback').textContent = '已开始重新复习今日 ' + queue.length + ' 个单词，学习记录已保留。';
+    saveReplay();
+    focusCurrent();
   }
   function render() {
     find('day').textContent = day;
     find('day').dateTime = day;
+    find('restart').disabled = !catalog || !selectionReady;
     if (!catalog) return;
     if (!selectionReady) {
       find('total').textContent = catalog.words.length;
@@ -113,18 +148,28 @@
       save();
       if (!syncing) queueSync();
     }
-    find('due').textContent = today.due.length;
+    var due = today.due;
+    if (replay) {
+      var replayIds = new Set(replay.ids);
+      var scheduledIds = new Set(due.map(function (word) { return word.id; }));
+      due = due.concat(catalog.words.map(function (word) { return core.state(word, progress); }).filter(function (word) {
+        return replayIds.has(word.id) && !scheduledIds.has(word.id) && word.first_learned_on && word.first_learned_on <= day;
+      }));
+    }
+    find('restart').disabled = !today.rotation_total && !due.length && !today.completed;
+    find('due').textContent = due.length;
     find('completed').textContent = today.completed;
     find('total').textContent = today.total;
     find('selected').textContent = today.rotation_total;
-    find('extra').textContent = today.extra_due;
-    var dueIds = new Set(today.due.map(function (word) { return word.id; }));
+    var selectedIds = new Set(today.daily_batch.ids);
+    find('extra').textContent = due.filter(function (word) { return !selectedIds.has(word.id); }).length;
+    var dueIds = new Set(due.map(function (word) { return word.id; }));
     queue = queue.filter(function (id) { return dueIds.has(id); });
     var queued = new Set(queue);
-    today.due.forEach(function (word) {
+    due.forEach(function (word) {
       if (!queued.has(word.id)) { queue.push(word.id); queued.add(word.id); }
     });
-    var currentWord = today.due.find(function (word) { return word.id === queue[0]; });
+    var currentWord = due.find(function (word) { return word.id === queue[0]; });
     var list = find('list');
     list.replaceChildren();
     if (currentWord) {
@@ -135,7 +180,7 @@
       var title = element('h3', '', word.word);
       title.tabIndex = -1;
       heading.appendChild(title);
-      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : '今日轮换'));
+      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : replay ? '今日重练' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : '今日轮换'));
       card.appendChild(heading);
       card.appendChild(element('p', 'vocabulary-meta', word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : '初学 ' + word.first_learned_on));
       var details = element('details', 'vocabulary-answer');
@@ -162,9 +207,9 @@
       list.appendChild(card);
     }
     var empty = find('empty');
-    empty.hidden = today.due.length > 0;
+    empty.hidden = due.length > 0;
     empty.textContent = today.total === 0 ? '词库还没有单词。把学过的单词和原句发给助手录入后，这里会自动安排复习。' :
-      (today.completed ? '今天的选词和到期任务已复习完。' : '今天没有待复习单词。') + (today.next ? '下次更新：' + today.next + ' 05:00。' : '');
+      (replay ? '本轮重新复习已完成。' : today.completed ? '今天的选词和到期任务已复习完。' : '今天没有待复习单词。') + (today.next ? '下次更新：' + today.next + ' 05:00。' : '');
   }
   async function refresh(force) {
     if (loading || (!force && Date.now() - lastLoadedAt < 60000)) return;
@@ -261,6 +306,8 @@
     if (current !== day) {
       day = current;
       queue = [];
+      replay = null;
+      saveReplay();
       selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
       find('feedback').textContent = '';
       render();
@@ -277,6 +324,7 @@
     queueSync();
   }
   find('refresh').addEventListener('click', function () { checkDay(); refresh(true); sync(false); });
+  find('restart').addEventListener('click', restart);
   find('sync').addEventListener('click', function () { sync(true); });
   gistSync.onRetry(function () { sync(false); });
   document.addEventListener('visibilitychange', resume);
@@ -285,6 +333,7 @@
   window.addEventListener('online', resume);
   window.addEventListener('storage', function (event) {
     if (event.key === KEY || event.key === null) { progress = core.mergeProgress(progress, readProgress()); dailyBatch = core.mergeDailyBatches(dailyBatch, readDailyBatch()); render(); }
+    if (event.key === REPLAY_KEY || event.key === null) { replay = readReplay(); queue = replay ? replay.ids.slice() : []; render(); }
     if (event.key === SYNC_KEY || event.key === null) { paintSync(); sync(false); }
   });
   paintSync();

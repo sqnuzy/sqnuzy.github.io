@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>高数｜不定积分与定积分的存在性速记 | sqnuzy 的算法小站</title>
+  <title>2026-11-07-高数第8章-一元函数积分学的概念和性质 | sqnuzy 的算法小站</title>
   
   <meta name="description" content="用定义和对照表速记极限、连续、可导、四类间断点，以及不定积分与普通定积分存在的充分条件、必要条件和易错点。">
   <meta name="theme-color" content="#f4f6f2">
@@ -106,7 +106,7 @@
     <header class="article-header">
       <time datetime="2026-11-02T12:27:17.000Z">2026-11-02</time>
       <p class="article-kicker">STUDY NOTES</p>
-      <h1>高数｜不定积分与定积分的存在性速记</h1>
+      <h1>2026-11-07-高数第8章-一元函数积分学的概念和性质</h1>
       <div class="post-meta">
         
           <span>学习笔记 / 数学</span>
@@ -162,8 +162,10 @@ f&#39;(x_0)=\lim_{h\to0}\frac{f(x_0+h)-f(x_0)}h\)</span> 存在且有限</td>
 <p><span class="math display">\[
 \boxed{\text{可导}\Rightarrow\text{连续}\Rightarrow\text{极限存在}}
 \]</span></p>
+<blockquote>
 <p><strong>反向都不一定成立。</strong></p>
-<p>特别区分：</p>
+</blockquote>
+<h3 id="特别区分">特别区分</h3>
 <ul>
 <li><strong>左右函数极限相等且有限</strong> → 极限存在。</li>
 <li><strong>左右导数相等且有限</strong> → 可导。</li>
@@ -201,7 +203,9 @@ class="math inline">\(-\infty\)</span></td>
 </tr>
 </tbody>
 </table>
+<blockquote>
 <p><strong>无界不等于趋于无穷；振荡可以有界，也可以无界。</strong></p>
+</blockquote>
 <h2 id="三原函数与不定积分">三、原函数与不定积分</h2>
 <p>若在区间 <span class="math inline">\(I\)</span> 的每一点都有</p>
 <p><span class="math display">\[
@@ -209,12 +213,12 @@ F&#39;(x)=f(x),
 \]</span></p>
 <p>则 <strong><span class="math inline">\(F\)</span> 是 <span
 class="math inline">\(f\)</span> 的一个原函数</strong>。</p>
-<p><strong>不定积分是全体原函数：</strong></p>
+<h3 id="不定积分是全体原函数">不定积分是全体原函数</h3>
 <p><span class="math display">\[
 \boxed{\int f(x)\,\mathrm dx=F(x)+C}
 \]</span></p>
 <p>其中 <span class="math inline">\(C\)</span> 是任意常数。</p>
-<p>注意：</p>
+<h3 id="注意">注意</h3>
 <ul>
 <li>原函数 <span
 class="math inline">\(F\)</span>：<strong>一定可导、一定连续</strong>。</li>
@@ -222,7 +226,86 @@ class="math inline">\(F\)</span>：<strong>一定可导、一定连续</strong>�
 class="math inline">\(f=F&#39;\)</span>：<strong>不一定连续</strong>。</li>
 <li>原函数是否存在，必须结合<strong>所讨论的整个区间</strong>判断。</li>
 </ul>
-<h2 id="四两种积分的存在条件">四、两种积分的存在条件</h2>
+<h2 id="四定积分">四、定积分</h2>
+<h3 id="定义">定义</h3>
+<p>设 <span class="math inline">\(f(x)\)</span> 在 <span
+class="math inline">\([a,b]\)</span>
+上有界。将区间任意分割，在各小区间内任取一点 <span
+class="math inline">\(\xi_i\)</span>。若下列有限极限存在，且与分割及取点方式无关，则称其为定积分：</p>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x
+=\lim_{\lambda\to0}\sum_{i=1}^{n}f(\xi_i)\Delta x_i,
+\qquad \lambda=\max_i\Delta x_i.
+\]</span></p>
+<h3 id="定积分的精确定义等分取点">定积分的精确定义（等分取点）</h3>
+<p>当定积分存在时，<strong>分点和每个小区间上的取点都可任意选择</strong>。常将
+<span class="math inline">\([a,b]\)</span> 作 <span
+class="math inline">\(n\)</span> 等分，以 <span
+class="math inline">\(\frac{b-a}{n}\)</span>
+为矩形的宽，以端点函数值为高。</p>
+<h4 id="取右端点">取右端点</h4>
+<p>右端点为 <span class="math inline">\(a+\frac{b-a}{n}i\)</span>（<span
+class="math inline">\(i=1,\ldots,n\)</span>），则</p>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x
+=\lim_{n\to\infty}\sum_{i=1}^{n}
+f\left(a+\frac{b-a}{n}i\right)\frac{b-a}{n}.
+\]</span></p>
+<h4 id="取左端点">取左端点</h4>
+<p>左端点为 <span class="math inline">\(a+\frac{b-a}{n}i\)</span>（<span
+class="math inline">\(i=0,\ldots,n-1\)</span>），则</p>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x
+=\lim_{n\to\infty}\sum_{i=0}^{n-1}
+f\left(a+\frac{b-a}{n}i\right)\frac{b-a}{n}.
+\]</span></p>
+<h4 id="区间为-01-时">区间为 <span class="math inline">\([0,1]\)</span>
+时</h4>
+<p>令 <span class="math inline">\(a=0\)</span>、<span
+class="math inline">\(b=1\)</span>，得到常用形式：</p>
+<p><span class="math display">\[
+\boxed{
+\int_0^1 f(x)\,\mathrm{d}x
+=\lim_{n\to\infty}\frac{1}{n}
+\sum_{i=1}^{n}f\left(\frac{i}{n}\right)
+}
+\]</span></p>
+<blockquote>
+<p><strong>记忆：</strong> 等分取点 → 矩形面积近似 → 求和 → 取极限。</p>
+</blockquote>
+<h3 id="存在定理">存在定理</h3>
+<p>在闭区间上，满足以下任一条件即可积：连续；单调；有界且只有有限个间断点。</p>
+<h3 id="基本性质">基本性质</h3>
+<p>以下函数均可积，且 <span class="math inline">\(a&lt;b\)</span>。</p>
+<p><span class="math display">\[
+\begin{aligned}
+  &amp;\int_a^b(\alpha f+\beta g)\,\mathrm{d}x =\alpha\int_a^b
+f\,\mathrm{d}x+\beta\int_a^b g\,\mathrm{d}x;\\
+  &amp;\int_a^b f\,\mathrm{d}x =\int_a^c f\,\mathrm{d}x+\int_c^b
+f\,\mathrm{d}x;\\
+  &amp;f\le g\ \Rightarrow\ \int_a^b f\,\mathrm{d}x\le\int_a^b
+g\,\mathrm{d}x;\\
+  &amp;\left|\int_a^b f\,\mathrm{d}x\right| \le\int_a^b|f|\,\mathrm{d}x.
+\end{aligned}
+\]</span></p>
+<p>另有 <span class="math inline">\(\displaystyle\int_a^a
+f\,\mathrm{d}x=0\)</span>，<span
+class="math inline">\(\displaystyle\int_a^b f\,\mathrm{d}x=-\int_b^a
+f\,\mathrm{d}x\)</span>。</p>
+<h3 id="积分中值定理">积分中值定理</h3>
+<p>若 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([a,b]\)</span> 上连续，则存在 <span
+class="math inline">\(\xi\in[a,b]\)</span>，使</p>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x=f(\xi)(b-a).
+\]</span></p>
+<h3 id="牛顿莱布尼茨公式">牛顿—莱布尼茨公式</h3>
+<p>若 <span class="math inline">\(f\)</span> 连续，且 <span
+class="math inline">\(F&#39;=f\)</span>，则</p>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x=F(b)-F(a).
+\]</span></p>
+<h2 id="五两种积分的存在条件">五、两种积分的存在条件</h2>
 <p>这里的定积分指有限闭区间 <span
 class="math inline">\([a,b]\)</span>（<span
 class="math inline">\(a&lt;b\)</span>）上的<strong>普通定积分</strong>。</p>
@@ -257,7 +340,7 @@ class="math inline">\(a&lt;b\)</span>）上的<strong>普通定积分</strong>�
 </tr>
 </tbody>
 </table>
-<p>补充记忆：</p>
+<h3 id="补充记忆">补充记忆</h3>
 <ul>
 <li><strong>只有有限个第一类间断点</strong> → 定积分存在。</li>
 <li><strong>有界且只有有限个振荡间断点</strong> →
@@ -267,6 +350,58 @@ class="math inline">\(a&lt;b\)</span>）上的<strong>普通定积分</strong>�
 <li><strong>连续是两种积分存在的充分条件，都不是必要条件。</strong></li>
 <li><strong>有原函数与定积分存在，互不推出。</strong></li>
 </ul>
+<h2 id="六变限积分">六、变限积分</h2>
+<h3 id="定义-1">定义</h3>
+<p>将定积分的上限或下限作为变量，所得函数称为变限积分。常见形式为</p>
+<p><span class="math display">\[
+\Phi(x)=\int_a^x f(t)\,\mathrm{d}t.
+\]</span></p>
+<h3 id="基本性质-1">基本性质</h3>
+<p>若 <span class="math inline">\(f\)</span> 在 <span
+class="math inline">\([a,b]\)</span> 上可积，则 <span
+class="math inline">\(\Phi\)</span> 连续；若 <span
+class="math inline">\(f\)</span> 在 <span
+class="math inline">\(x_0\)</span> 处连续，则</p>
+<p><span class="math display">\[
+\Phi&#39;(x_0)=f(x_0).
+\]</span></p>
+<h3 id="常用求导公式">常用求导公式</h3>
+<p>当 <span class="math inline">\(f\)</span> 连续、<span
+class="math inline">\(u,v\)</span> 可导时，</p>
+<p><span class="math display">\[
+\frac{\mathrm{d}}{\mathrm{d}x}\int_{u(x)}^{v(x)}f(t)\,\mathrm{d}t
+=f(v(x))v&#39;(x)-f(u(x))u&#39;(x).
+\]</span></p>
+<h2 id="七反常积分">七、反常积分</h2>
+<h3 id="定义-2">定义</h3>
+<p>积分区间无界，或被积函数在某点附近无界时，通过极限定义的积分称为反常积分。</p>
+<h4 id="无穷区间的情形">无穷区间的情形</h4>
+<p><span class="math display">\[
+\int_a^{+\infty}f(x)\,\mathrm{d}x
+:=\lim_{R\to+\infty}\int_a^R f(x)\,\mathrm{d}x.
+\]</span></p>
+<h4 id="被积函数在端点-b-附近无界的情形">被积函数在端点 <span
+class="math inline">\(b\)</span> 附近无界的情形</h4>
+<p><span class="math display">\[
+\int_a^b f(x)\,\mathrm{d}x
+:=\lim_{r\to b^-}\int_a^r f(x)\,\mathrm{d}x.
+\]</span></p>
+<h3 id="敛散性">敛散性</h3>
+<p>相应极限存在且有限，称为收敛；否则称为发散。有多处需要取极限时，应拆开，各部分均收敛才算收敛。</p>
+<h3 id="两个基本判敛结论">两个基本判敛结论</h3>
+<p><span class="math display">\[
+\begin{aligned}
+  &amp;\int_1^{+\infty}\frac{1}{x^p}\,\mathrm{d}x \text{ 收敛}\iff
+p&gt;1;\\
+  &amp;\int_0^1\frac{1}{x^p}\,\mathrm{d}x \text{ 收敛}\iff p&lt;1.
+\end{aligned}
+\]</span></p>
+<h3 id="比较判别法">比较判别法</h3>
+<p>对同一积分区间，若 <span class="math inline">\(0\le f\le
+g\)</span>，则 <span class="math inline">\(\int g\)</span> 收敛可推出
+<span class="math inline">\(\int f\)</span> 收敛；<span
+class="math inline">\(\int f\)</span> 发散可推出 <span
+class="math inline">\(\int g\)</span> 发散。</p>
 
     </div>
   </article>

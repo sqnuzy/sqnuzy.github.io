@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>每日单词 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="用自己的单词和原句复习，安装到手机桌面，联网准备后也能离线背词。">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=10">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  <link rel="stylesheet" href="/css/study.css?v=20261104-1">
+  
+  
+  <link rel="manifest" href="/words/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/words/icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="每日单词">
+  <link rel="stylesheet" href="/css/vocabulary-app.css?v=20261110-1">
+  
+  
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout vocabulary-app-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="study-hub vocabulary-app" data-study-hub data-vocabulary-app>
+  <header class="vocabulary-app-header">
+    <a class="vocabulary-app-brand" href="/words/" aria-label="每日单词首页">
+      <img src="/words/icons/icon-192.png" width="42" height="42" alt="">
+      <div><h1>每日单词</h1><p>用你的原句，每天记住一点。</p></div>
+    </a>
+    <a class="vocabulary-sync-link" href="/study/">复习笔记</a>
+  </header>
+  <div class="vocabulary-app-toolbar">
+    <p class="vocabulary-app-status" data-app-status role="status">首次联网打开后，准备离线背词。</p>
+    <button type="button" class="study-button" data-app-install aria-controls="vocabulary-app-help" aria-expanded="false">安装到手机</button>
+  </div>
+  <div class="vocabulary-app-help" id="vocabulary-app-help" data-app-help hidden>
+    <p><strong>安卓手机：</strong>用 Chrome 等浏览器打开本页，点击浏览器菜单，选择“安装应用”或“添加到主屏幕”。微信内请先选择“在浏览器打开”。</p>
+    <p><strong>苹果手机：</strong>用 Safari 打开本页，点击“分享”→“添加到主屏幕”；如有“作为网页 App 打开”，请保持开启。</p>
+    <p>首次联网后，等页面显示“已准备好离线背词”，就能离线打开并记录进度。新增词库和跨设备同步需要联网。</p>
+  </div>
+  <section class="vocabulary-review" data-vocabulary-review data-source="/study/vocabulary.json" aria-labelledby="vocabulary-title">
+  <header class="vocabulary-header">
+    <div>
+      <p class="article-kicker">DAILY VOCABULARY</p>
+      <h2 id="vocabulary-title">今日单词复习</h2>
+      <p class="vocabulary-schedule"><time data-vocabulary-day></time> · 每天 05:00 更新 · 北京时间</p>
+    </div>
+    <div class="study-actions">
+      <button type="button" class="study-button study-button-primary" data-vocabulary-restart disabled title="再练一轮今日清单，保留学习记录">重新复习今日单词</button>
+      <button type="button" class="study-button" data-vocabulary-refresh>更新清单</button>
+    </div>
+  </header>
+  <div class="vocabulary-stats" aria-label="单词复习概况">
+    <span>待复习 <strong data-vocabulary-due>—</strong></span>
+    <span>今日完成 <strong data-vocabulary-completed>—</strong></span>
+    <span>词库 <strong data-vocabulary-total>—</strong></span>
+    <span>今日选词 <strong data-vocabulary-selected>—</strong> / 100</span>
+    <span>额外复习 <strong data-vocabulary-extra>—</strong></span>
+  </div>
+  <p class="vocabulary-hint">每天选取100个最久没复习的词，不足100个则全选；到期和未完成的旧词额外保留，重复词合并。每次一个，核对后评分继续。</p>
+  <p class="vocabulary-feedback" data-vocabulary-feedback role="status"></p>
+  <p class="vocabulary-feedback" data-vocabulary-load-status role="status"></p>
+  <div class="vocabulary-list" data-vocabulary-list></div>
+  <p class="vocabulary-empty" data-vocabulary-empty tabindex="-1">正在加载单词清单…</p>
+  <footer class="vocabulary-footer">
+    <p data-vocabulary-sync-status>复习进度保存在此设备。</p>
+    <button type="button" class="study-button" data-vocabulary-sync hidden>同步进度</button>
+    <a class="vocabulary-sync-link" href="/todo/timer/" data-vocabulary-connect>连接已有的学习同步</a>
+    
+  </footer>
+  <noscript><p>启用 JavaScript 后可查看当天到期单词并记录复习结果。</p></noscript>
+</section>
+
+</section>
+
+    </main>
+    
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  
+  
+  
+  <script src="/todo/timer/review.js?v=20261101-3"></script>
+  
+  <script src="/js/vocabulary-app.js?v=20261110-1"></script>
+  <script src="/todo/gist-sync.js?v=20261106-3"></script>
+  <script src="/js/vocabulary-core.js?v=20261104-5"></script>
+  <script src="/js/vocabulary.js?v=20261108-1"></script>
+  
+</body>
+</html>

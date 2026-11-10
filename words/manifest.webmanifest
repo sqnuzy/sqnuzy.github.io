@@ -1,0 +1,26 @@
+{
+  "id": "/words/",
+  "name": "每日单词",
+  "short_name": "每日单词",
+  "description": "用自己的原句背单词，每天复习，离线也能继续。",
+  "lang": "zh-CN",
+  "start_url": "/words/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f2",
+  "theme_color": "#f4f6f2",
+  "icons": [
+    {
+      "src": "/words/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/words/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

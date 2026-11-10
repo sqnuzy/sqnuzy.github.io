@@ -1,6 +1,6 @@
 'use strict';
 var PREFIX = 'sqnuzy-vocabulary-app-';
-var CACHE = PREFIX + '20261110-2';
+var CACHE = PREFIX + '20261110-3';
 var PAGE = '/words/';
 var DATA = '/study/vocabulary.json';
 var ASSETS = [

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sqnuzy的算法竞赛模版_0_杂板子整理 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="sqnuzy的算法竞赛模版">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=11">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      <p class="article-kicker">CONTEST NOTES</p>
+      <h1>sqnuzy的算法竞赛模版_0_杂板子整理</h1>
+      <div class="post-meta">
+        
+          <span>模版</span>
+        
+        
+          <span>#算法竞赛 #模版</span>
+        
+      </div>
+      
+    </header>
+    <div class="article-body">
+      <h1 id="六杂板子整理">六、杂板子整理</h1>
+<hr />
+<h2 id="三分">1. 三分</h2>
+<p><strong>核心结论</strong></p>
+<p>若函数在区间内满足单峰性：</p>
+<ul>
+<li>求最小值时，若 <code>f(m1) &lt; f(m2)</code>，则答案在
+<code>[l, m2]</code></li>
+<li>否则答案在 <code>[m1, r]</code></li>
+</ul>
+<p>其中：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">m1 = (<span class="number">2</span> * l + r) / <span class="number">3</span>;</span><br><span class="line">m2 = (l + <span class="number">2</span> * r) / <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+<p><strong>注意点</strong></p>
+<ul>
+<li>前提是函数具有单峰性，否则不能乱用</li>
+<li>实数三分一般迭代 <code>80 ~ 100</code> 次就够</li>
+<li>输出极值时通常输出 <code>f(l)</code> 或
+<code>f((l + r) / 2)</code></li>
+<li>若是整数三分，最后要对收缩后的短区间暴力比较</li>
+</ul>
+<p><strong>模板：实数三分求最小值</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;<span class="type">double</span>&gt; <span class="title">a</span><span class="params">(n + <span class="number">1</span>)</span>, <span class="title">b</span><span class="params">(n + <span class="number">1</span>)</span>, <span class="title">c</span><span class="params">(n + <span class="number">1</span>)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        cin &gt;&gt; a[i] &gt;&gt; b[i] &gt;&gt; c[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> f = [&amp;](<span class="type">double</span> x) &#123;</span><br><span class="line">        <span class="type">double</span> ans = <span class="number">-1e100</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">            ans = <span class="built_in">max</span>(ans, a[i] * x * x + b[i] * x + c[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> ans;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="type">double</span> l = <span class="number">0</span>, r = <span class="number">1000</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">100</span>; i++) &#123;</span><br><span class="line">        <span class="type">double</span> m1 = (<span class="number">2</span> * l + r) / <span class="number">3</span>;</span><br><span class="line">        <span class="type">double</span> m2 = (l + <span class="number">2</span> * r) / <span class="number">3</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">f</span>(m1) &lt; <span class="built_in">f</span>(m2)) r = m2;</span><br><span class="line">        <span class="keyword">else</span> l = m1;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; fixed &lt;&lt; <span class="built_in">setprecision</span>(<span class="number">4</span>) &lt;&lt; <span class="built_in">f</span>(l) &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">    cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line">    cin &gt;&gt; _T;</span><br><span class="line">    <span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>模板：整数三分</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (r - l &gt; <span class="number">3</span>) &#123;</span><br><span class="line">    <span class="type">int</span> m1 = l + (r - l) / <span class="number">3</span>;</span><br><span class="line">    <span class="type">int</span> m2 = r - (r - l) / <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">f</span>(m1) &lt; <span class="built_in">f</span>(m2)) l = m1;</span><br><span class="line">    <span class="keyword">else</span> r = m2;</span><br><span class="line">&#125;</span><br><span class="line"><span class="type">int</span> ans = l;</span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = l; i &lt;= r; i++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">f</span>(i) &gt; <span class="built_in">f</span>(ans)) ans = i;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h2 id="对拍随机数">2. 对拍随机数</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="function">mt19937_64 <span class="title">rnd</span><span class="params">(chrono::steady_clock::now().time_since_epoch().count())</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">rand</span><span class="params">(<span class="type">int</span> l, <span class="type">int</span> r)</span> </span>&#123; <span class="comment">//l：随机数的最小值（闭区间）r：随机数的最大值（闭区间）</span></span><br><span class="line">	<span class="function">uniform_int_distribution&lt;<span class="type">int</span>&gt; <span class="title">dist</span><span class="params">(l, r)</span></span>;</span><br><span class="line">	<span class="keyword">return</span> <span class="built_in">dist</span>(rnd);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n = <span class="built_in">rand</span>(<span class="number">0</span>, <span class="number">9</span>);</span><br><span class="line">	cout &lt;&lt; n &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		<span class="type">int</span> l = <span class="built_in">rand</span>(<span class="number">0</span>, <span class="number">10</span>);</span><br><span class="line">		<span class="type">int</span> r = <span class="built_in">rand</span>(l, <span class="number">10</span>);</span><br><span class="line">		cout &lt;&lt; l &lt;&lt; <span class="string">&quot; &quot;</span> &lt;&lt; r &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="对拍器">3. 对拍器</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdio&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;cstdlib&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;chrono&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std::chrono;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 利用宏定义自动识别系统平台，配置对应的运行命令</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> _WIN32</span></span><br><span class="line"><span class="type">const</span> string GEN_CMD   = <span class="string">&quot;data.exe &gt; in.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string TEST_CMD  = <span class="string">&quot;test.exe &lt; in.txt &gt; test_out.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string BAOLI_CMD = <span class="string">&quot;baoli.exe &lt; in.txt &gt; baoli_out.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string DIFF_CMD  = <span class="string">&quot;fc test_out.txt baoli_out.txt &gt; nul&quot;</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">else</span></span></span><br><span class="line"><span class="type">const</span> string GEN_CMD   = <span class="string">&quot;./data &gt; in.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string TEST_CMD  = <span class="string">&quot;./test &lt; in.txt &gt; test_out.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string BAOLI_CMD = <span class="string">&quot;./baoli &lt; in.txt &gt; baoli_out.txt&quot;</span>;</span><br><span class="line"><span class="type">const</span> string DIFF_CMD  = <span class="string">&quot;diff -w test_out.txt baoli_out.txt &gt; /dev/null&quot;</span>;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> ok = <span class="number">0</span>, n = <span class="number">100</span>; <span class="comment">// n 为测试数据的组数</span></span><br><span class="line">	</span><br><span class="line">	cout &lt;&lt; <span class="string">&quot;开始对拍...&quot;</span> &lt;&lt; endl;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span>(<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++)&#123;</span><br><span class="line">		<span class="comment">// 1. 生成随机数据</span></span><br><span class="line">		<span class="built_in">system</span>(GEN_CMD.<span class="built_in">c_str</span>());</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 2. 运行待测试代码</span></span><br><span class="line">		<span class="built_in">system</span>(TEST_CMD.<span class="built_in">c_str</span>()); </span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 3. 运行暴力/正确代码，并使用 chrono 精确计时</span></span><br><span class="line">		<span class="keyword">auto</span> begin = steady_clock::<span class="built_in">now</span>();</span><br><span class="line">		<span class="built_in">system</span>(BAOLI_CMD.<span class="built_in">c_str</span>()); </span><br><span class="line">		<span class="keyword">auto</span> end = steady_clock::<span class="built_in">now</span>();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 获取真实流逝的毫秒数</span></span><br><span class="line">		<span class="keyword">auto</span> t = <span class="built_in">duration_cast</span>&lt;milliseconds&gt;(end - begin).<span class="built_in">count</span>();</span><br><span class="line">		</span><br><span class="line">		<span class="comment">// 4. 比对输出结果</span></span><br><span class="line">		<span class="keyword">if</span>(<span class="built_in">system</span>(DIFF_CMD.<span class="built_in">c_str</span>()))&#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;测试点#%d Wrong Answer\n&quot;</span>, i);</span><br><span class="line">			<span class="keyword">break</span>; <span class="comment">// 遇到 WA 直接退出，保留 in.txt 现场方便 Debug</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span>(t &gt; <span class="number">1000</span>)&#123; <span class="comment">// 假设时间限制为 1000ms</span></span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;暴力/测试代码 Time Limit Exceeded (用时 %lld ms)\n&quot;</span>, t);</span><br><span class="line">			<span class="keyword">break</span>; <span class="comment">// 建议超时也保留现场</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="built_in">printf</span>(<span class="string">&quot;测试点#%d Accepted 用时 %lld ms\n&quot;</span>, i, t);</span><br><span class="line">			ok++; </span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;\n测试结束。\n&quot;</span>);</span><br><span class="line">	<span class="type">double</span> res = <span class="number">100.0</span> * ok / n;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;共 %d 组测试数据，AC数据 %d 组。 得分 %.1lf。\n&quot;</span>, n, ok, res);</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+</body>
+</html>

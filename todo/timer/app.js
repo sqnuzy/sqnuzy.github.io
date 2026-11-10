@@ -111,7 +111,8 @@
         ? raw.subjects.filter(s => s && s.id && s.name).map(s => ({
             id: String(s.id),
             name: String(s.name).slice(0, 16),
-            color: /^#[0-9a-f]{6}$/i.test(s.color || '') ? s.color : PALETTE[0]
+            color: /^#[0-9a-f]{6}$/i.test(s.color || '') ? s.color : PALETTE[0],
+            updatedAt: Number(s.updatedAt) || 0
           }))
         : base.subjects,
       sessions: Array.isArray(raw.sessions)
@@ -138,7 +139,7 @@
     const s = data.settings;
     data.subjects.forEach(sub => {
       const old = LEGACY_COLORS[sub.id];
-      if (old && String(sub.color).toLowerCase() === old.toLowerCase()) sub.color = FRESH_COLORS[sub.id];
+      if (!sub.updatedAt && old && String(sub.color).toLowerCase() === old.toLowerCase()) sub.color = FRESH_COLORS[sub.id];
     });
     s.dailyGoal = clamp(Number(s.dailyGoal) || 0, 0, 1440);
     s.sound = s.sound !== false;
@@ -1168,20 +1169,38 @@
   function renderSubjectManage() {
     el.subjectManage.innerHTML = data.subjects.map(s => `
       <li data-id="${esc(s.id)}">
-        <span class="sw" style="background:${esc(s.color)}"></span>
+        <input class="subject-color" type="color" value="${esc(s.color)}" aria-label="修改${esc(s.name)}的颜色" title="修改${esc(s.name)}的颜色">
         <input type="text" value="${esc(s.name)}" maxlength="12" aria-label="科目名称">
         <button class="del" type="button" title="删除科目">删除</button>
       </li>`).join('');
     $$('li', el.subjectManage).forEach(li => {
       const id = li.dataset.id;
-      const input = $('input', li);
+      const input = $('input[type="text"]', li);
+      const colorInput = $('input[type="color"]', li);
+      colorInput.addEventListener('change', () => {
+        const sub = subjectById(id);
+        if (!sub || sub.color.toLowerCase() === colorInput.value.toLowerCase()) return;
+        sub.color = colorInput.value;
+        sub.updatedAt = Date.now();
+        data.updatedAt = sub.updatedAt;
+        save(true);
+        renderPills();
+        paintAll();
+        renderChart();
+        renderWeekBars();
+        renderFlow();
+        renderHistoryIfOpen();
+      });
       input.addEventListener('change', () => {
         const name = input.value.trim();
         if (!name) { input.value = subjectName(id); return; }
         const sub = subjectById(id);
         if (sub) {
           sub.name = name.slice(0, 12);
-          data.updatedAt = Date.now();
+          sub.updatedAt = Date.now();
+          data.updatedAt = sub.updatedAt;
+          colorInput.setAttribute('aria-label', `修改${sub.name}的颜色`);
+          colorInput.title = `修改${sub.name}的颜色`;
           save();
           renderPills();
           renderChart();
@@ -1683,7 +1702,11 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     (Array.isArray(remote.subjects) ? remote.subjects : []).forEach(s => {
       if (s && s.id && s.name) subs.set(String(s.id), s);
     });
-    data.subjects.forEach(s => subs.set(s.id, s));
+    data.subjects.forEach(s => {
+      const incoming = subs.get(s.id);
+      if (incoming && (Number(incoming.updatedAt) || 0) > (Number(s.updatedAt) || 0)) return;
+      subs.set(s.id, s);
+    });
     const delSub = new Set([...(data.deletedSubjects || []), ...(remote.deletedSubjects || [])]);
     delSub.forEach(id => subs.delete(id));
 

@@ -768,15 +768,27 @@ kbd {
   background: var(--surface-2);
   border: 1px solid var(--line);
 }
-.subject-manage .sw { width: 12px; height: 12px; border-radius: 4px; flex: none; }
-.subject-manage input {
+.subject-manage .subject-color {
+  flex: none;
+  width: 36px; height: 36px;
+  padding: 3px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.subject-manage .subject-color::-webkit-color-swatch-wrapper { padding: 0; }
+.subject-manage .subject-color::-webkit-color-swatch { border: 0; border-radius: 5px; }
+.subject-manage .subject-color::-moz-color-swatch { border: 0; border-radius: 5px; }
+.subject-manage .subject-color:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.subject-manage input[type="text"] {
   flex: 1; min-width: 0;
   border: 0; background: transparent; outline: 0;
   font-size: 13px; font-weight: 600; color: var(--ink);
   padding: 3px 0;
   border-bottom: 1px dashed transparent;
 }
-.subject-manage input:focus { border-bottom-color: var(--line-strong); }
+.subject-manage input[type="text"]:focus { border-bottom-color: var(--line-strong); }
 .subject-manage .del {
   border: 0; background: transparent;
   color: var(--muted);

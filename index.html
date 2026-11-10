@@ -9,12 +9,12 @@
   <meta name="theme-color" content="#f4f6f2">
   <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
   <link rel="stylesheet" href="/css/firefly.css?v=2">
-  <link rel="stylesheet" href="/css/refined.css?v=10">
+  <link rel="stylesheet" href="/css/refined.css?v=11">
   <link rel="stylesheet" href="/css/navigation.css?v=20261031">
   
   
-  <link rel="preload" as="image" href="/images/home-banner.webp" media="(min-width: 761px)" fetchpriority="high">
-  <link rel="preload" as="image" href="/images/home-banner-mobile.webp" media="(max-width: 760px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="/images/home-banner.avif" media="(min-width: 761px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="/images/home-banner-mobile.avif" media="(max-width: 760px)" fetchpriority="high">
   
   <script>
     window.MathJax = {
@@ -101,7 +101,7 @@
 
   <div class="site-shell">
     
-      <section class="home-banner" aria-label="博客封面" style="--home-background-image: url('/images/home-banner.webp')"></section>
+      <section class="home-banner" aria-label="博客封面" style="--home-background-image: url('/images/home-banner.avif')"></section>
     
     <main class="site-main">
       
@@ -373,6 +373,8 @@
         
           <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span>学习笔记</span><b>14</b></a>
         
+          <a href="/categories/%E6%A8%A1%E7%89%88/"><span>模版</span><b>10</b></a>
+        
           <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%95%B0%E5%AD%A6/"><span>数学</span><b>5</b></a>
         
           <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E8%8B%B1%E8%AF%AD/"><span>英语</span><b>5</b></a>
@@ -380,8 +382,6 @@
           <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/408/"><span>408</span><b>4</b></a>
         
           <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"><span>计算机组成原理</span><b>4</b></a>
-        
-          <a href="/categories/%E6%A8%A1%E7%89%88/"><span>模版</span><b>2</b></a>
         
           <a href="/categories/%E6%AF%94%E8%B5%9B%E8%B5%84%E6%96%99/"><span>比赛资料</span><b>1</b></a>
         
@@ -400,7 +400,15 @@
         
           <a href="/tags/%E8%A1%A5%E9%A2%98/">补题</a>
         
+          <a href="/tags/%E6%A8%A1%E7%89%88/">模版</a>
+        
           <a href="/tags/%E9%AB%98%E7%AD%89%E6%95%B0%E5%AD%A6/">高等数学</a>
+        
+          <a href="/tags/%E4%B8%80%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/">一元函数微分学</a>
+        
+          <a href="/tags/%E6%B1%82%E5%AF%BC%E5%85%AC%E5%BC%8F/">求导公式</a>
+        
+          <a href="/tags/%E6%9C%80%E5%80%BC/">最值</a>
         
           <a href="/tags/%E6%9E%81%E9%99%90/">极限</a>
         
@@ -411,22 +419,6 @@
           <a href="/tags/%E4%BB%8B%E5%80%BC%E6%80%A7/">介值性</a>
         
           <a href="/tags/%E6%98%93%E9%94%99%E7%82%B9/">易错点</a>
-        
-          <a href="/tags/%E6%A8%A1%E7%89%88/">模版</a>
-        
-          <a href="/tags/%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86/">中值定理</a>
-        
-          <a href="/tags/%E5%BE%AE%E5%88%86%E7%AD%89%E5%BC%8F/">微分等式</a>
-        
-          <a href="/tags/%E5%BE%AE%E5%88%86%E4%B8%8D%E7%AD%89%E5%BC%8F/">微分不等式</a>
-        
-          <a href="/tags/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F/">泰勒公式</a>
-        
-          <a href="/tags/%E4%B8%80%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/">一元函数微分学</a>
-        
-          <a href="/tags/%E6%B1%82%E5%AF%BC%E5%85%AC%E5%BC%8F/">求导公式</a>
-        
-          <a href="/tags/%E6%9C%80%E5%80%BC/">最值</a>
         
           <a href="/tags/%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">不定积分</a>
         
@@ -444,11 +436,19 @@
         
           <a href="/tags/%E6%9C%AA%E5%AE%9A%E5%BC%8F/">未定式</a>
         
+          <a href="/tags/%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86/">中值定理</a>
+        
+          <a href="/tags/%E5%BE%AE%E5%88%86%E7%AD%89%E5%BC%8F/">微分等式</a>
+        
+          <a href="/tags/%E5%BE%AE%E5%88%86%E4%B8%8D%E7%AD%89%E5%BC%8F/">微分不等式</a>
+        
+          <a href="/tags/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F/">泰勒公式</a>
+        
+          <a href="/tags/%E5%9B%9B%E7%BA%A7%E7%BF%BB%E8%AF%91/">四级翻译</a>
+        
+          <a href="/tags/%E8%AF%8D%E6%B1%87%E7%9F%AD%E8%AF%AD/">词汇短语</a>
+        
           <a href="/tags/%E8%8B%B1%E8%AF%AD/">英语</a>
-        
-          <a href="/tags/%E5%B9%B6%E5%88%97%E5%8F%A5/">并列句</a>
-        
-          <a href="/tags/%E9%80%BB%E8%BE%91%E5%85%B3%E7%B3%BB%E8%AF%8D/">逻辑关系词</a>
         
       </div>
     </section>

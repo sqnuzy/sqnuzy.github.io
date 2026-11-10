@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="这是我的个人博客">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=11">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  
+  <link rel="preload" as="image" type="image/avif" href="/images/home-banner.avif" media="(min-width: 761px)" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" href="/images/home-banner-mobile.avif" media="(max-width: 760px)" fetchpriority="high">
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class=" home-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+      <section class="home-banner" aria-label="博客封面" style="--home-background-image: url('/images/home-banner.avif')"></section>
+    
+    <main class="site-main">
+      
+<section class="home-grid">
+  <div class="post-list" id="latest-posts">
+    <div class="feed-toolbar">
+      <div class="section-title">
+        <h2>最近更新</h2>
+      </div>
+      <div class="layout-switch" role="group" aria-label="文章布局">
+        <button type="button" data-post-layout="list" title="列表布局" aria-label="列表布局" aria-pressed="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>
+        </button>
+        <button type="button" data-post-layout="grid" title="网格布局" aria-label="网格布局" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="post-feed" data-feed>
+      
+        <article class="post-card">
+  <a class="post-card-link" href="/CP-template0-data-structures/">
+    <div class="post-line">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      
+        <span>模版</span>
+      
+    </div>
+    <h2>sqnuzy的算法竞赛模版_0_数据结构</h2>
+    <p>sqnuzy的算法竞赛模版</p>
+    <footer class="post-card-footer">
+      <div class="post-meta">
+      
+        <span>#算法竞赛 #模版</span>
+      
+      </div>
+      <span class="read-more">阅读全文 <span aria-hidden="true">→</span></span>
+    </footer>
+  </a>
+</article>
+
+      
+        <article class="post-card">
+  <a class="post-card-link" href="/CP-template0-misc/">
+    <div class="post-line">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      
+        <span>模版</span>
+      
+    </div>
+    <h2>sqnuzy的算法竞赛模版_0_杂板子整理</h2>
+    <p>sqnuzy的算法竞赛模版</p>
+    <footer class="post-card-footer">
+      <div class="post-meta">
+      
+        <span>#算法竞赛 #模版</span>
+      
+      </div>
+      <span class="read-more">阅读全文 <span aria-hidden="true">→</span></span>
+    </footer>
+  </a>
+</article>
+
+      
+        <article class="post-card">
+  <a class="post-card-link" href="/CP-template0-geometry/">
+    <div class="post-line">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      
+        <span>模版</span>
+      
+    </div>
+    <h2>sqnuzy的算法竞赛模版_0_计算几何</h2>
+    <p>sqnuzy的算法竞赛模版</p>
+    <footer class="post-card-footer">
+      <div class="post-meta">
+      
+        <span>#算法竞赛 #模版</span>
+      
+      </div>
+      <span class="read-more">阅读全文 <span aria-hidden="true">→</span></span>
+    </footer>
+  </a>
+</article>
+
+      
+        <article class="post-card">
+  <a class="post-card-link" href="/CP-template0/">
+    <div class="post-line">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      
+        <span>模版</span>
+      
+    </div>
+    <h2>sqnuzy的算法竞赛模版_0</h2>
+    <p>sqnuzy的算法竞赛模版</p>
+    <footer class="post-card-footer">
+      <div class="post-meta">
+      
+        <span>#算法竞赛 #模版</span>
+      
+      </div>
+      <span class="read-more">阅读全文 <span aria-hidden="true">→</span></span>
+    </footer>
+  </a>
+</article>
+
+      
+        <article class="post-card">
+  <a class="post-card-link" href="/CP-template0-greedy/">
+    <div class="post-line">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      
+        <span>模版</span>
+      
+    </div>
+    <h2>sqnuzy的算法竞赛模版_0_贪心</h2>
+    <p>sqnuzy的算法竞赛模版</p>
+    <footer class="post-card-footer">
+      <div class="post-meta">
+      
+        <span>#算法竞赛 #模版</span>
+      
+      </div>
+      <span class="read-more">阅读全文 <span aria-hidden="true">→</span></span>
+    </footer>
+  </a>
+</article>
+
+      
+    </div>
+    
+  <nav class="pagination">
+    <a href="/page/2/">较新文章</a>
+    
+  </nav>
+
+
+  </div>
+  <aside class="left-sidebar sidebar">
+  <section class="about-panel">
+    <p class="sidebar-kicker">PROFILE</p>
+    <h2>关于本站</h2>
+    <p>算法竞赛选手，持续记录赛后补题、解题思路与训练复盘。</p>
+    <a class="text-link" href="https://github.com/sqnuzy" target="_blank" rel="noopener">访问 GitHub <span aria-hidden="true">↗</span></a>
+  </section>
+
+  
+    <section>
+      <div class="sidebar-heading"><h2>文章分类</h2><a href="/categories/">全部</a></div>
+      <div class="list-links">
+        
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span>学习笔记</span><b>14</b></a>
+        
+          <a href="/categories/%E6%A8%A1%E7%89%88/"><span>模版</span><b>10</b></a>
+        
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E6%95%B0%E5%AD%A6/"><span>数学</span><b>5</b></a>
+        
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/%E8%8B%B1%E8%AF%AD/"><span>英语</span><b>5</b></a>
+        
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/408/"><span>408</span><b>4</b></a>
+        
+          <a href="/categories/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/408/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86/"><span>计算机组成原理</span><b>4</b></a>
+        
+          <a href="/categories/%E6%AF%94%E8%B5%9B%E8%B5%84%E6%96%99/"><span>比赛资料</span><b>1</b></a>
+        
+      </div>
+    </section>
+  
+
+  
+    <section>
+      <div class="sidebar-heading"><h2>常用标签</h2><a href="/tags/">全部</a></div>
+      <div class="chips">
+        
+          <a href="/tags/%E7%AE%97%E6%B3%95%E7%AB%9E%E8%B5%9B/">算法竞赛</a>
+        
+          <a href="/tags/XCPC/">XCPC</a>
+        
+          <a href="/tags/%E8%A1%A5%E9%A2%98/">补题</a>
+        
+          <a href="/tags/%E6%A8%A1%E7%89%88/">模版</a>
+        
+          <a href="/tags/%E9%AB%98%E7%AD%89%E6%95%B0%E5%AD%A6/">高等数学</a>
+        
+          <a href="/tags/%E4%B8%80%E5%85%83%E5%87%BD%E6%95%B0%E5%BE%AE%E5%88%86%E5%AD%A6/">一元函数微分学</a>
+        
+          <a href="/tags/%E6%B1%82%E5%AF%BC%E5%85%AC%E5%BC%8F/">求导公式</a>
+        
+          <a href="/tags/%E6%9C%80%E5%80%BC/">最值</a>
+        
+          <a href="/tags/%E6%9E%81%E9%99%90/">极限</a>
+        
+          <a href="/tags/%E8%BF%9E%E7%BB%AD/">连续</a>
+        
+          <a href="/tags/%E5%AF%BC%E6%95%B0/">导数</a>
+        
+          <a href="/tags/%E4%BB%8B%E5%80%BC%E6%80%A7/">介值性</a>
+        
+          <a href="/tags/%E6%98%93%E9%94%99%E7%82%B9/">易错点</a>
+        
+          <a href="/tags/%E4%B8%8D%E5%AE%9A%E7%A7%AF%E5%88%86/">不定积分</a>
+        
+          <a href="/tags/%E5%AE%9A%E7%A7%AF%E5%88%86/">定积分</a>
+        
+          <a href="/tags/%E5%8E%9F%E5%87%BD%E6%95%B0/">原函数</a>
+        
+          <a href="/tags/%E9%97%B4%E6%96%AD%E7%82%B9/">间断点</a>
+        
+          <a href="/tags/%E5%87%BD%E6%95%B0%E6%9E%81%E9%99%90/">函数极限</a>
+        
+          <a href="/tags/%E7%AD%89%E4%BB%B7%E6%97%A0%E7%A9%B7%E5%B0%8F/">等价无穷小</a>
+        
+          <a href="/tags/%E6%B4%9B%E5%BF%85%E8%BE%BE%E6%B3%95%E5%88%99/">洛必达法则</a>
+        
+          <a href="/tags/%E6%9C%AA%E5%AE%9A%E5%BC%8F/">未定式</a>
+        
+          <a href="/tags/%E4%B8%AD%E5%80%BC%E5%AE%9A%E7%90%86/">中值定理</a>
+        
+          <a href="/tags/%E5%BE%AE%E5%88%86%E7%AD%89%E5%BC%8F/">微分等式</a>
+        
+          <a href="/tags/%E5%BE%AE%E5%88%86%E4%B8%8D%E7%AD%89%E5%BC%8F/">微分不等式</a>
+        
+          <a href="/tags/%E6%B3%B0%E5%8B%92%E5%85%AC%E5%BC%8F/">泰勒公式</a>
+        
+          <a href="/tags/%E5%9B%9B%E7%BA%A7%E7%BF%BB%E8%AF%91/">四级翻译</a>
+        
+          <a href="/tags/%E8%AF%8D%E6%B1%87%E7%9F%AD%E8%AF%AD/">词汇短语</a>
+        
+          <a href="/tags/%E8%8B%B1%E8%AF%AD/">英语</a>
+        
+      </div>
+    </section>
+  
+
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+</body>
+</html>

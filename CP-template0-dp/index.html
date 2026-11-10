@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sqnuzy的算法竞赛模版_0_动态规划 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="sqnuzy的算法竞赛模版">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=11">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      <p class="article-kicker">CONTEST NOTES</p>
+      <h1>sqnuzy的算法竞赛模版_0_动态规划</h1>
+      <div class="post-meta">
+        
+          <span>模版</span>
+        
+        
+          <span>#算法竞赛 #模版</span>
+        
+      </div>
+      
+    </header>
+    <div class="article-body">
+      <h1 id="一动态规划">一、动态规划</h1>
+<hr />
+<h2 id="数位-dp">1. 数位 DP</h2>
+<h3 id="数字计数">1.1 数字计数</h3>
+<p><strong>适用场景</strong></p>
+<p>求区间 <span class="math inline">\([a,b]\)</span> 中每个数字 <span
+class="math inline">\(0 \sim 9\)</span> 出现的总次数。</p>
+<p>常见转化：</p>
+<ul>
+<li>先求 <span class="math inline">\([1,x]\)</span>
+中每个数码出现次数；</li>
+<li>再用 <span class="math inline">\(calc(b) - calc(a-1)\)</span>
+得到答案。</li>
+</ul>
+<p><strong>核心思路</strong></p>
+<p>设：</p>
+<ul>
+<li><span class="math inline">\(ten[i] = 10^i\)</span></li>
+<li><span class="math inline">\(dp[i]\)</span> 表示在所有 <span
+class="math inline">\(i\)</span> 位数的低 <span
+class="math inline">\(i\)</span>
+位贡献中，某个数字在每一位出现的总次数贡献</li>
+</ul>
+<p>预处理：</p>
+<p><span class="math display">\[
+dp[i] = i \cdot 10^{i-1}
+\]</span></p>
+<p>从高位到低位枚举当前位，统计：</p>
+<ul>
+<li>当前位左边固定时，右边自由变化带来的整段贡献；</li>
+<li>当前位取比原数当前位更小的值时带来的贡献；</li>
+<li>当前位恰好等于原数当前位时，右侧剩余部分形成的贡献；</li>
+<li>额外减去前导零贡献。</li>
+</ul>
+<p><strong>复杂度</strong></p>
+<ul>
+<li>时间复杂度：<span class="math inline">\(O(\log_{10} n)\)</span></li>
+<li>空间复杂度：<span class="math inline">\(O(\log_{10} n)\)</span></li>
+</ul>
+<p><strong>注意点</strong></p>
+<ul>
+<li>区间统计统一写成：<code>calc(b) - calc(a - 1)</code>。</li>
+<li>统计 <code>0</code> 时一定要处理前导零，模板里通过
+<code>cnt[0] -= ten[i - 1]</code> 消掉非法贡献。</li>
+<li>当 <code>a = 1</code>
+时，<code>a - 1 = 0</code>，要保证分解数字时不会出错。</li>
+<li>数据范围到 <span class="math inline">\(10^{12}\)</span> 时，使用
+<code>long long</code>。</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line">ll ten[N], dp[N];</span><br><span class="line"><span class="type">int</span> num[N];</span><br><span class="line"></span><br><span class="line"><span class="function">array&lt;ll, 10&gt; <span class="title">calc</span><span class="params">(ll x)</span> </span>&#123;</span><br><span class="line">    array&lt;ll, 10&gt; cnt&#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span> (x &lt;= <span class="number">0</span>) <span class="keyword">return</span> cnt;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> len = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (x) &#123;</span><br><span class="line">        num[++len] = x % <span class="number">10</span>;</span><br><span class="line">        x /= <span class="number">10</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= <span class="number">15</span>; i++) &#123;</span><br><span class="line">        ten[i] = ten[i - <span class="number">1</span>] * <span class="number">10</span>;</span><br><span class="line">        dp[i] = <span class="number">1LL</span> * i * ten[i - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = len; i &gt;= <span class="number">1</span>; i--) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> d = <span class="number">0</span>; d &lt;= <span class="number">9</span>; d++) &#123;</span><br><span class="line">            cnt[d] += dp[i - <span class="number">1</span>] * num[i];</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> d = <span class="number">0</span>; d &lt; num[i]; d++) &#123;</span><br><span class="line">            cnt[d] += ten[i - <span class="number">1</span>];</span><br><span class="line">        &#125;</span><br><span class="line">        ll suf = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = i - <span class="number">1</span>; j &gt;= <span class="number">1</span>; j--) &#123;</span><br><span class="line">            suf = suf * <span class="number">10</span> + num[j];</span><br><span class="line">        &#125;</span><br><span class="line">        cnt[num[i]] += suf + <span class="number">1</span>;</span><br><span class="line">        cnt[<span class="number">0</span>] -= ten[i - <span class="number">1</span>];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cnt;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ten[<span class="number">0</span>] = <span class="number">1</span>;</span><br><span class="line">    ll a, b;</span><br><span class="line">    cin &gt;&gt; a &gt;&gt; b;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> A = <span class="built_in">calc</span>(a - <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">auto</span> B = <span class="built_in">calc</span>(b);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt;= <span class="number">9</span>; i++) &#123;</span><br><span class="line">        cout &lt;&lt; B[i] - A[i] &lt;&lt; <span class="string">&quot; \n&quot;</span>[i == <span class="number">9</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">    cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="线性-dp">2.线性 DP</h2>
+<h3 id="最长上升子序列-i">2.1 最长上升子序列 I</h3>
+<p><strong>状态定义：</strong> <code>f[i]</code> 表示 <strong>以
+<code>a[i]</code> 结尾</strong> 的最长严格上升子序列长度。</p>
+<p><strong>状态转移：</strong> 枚举前面的 <code>j</code>，如果
+<code>a[j] &lt; a[i]</code>，那么可以从 <code>j</code> 转移到
+<code>i</code>： <span class="math display">\[
+f[i] = \max(f[i], f[j] + 1)
+\]</span> <strong>时间复杂度：</strong> <code>O(n^2)</code></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1010</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a[N], f[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="type">int</span> n;</span><br><span class="line">	cin &gt;&gt; n;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		cin &gt;&gt; a[i];</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="type">int</span> res = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i ++) &#123;</span><br><span class="line">		f[i] = <span class="number">1</span>; <span class="comment">// 只选自己</span></span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">1</span>; j &lt; i; j ++) &#123;</span><br><span class="line">			<span class="keyword">if</span> (a[j] &lt; a[i]) &#123;</span><br><span class="line">				f[i] = <span class="built_in">max</span>(f[i], f[j] + <span class="number">1</span>);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		res = <span class="built_in">max</span>(res, f[i]);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	cout &lt;&lt; res &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="最长上升子序列-ii">2.2 最长上升子序列 II</h3>
+<p><strong>定义：</strong> <code>q[len]</code> 表示长度为
+<code>len + 1</code> 的严格上升子序列的<strong>最小结尾值</strong>。</p>
+<p><strong>做法：</strong> 对于每个 <code>a[i]</code>：</p>
+<ul>
+<li>在 <code>q</code> 中找到第一个 <code>&gt;= a[i]</code> 的位置</li>
+<li>用 <code>a[i]</code> 去替换它</li>
+<li>如果没找到，说明 <code>a[i]</code>
+比当前所有结尾都大，可以直接接到后面</li>
+</ul>
+<p>这样最后 <code>q</code> 的长度就是 LIS 长度。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> N = <span class="number">1e5</span> + <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> a[N];</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) cin &gt;&gt; a[i];</span><br><span class="line"></span><br><span class="line">    vector&lt;<span class="type">int</span>&gt; q;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        <span class="keyword">auto</span> it = <span class="built_in">lower_bound</span>(q.<span class="built_in">begin</span>(), q.<span class="built_in">end</span>(), a[i]);</span><br><span class="line">        <span class="keyword">if</span> (it == q.<span class="built_in">end</span>()) q.<span class="built_in">push_back</span>(a[i]);</span><br><span class="line">        <span class="keyword">else</span> *it = a[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; q.<span class="built_in">size</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+</body>
+</html>

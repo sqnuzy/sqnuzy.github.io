@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="article-layout-root">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>sqnuzy的算法竞赛模版_0_贪心 | sqnuzy 的算法小站</title>
+  
+  <meta name="description" content="sqnuzy的算法竞赛模版">
+  <meta name="theme-color" content="#f4f6f2">
+  <link rel="icon" href="/images/favicon.svg?v=2" type="image/svg+xml">
+  <link rel="stylesheet" href="/css/firefly.css?v=2">
+  <link rel="stylesheet" href="/css/refined.css?v=11">
+  <link rel="stylesheet" href="/css/navigation.css?v=20261031">
+  
+  
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['\\(', '\\)'], ['$', '$']],
+        displayMath: [['\\[', '\\]'], ['$$', '$$']],
+        processEscapes: true,
+        packages: {'[+]': ['noerrors']}
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      svg: {
+        fontCache: 'global'
+      }
+    };
+  </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="article-layout">
+  <div class="site-backdrop" aria-hidden="true"></div>
+  <header class="site-header">
+  <a class="brand" href="/" aria-label="sqnuzy 的算法小站">
+    <span class="brand-text">sqnuzy 的算法小站</span>
+  </a>
+  <nav class="site-nav" aria-label="Primary">
+    
+    
+      <a href="/">主页</a>
+    
+      <a href="/library/">内容导航</a>
+    
+      <a href="/study/">复习</a>
+    
+      <a href="/todo/">训练清单</a>
+    
+      <a href="/todo/timer/">计时</a>
+    
+      <a href="/search/">搜索</a>
+    
+  </nav>
+  <div class="header-actions">
+    <form class="header-search" action="/search/" method="get" role="search">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="m21 21-4.35-4.35"></path>
+        <circle cx="11" cy="11" r="7"></circle>
+      </svg>
+      <input type="search" name="q" placeholder="搜索" autocomplete="off" data-navbar-search-input>
+    </form>
+    
+  </div>
+  <div class="header-panel navbar-search-panel" data-panel="search" hidden>
+    <div class="navbar-search-results" data-navbar-search-results>
+      <p class="search-empty">输入关键词开始搜索。</p>
+    </div>
+  </div>
+  
+  <div class="header-panel theme-panel" data-panel="theme" hidden>
+    <button type="button" data-theme-set="light">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"></circle>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"></path>
+      </svg>
+      亮色
+    </button>
+    <button type="button" data-theme-set="dark">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M21 12.8A8.5 8.5 0 1 1 11.2 3 6.5 6.5 0 0 0 21 12.8Z"></path>
+      </svg>
+      暗色
+    </button>
+    <button type="button" data-theme-set="auto">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-action-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"></path>
+        <circle cx="12" cy="12" r="3"></circle>
+      </svg>
+      跟随系统
+    </button>
+  </div>
+</header>
+
+
+
+  <div class="site-shell">
+    
+    <main class="site-main">
+      <section class="article-grid post-grid">
+  <article class="article">
+    <header class="article-header">
+      <time datetime="2026-08-18T16:00:00.000Z">2026-08-19</time>
+      <p class="article-kicker">CONTEST NOTES</p>
+      <h1>sqnuzy的算法竞赛模版_0_贪心</h1>
+      <div class="post-meta">
+        
+          <span>模版</span>
+        
+        
+          <span>#算法竞赛 #模版</span>
+        
+      </div>
+      
+    </header>
+    <div class="article-body">
+      <h1 id="七贪心">七、贪心</h1>
+<h2 id="区间问题">1. 区间问题</h2>
+<h3 id="区间合并">1.1 区间合并</h3>
+<p><strong>题型特征</strong></p>
+<p>给若干区间，要求把所有有交集的区间合并，求合并后的区间个数或合并后的结果。</p>
+<p><strong>贪心策略</strong></p>
+<p>按左端点从小到大排序。</p>
+<p><strong>核心思路</strong></p>
+<p>维护当前合并区间的右端点 <code>ed</code>：</p>
+<ul>
+<li>若新区间左端点 <code>l &lt;= ed</code>，说明有交集，更新
+<code>ed = max(ed, r)</code></li>
+<li>否则说明出现新区间，答案加一，并重置 <code>ed</code></li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Seg</span> &#123;</span><br><span class="line">    <span class="type">int</span> l, r;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Seg &amp;t) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> l &lt; t.l;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="function">vector&lt;Seg&gt; <span class="title">segs</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) cin &gt;&gt; segs[i].l &gt;&gt; segs[i].r;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(segs.<span class="built_in">begin</span>(), segs.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> cnt = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> ed = segs[<span class="number">0</span>].r;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (segs[i].l &lt;= ed) ed = <span class="built_in">max</span>(ed, segs[i].r);</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            cnt++;</span><br><span class="line">            ed = segs[i].r;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; cnt &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="区间选点">1.2 区间选点</h3>
+<p><strong>题型特征</strong></p>
+<p>给若干闭区间，选尽量少的点，使每个区间至少包含一个点。</p>
+<p><strong>贪心策略</strong></p>
+<p>按右端点从小到大排序，优先选当前区间的右端点。</p>
+<p><strong>核心思路</strong></p>
+<p>因为右端点越小，越能兼顾后面的区间。<br />
+所以每次都选当前最早结束区间的右端点。</p>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Seg</span> &#123;</span><br><span class="line">    <span class="type">int</span> l, r;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Seg &amp;t) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> r &lt; t.r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="function">vector&lt;Seg&gt; <span class="title">segs</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) cin &gt;&gt; segs[i].l &gt;&gt; segs[i].r;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(segs.<span class="built_in">begin</span>(), segs.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> cnt = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> ed = segs[<span class="number">0</span>].r;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (segs[i].l &lt;= ed) <span class="keyword">continue</span>;</span><br><span class="line">        ed = segs[i].r;</span><br><span class="line">        cnt++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; cnt &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="最大不相交区间数量">1.3 最大不相交区间数量</h3>
+<p><strong>题型特征</strong></p>
+<p>给若干区间，要求选出尽可能多的区间，使它们两两不相交。</p>
+<p><strong>贪心策略</strong></p>
+<p>按右端点从小到大排序。</p>
+<p><strong>核心思路</strong></p>
+<p>这题和“区间选点”本质一样。<br />
+每次优先选右端点最小的区间，这样能给后面留下最多空间。</p>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Seg</span> &#123;</span><br><span class="line">    <span class="type">int</span> l, r;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Seg &amp;t) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> r &lt; t.r;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="function">vector&lt;Seg&gt; <span class="title">segs</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) cin &gt;&gt; segs[i].l &gt;&gt; segs[i].r;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(segs.<span class="built_in">begin</span>(), segs.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> cnt = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> ed = segs[<span class="number">0</span>].r;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (segs[i].l &lt;= ed) <span class="keyword">continue</span>;</span><br><span class="line">        ed = segs[i].r;</span><br><span class="line">        cnt++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; cnt &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="区间分组">1.4 区间分组</h3>
+<p><strong>题型特征</strong></p>
+<p>给若干区间，要求分成尽量少的组，使每组内部区间两两不相交。</p>
+<p><strong>贪心策略</strong></p>
+<p>按左端点从小到大排序，再用小根堆维护每组当前最小的右端点。</p>
+<p><strong>核心思路</strong></p>
+<ul>
+<li>堆顶表示当前最早结束的那一组</li>
+<li>如果当前区间左端点
+<code>l &lt;= heap.top()</code>，说明和最早结束的那组也有冲突，只能新开一组</li>
+<li>否则可以放进这组，弹出旧右端点，加入新区间右端点</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Seg</span> &#123;</span><br><span class="line">    <span class="type">int</span> l, r;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Seg &amp;t) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> l &lt; t.l;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line">    <span class="function">vector&lt;Seg&gt; <span class="title">segs</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) cin &gt;&gt; segs[i].l &gt;&gt; segs[i].r;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(segs.<span class="built_in">begin</span>(), segs.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    priority_queue&lt;<span class="type">int</span>, vector&lt;<span class="type">int</span>&gt;, greater&lt;<span class="type">int</span>&gt;&gt; heap;</span><br><span class="line">    heap.<span class="built_in">push</span>(segs[<span class="number">0</span>].r);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (segs[i].l &lt;= heap.<span class="built_in">top</span>()) &#123;</span><br><span class="line">            heap.<span class="built_in">push</span>(segs[i].r);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            heap.<span class="built_in">pop</span>();</span><br><span class="line">            heap.<span class="built_in">push</span>(segs[i].r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; heap.<span class="built_in">size</span>() &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+<h3 id="区间覆盖">1.5 区间覆盖</h3>
+<p><strong>题型特征</strong></p>
+<p>给定目标区间
+<code>[st, ed]</code>，从若干区间中选尽量少的区间把它完全覆盖。</p>
+<p><strong>贪心策略</strong></p>
+<p>按左端点从小到大排序，每次在所有能接上当前 <code>st</code>
+的区间中，选右端点最远的那个。</p>
+<p><strong>核心思路</strong></p>
+<p>设当前要覆盖到的位置是 <code>st</code>：</p>
+<ul>
+<li>找所有满足 <code>l &lt;= st</code> 的区间</li>
+<li>在这些区间中选 <code>r</code> 最大的</li>
+<li>这样一步尽量向右扩展最多</li>
+<li>若最大 <code>r</code> 仍然小于 <code>st</code>，说明无法覆盖</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"></span><br><span class="line"><span class="type">const</span> <span class="type">int</span> INF = <span class="number">2e9</span> + <span class="number">10</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">Seg</span> &#123;</span><br><span class="line">    <span class="type">int</span> l, r;</span><br><span class="line">    <span class="type">bool</span> <span class="keyword">operator</span> &lt; (<span class="type">const</span> Seg &amp;t) <span class="type">const</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> l &lt; t.l;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> st, ed, n;</span><br><span class="line">    cin &gt;&gt; st &gt;&gt; ed &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    <span class="function">vector&lt;Seg&gt; <span class="title">segs</span><span class="params">(n)</span></span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) cin &gt;&gt; segs[i].l &gt;&gt; segs[i].r;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">sort</span>(segs.<span class="built_in">begin</span>(), segs.<span class="built_in">end</span>());</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> cnt = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; n; i++) &#123;</span><br><span class="line">        <span class="type">int</span> j = i;</span><br><span class="line">        <span class="type">int</span> r = -INF;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (j &lt; n &amp;&amp; segs[j].l &lt;= st) &#123;</span><br><span class="line">            r = <span class="built_in">max</span>(r, segs[j].r);</span><br><span class="line">            j++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (r &lt; st) <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        cnt++;</span><br><span class="line">        st = r + <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (st &gt; ed) &#123;</span><br><span class="line">            cout &lt;&lt; cnt &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        i = j - <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; <span class="number">-1</span> &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="反悔贪心">2. 反悔贪心</h2>
+<p><strong>适用场景</strong></p>
+<p>有一批决策按顺序出现：</p>
+<ul>
+<li>当前先贪心选一个</li>
+<li>以后发现有更优选择时，允许撤销之前较差的选择</li>
+<li>典型维护结构通常是优先队列、平衡树</li>
+</ul>
+<p><strong>经典思路</strong></p>
+<p>用一个堆维护“当前已选方案中最差的那个”。
+若新来的更优，就把最差的弹掉，再换成当前更优的。</p>
+<p><strong>做法理解</strong></p>
+<p>最小堆里维护“之前买入的股价”。 若当前价格 <code>x</code>
+比堆顶更大，说明把之前更低价买的那股放到今天卖更优：</p>
+<ul>
+<li>收益增加 <code>x - pq.top()</code></li>
+<li>弹出旧买入价</li>
+<li>插入当前价，表示这次卖出后仍可视为“在今天重新买回一股”，以便后续继续反悔</li>
+</ul>
+<p><strong>模板</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span><span class="string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> std;</span><br><span class="line"><span class="keyword">using</span> ll = <span class="type">long</span> <span class="type">long</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">solve</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="type">int</span> n;</span><br><span class="line">    cin &gt;&gt; n;</span><br><span class="line"></span><br><span class="line">    priority_queue&lt;ll, vector&lt;ll&gt;, greater&lt;ll&gt;&gt; pq;</span><br><span class="line">    ll ans = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt;= n; i++) &#123;</span><br><span class="line">        ll x;</span><br><span class="line">        cin &gt;&gt; x;</span><br><span class="line">        <span class="keyword">if</span> (!pq.<span class="built_in">empty</span>() &amp;&amp; pq.<span class="built_in">top</span>() &lt; x) &#123;</span><br><span class="line">            ans += x - pq.<span class="built_in">top</span>();</span><br><span class="line">            pq.<span class="built_in">pop</span>();</span><br><span class="line">            pq.<span class="built_in">push</span>(x);</span><br><span class="line">        &#125;</span><br><span class="line">        pq.<span class="built_in">push</span>(x);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cout &lt;&lt; ans &lt;&lt; <span class="string">&quot;\n&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ios::<span class="built_in">sync_with_stdio</span>(<span class="literal">false</span>);</span><br><span class="line">    cin.<span class="built_in">tie</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="type">int</span> _T = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (_T--) <span class="built_in">solve</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<hr />
+
+    </div>
+  </article>
+  <aside class="right-sidebar sidebar">
+  
+    
+      <section class="toc-card">
+        <p class="sidebar-kicker">ON THIS PAGE</p>
+        <h2>文章目录</h2>
+        <input class="toc-search" type="search" data-toc-filter placeholder="筛选章节…" aria-label="筛选文章目录">
+        <div class="toc-list" data-toc>
+          <p>暂无目录</p>
+        </div>
+        <p data-toc-empty hidden>没有匹配的章节。</p>
+      </section>
+    
+  
+</aside>
+
+</section>
+
+    </main>
+    <footer class="site-footer">
+  <span>&copy; 2026 zy</span>
+  <span>用 Hexo 构建 · 记录比结果更重要</span>
+</footer>
+
+  </div>
+  <script src="/js/firefly.js?v=8"></script>
+  <script src="/js/search.js?v=20261031" data-index="/catalog.json" data-search-page="/search/"></script>
+  
+  
+</body>
+</html>

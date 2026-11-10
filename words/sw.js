@@ -1,6 +1,6 @@
 'use strict';
 var PREFIX = 'sqnuzy-vocabulary-app-';
-var CACHE = PREFIX + '20261110-1';
+var CACHE = PREFIX + '20261110-2';
 var PAGE = '/words/';
 var DATA = '/study/vocabulary.json';
 var ASSETS = [
@@ -65,5 +65,10 @@ self.addEventListener('fetch', function (event) {
   if (url.origin !== self.location.origin) return;
   var key = url.pathname === '/words' || url.pathname === PAGE ? PAGE : url.pathname === DATA ? DATA : url.pathname + url.search;
   if (ASSETS.indexOf(key) === -1) return;
-  event.respondWith(networkFirst(event, key));
+  event.respondWith(key === DATA ? networkFirst(event, key) : cachedFirst(event, key));
 });
+async function cachedFirst(event, key) {
+  var cache = await caches.open(CACHE);
+  var saved = await cache.match(key);
+  return saved || networkFirst(event, key);
+}

@@ -107,7 +107,7 @@
   }
   function focusCurrent() {
     var nextCard = find('list').querySelector('.vocabulary-card');
-    var next = nextCard ? nextCard.querySelector('h3') : find('empty');
+    var next = nextCard ? nextCard.querySelector('.vocabulary-word-toggle') : find('empty');
     next.focus({ preventScroll: true });
     var scrollTarget = nextCard || next;
     var header = document.querySelector('.site-header');
@@ -177,22 +177,31 @@
       var card = element('article', 'vocabulary-card');
       card.dataset.wordId = word.id;
       var heading = element('div', 'vocabulary-word');
-      var title = element('h3', '', word.word);
-      title.tabIndex = -1;
+      var title = element('h3');
+      var toggle = element('button', 'vocabulary-word-toggle', word.word);
+      toggle.type = 'button';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-controls', 'vocabulary-answer-' + word.id);
+      title.appendChild(toggle);
       heading.appendChild(title);
       heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : replay ? '今日重练' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : '今日轮换'));
       card.appendChild(heading);
       card.appendChild(element('p', 'vocabulary-meta', word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : '初学 ' + word.first_learned_on));
-      var details = element('details', 'vocabulary-answer');
-      details.appendChild(element('summary', '', '回忆后查看原句与释义'));
-      if (word.meaning || word.sense) details.appendChild(element('p', 'vocabulary-meaning', word.meaning || word.sense));
+      var answer = element('div', 'vocabulary-answer');
+      answer.id = 'vocabulary-answer-' + word.id;
+      answer.hidden = true;
+      toggle.addEventListener('click', function () {
+        answer.hidden = !answer.hidden;
+        toggle.setAttribute('aria-expanded', String(!answer.hidden));
+      });
+      if (word.meaning || word.sense) answer.appendChild(element('p', 'vocabulary-meaning', word.meaning || word.sense));
       (word.examples || []).forEach(function (example) {
         var quote = element('blockquote', 'vocabulary-example');
         var sentence = element('p', '', example.original_sentence);
         sentence.lang = 'en';
         quote.appendChild(sentence);
         if (example.translation) quote.appendChild(element('p', 'vocabulary-translation', example.translation));
-        details.appendChild(quote);
+        answer.appendChild(quote);
       });
       var actions = element('div', 'vocabulary-ratings');
       [['remembered', '记得'], ['hesitant', '模糊'], ['forgotten', '忘了']].forEach(function (choice) {
@@ -202,8 +211,8 @@
         button.addEventListener('click', function () { rate(word, choice[0]); });
         actions.appendChild(button);
       });
-      details.appendChild(actions);
-      card.appendChild(details);
+      answer.appendChild(actions);
+      card.appendChild(answer);
       list.appendChild(card);
     }
     var empty = find('empty');
@@ -214,7 +223,6 @@
   async function refresh(force) {
     if (loading || (!force && Date.now() - lastLoadedAt < 60000)) return;
     loading = true;
-    find('refresh').disabled = true;
     try {
       var response = await fetch(panel.dataset.source, { cache: 'no-store' });
       if (!response.ok) throw new Error('词库加载失败');
@@ -225,11 +233,10 @@
       lastLoadedAt = Date.now();
       render();
     } catch (error) {
-      if (catalog) find('load-status').textContent = '暂时无法获取新词，当前清单仍可复习；联网后点击“更新清单”。';
-      else find('empty').textContent = '暂时无法加载词库，请联网后点击“更新清单”重试。';
+      if (catalog) find('load-status').textContent = '暂时无法获取新词，当前清单仍可复习；联网后刷新页面可重试。';
+      else find('empty').textContent = '暂时无法加载词库，请联网后刷新页面重试。';
     } finally {
       loading = false;
-      find('refresh').disabled = false;
     }
   }
   async function sync(manual) {
@@ -323,7 +330,6 @@
     refresh(false);
     queueSync();
   }
-  find('refresh').addEventListener('click', function () { checkDay(); refresh(true); sync(false); });
   find('restart').addEventListener('click', restart);
   find('sync').addEventListener('click', function () { sync(true); });
   gistSync.onRetry(function () { sync(false); });

@@ -134,13 +134,14 @@
           other.hidden = other !== panel;
           other.classList.toggle('open', other === panel);
         });
-        document.querySelectorAll('[data-panel-toggle]').forEach(function (button) { button.classList.remove('active'); });
+        document.querySelectorAll('[data-panel-toggle]').forEach(function (button) {
+          button.classList.remove('active');
+          button.setAttribute('aria-expanded', 'false');
+        });
+        input.setAttribute('aria-expanded', 'true');
       }
       input.addEventListener('focus', function () { open(); render(); });
       input.addEventListener('input', open);
-      input.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') { panel.hidden = true; panel.classList.remove('open'); input.blur(); }
-      });
     } else {
       input.value = new URLSearchParams(window.location.search).get('q') || '';
       render();

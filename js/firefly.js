@@ -4,17 +4,26 @@
     document.body.classList.add('article-layout');
   }
   var root = document.documentElement;
-  var savedTheme = localStorage.getItem('firefly-theme') || 'auto';
+  function readPreference(key, fallback) {
+    try { return localStorage.getItem(key) || fallback; } catch (error) { return fallback; }
+  }
+  function savePreference(key, value) {
+    try { localStorage.setItem(key, value); } catch (error) {}
+  }
+  var savedTheme = root.dataset.themeMode || readPreference('firefly-theme', 'auto');
 
   function applyTheme(mode) {
+    if (['light', 'dark', 'auto'].indexOf(mode) === -1) mode = 'auto';
     var resolved = mode === 'auto'
       ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
       : mode;
     root.dataset.theme = resolved;
     root.dataset.themeMode = mode;
-    localStorage.setItem('firefly-theme', mode);
+    savePreference('firefly-theme', mode);
     document.querySelectorAll('[data-theme-set]').forEach(function (button) {
-      button.classList.toggle('active', button.getAttribute('data-theme-set') === mode);
+      var selected = button.getAttribute('data-theme-set') === mode;
+      button.classList.toggle('active', selected);
+      button.setAttribute('aria-pressed', String(selected));
     });
   }
 
@@ -24,6 +33,7 @@
     button.addEventListener('click', function () {
       applyTheme(button.getAttribute('data-theme-set'));
       closePanels();
+      document.querySelector('[data-panel-toggle="theme"]').focus();
     });
   });
 
@@ -37,7 +47,10 @@
     document.querySelectorAll('[data-panel-toggle]').forEach(function (button) {
       var active = except && button.getAttribute('data-panel-toggle') === except.getAttribute('data-panel');
       button.classList.toggle('active', !!active);
+      button.setAttribute('aria-expanded', String(!!active));
     });
+    var searchInput = document.querySelector('[data-navbar-search-input]');
+    if (searchInput) searchInput.setAttribute('aria-expanded', String(!!except && except.dataset.panel === 'search'));
   }
 
   document.querySelectorAll('[data-panel-toggle]').forEach(function (button) {
@@ -51,6 +64,9 @@
         panel.hidden = false;
         panel.classList.add('open');
         button.classList.add('active');
+        button.setAttribute('aria-expanded', 'true');
+        var firstControl = panel.querySelector('button, input, a');
+        if (firstControl) firstControl.focus();
       }
     });
   });
@@ -58,17 +74,33 @@
   document.addEventListener('click', function (event) {
     if (!event.target.closest('.header-actions') && !event.target.closest('.header-panel')) closePanels();
   });
+  document.addEventListener('keydown', function (event) {
+    if (event.key !== 'Escape') return;
+    var openPanel = document.querySelector('[data-panel].open');
+    if (!openPanel) return;
+    var toggle = document.querySelector('[data-panel-toggle="' + openPanel.dataset.panel + '"]');
+    closePanels();
+    if (toggle) toggle.focus();
+  });
+
+  var header = document.querySelector('.site-header');
+  if (header && window.ResizeObserver) {
+    new ResizeObserver(function () {
+      root.style.setProperty('--header-offset', Math.ceil(header.getBoundingClientRect().height) + 20 + 'px');
+    }).observe(header);
+  }
 
   var media = window.matchMedia('(prefers-color-scheme: dark)');
   media.addEventListener && media.addEventListener('change', function () {
-    if ((localStorage.getItem('firefly-theme') || 'auto') === 'auto') applyTheme('auto');
+    if (root.dataset.themeMode === 'auto') applyTheme('auto');
   });
 
   var feed = document.querySelector('[data-feed]');
-  var layout = localStorage.getItem('firefly-post-layout') || 'list';
+  var layout = readPreference('firefly-post-layout', 'list');
   function setPostLayout(next) {
+    if (next !== 'grid') next = 'list';
     if (feed) feed.dataset.layout = next;
-    localStorage.setItem('firefly-post-layout', next);
+    savePreference('firefly-post-layout', next);
     document.querySelectorAll('[data-post-layout]').forEach(function (button) {
       var selected = button.getAttribute('data-post-layout') === next;
       button.classList.toggle('active', selected);
@@ -102,7 +134,7 @@
     button.innerHTML = '<svg class="copy-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg>';
     var tip = document.createElement('span');
     tip.className = 'copy-tip';
-    tip.textContent = '已复制';
+    tip.setAttribute('role', 'status');
     figure.appendChild(tip);
     var showCopy = function () {
       figure.classList.add('copy-visible');
@@ -117,13 +149,21 @@
     button.addEventListener('click', function () {
       var code = figure.querySelector('td.code pre');
       var text = code ? code.innerText : figure.innerText;
-      navigator.clipboard && navigator.clipboard.writeText(text.replace(/\n复制$/, ''));
-      figure.classList.add('copy-visible', 'copy-done');
-      clearTimeout(figure._copyTimer);
-      figure._copyTimer = setTimeout(function () {
-        figure.classList.remove('copy-done');
-        if (!figure.matches(':hover')) figure.classList.remove('copy-visible');
-      }, 850);
+      var copying = navigator.clipboard
+        ? navigator.clipboard.writeText(text.replace(/\n复制$/, ''))
+        : Promise.reject(new Error('Clipboard unavailable'));
+      copying.then(function () {
+        tip.textContent = '已复制';
+      }, function () {
+        tip.textContent = '复制失败，请手动选择代码';
+      }).then(function () {
+        figure.classList.add('copy-visible', 'copy-done');
+        clearTimeout(figure._copyTimer);
+        figure._copyTimer = setTimeout(function () {
+          figure.classList.remove('copy-done');
+          if (!figure.matches(':hover')) figure.classList.remove('copy-visible');
+        }, 1600);
+      });
     });
     figure.appendChild(button);
   });
@@ -137,6 +177,7 @@
     if (paragraph.textContent.trim() === '[TOC]') paragraph.remove();
   });
   var headings = Array.prototype.slice.call(document.querySelectorAll('.article-body h1, .article-body h2, .article-body h3, .article-body h4'));
+  var tocToggle;
   if (toc && headings.length) {
     toc.innerHTML = '';
     headings.forEach(function (heading, index) {
@@ -151,6 +192,11 @@
         event.preventDefault();
         heading.scrollIntoView({ behavior: 'auto', block: 'start' });
         if (history.replaceState) history.replaceState(null, '', link.hash);
+        if (tocToggle && window.matchMedia('(max-width: 860px)').matches) {
+          tocToggle.click();
+          heading.setAttribute('tabindex', '-1');
+          heading.focus({ preventScroll: true });
+        }
       });
       toc.appendChild(link);
     });
@@ -191,12 +237,14 @@
   // be dismissed whenever it gets in the way, especially on phone screens.
   if (tocCard && headings.length) {
     var postGrid = tocCard.closest('.post-grid');
-    var tocToggle = document.createElement('button');
+    tocToggle = document.createElement('button');
     tocToggle.className = 'toc-toggle';
     tocToggle.type = 'button';
     tocToggle.textContent = '目录';
     tocToggle.setAttribute('aria-label', '收起或展开文章目录');
     tocToggle.setAttribute('aria-expanded', 'true');
+    tocCard.id = 'article-toc';
+    tocToggle.setAttribute('aria-controls', tocCard.id);
     if (window.matchMedia('(max-width: 860px)').matches) {
       tocCard.classList.add('is-collapsed');
       if (postGrid) postGrid.classList.add('toc-collapsed');
@@ -208,6 +256,12 @@
       if (postGrid) postGrid.classList.toggle('toc-collapsed', collapsed);
       tocToggle.setAttribute('aria-expanded', String(!collapsed));
     });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !tocCard.classList.contains('is-collapsed') && window.matchMedia('(max-width: 860px)').matches) {
+        tocToggle.click();
+        tocToggle.focus();
+      }
+    });
   }
 
   var backTop = document.createElement('button');
@@ -217,10 +271,13 @@
   backTop.setAttribute('aria-label', '返回顶部');
   document.body.appendChild(backTop);
   backTop.addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   });
-  window.addEventListener('scroll', function () {
+  function updateBackTop() {
     backTop.classList.toggle('show', window.scrollY > 500);
-  });
+    backTop.tabIndex = window.scrollY > 500 ? 0 : -1;
+  }
+  updateBackTop();
+  window.addEventListener('scroll', updateBackTop, { passive: true });
 
 })();

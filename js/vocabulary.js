@@ -104,7 +104,7 @@
     var target = event.target;
     if (target && (target.isContentEditable || (target.closest && target.closest('input, textarea, select, [role="textbox"], [data-vocabulary-library]')))) return;
     var key = event.key.toLowerCase();
-    var ratings = { a: 'remembered', b: 'hesitant', c: 'forgotten' };
+    var ratings = { a: 'remembered', s: 'hesitant', d: 'forgotten' };
     if (key !== 'w' && !ratings[key]) return;
     checkDay();
     if (!catalog || !selectionReady) return;
@@ -241,7 +241,7 @@
       if (word.meaning || word.sense) answer.appendChild(element('p', 'vocabulary-meaning', word.meaning || word.sense));
       appendExamples(answer, word);
       var actions = element('div', 'vocabulary-ratings');
-      [['remembered', '记得', 'a'], ['hesitant', '模糊', 'b'], ['forgotten', '忘了', 'c']].forEach(function (choice) {
+      [['remembered', '记得', 'a'], ['hesitant', '模糊', 's'], ['forgotten', '忘了', 'd']].forEach(function (choice) {
         var button = element('button', 'study-button' + (choice[0] === 'remembered' ? ' study-button-primary' : ''), choice[1] + ' (' + choice[2].toUpperCase() + ')');
         button.type = 'button';
         button.dataset.rating = choice[0];

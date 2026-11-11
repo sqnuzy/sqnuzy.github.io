@@ -5,14 +5,12 @@
   var core = window.VocabularyReviewCore;
   var gistSync = window.StudyGistSync;
   var KEY = 'sqnuzy-vocabulary-review-v1';
-  var REPLAY_KEY = 'sqnuzy-vocabulary-replay-v1';
   var SYNC_KEY = 'kaoyan-study-timer-sync-v1';
   var GIST_FILE = 'vocabulary-review.json';
   var catalog = null;
   var progress = readProgress();
   var dailyBatch = readDailyBatch();
-  var replay = readReplay();
-  var queue = replay ? replay.ids.slice() : [];
+  var queue = [];
   var day = core.reviewDay();
   var selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
   var rolloverTimer;
@@ -34,18 +32,6 @@
   function readDailyBatch() {
     try { return JSON.parse(localStorage.getItem(KEY) || '{}').daily_batch || null; }
     catch (error) { return null; }
-  }
-  function readReplay() {
-    try {
-      var saved = JSON.parse(localStorage.getItem(REPLAY_KEY) || 'null');
-      return saved && saved.day === core.reviewDay() && Array.isArray(saved.ids) && saved.ids.every(function (id) { return typeof id === 'string'; }) ? saved : null;
-    } catch (error) { return null; }
-  }
-  function saveReplay() {
-    try {
-      if (replay) localStorage.setItem(REPLAY_KEY, JSON.stringify(replay));
-      else localStorage.removeItem(REPLAY_KEY);
-    } catch (error) { find('feedback').textContent = '浏览器未能保存本轮重练进度，刷新后可能需要重新开始。'; }
   }
   function payload() { return { version: 2, progress: progress, daily_batch: dailyBatch }; }
   function queueSync() {
@@ -99,7 +85,6 @@
     var result = core.state(word, progress);
     queue = queue.filter(function (id) { return id !== word.id; });
     if (result.same_day_retest_pending) queue.push(word.id);
-    if (replay) { replay.ids = queue.slice(); saveReplay(); }
     render();
     if (saved) find('feedback').textContent = word.word + (result.same_day_retest_pending ? '：加入当日巩固，稍后再回忆一次；明天仍会复习。' : '：已记录，下次复习 ' + result.next_review_on + ' 05:00。');
     focusCurrent();
@@ -114,26 +99,89 @@
     scrollTarget.style.scrollMarginTop = ((header ? header.offsetHeight : 0) + 16) + 'px';
     scrollTarget.scrollIntoView({ block: 'nearest' });
   }
-  function restart() {
+  function handleShortcut(event) {
+    if (event.defaultPrevented || event.repeat || event.isComposing || event.keyCode === 229 || event.ctrlKey || event.altKey || event.metaKey || document.hidden) return;
+    var target = event.target;
+    if (target && (target.isContentEditable || (target.closest && target.closest('input, textarea, select, [role="textbox"], [data-vocabulary-library]')))) return;
+    var key = event.key.toLowerCase();
+    var ratings = { a: 'remembered', b: 'hesitant', c: 'forgotten' };
+    if (key !== 'w' && !ratings[key]) return;
+    checkDay();
+    if (!catalog || !selectionReady) return;
+    var card = find('list').querySelector('.vocabulary-card');
+    if (!card) return;
+    if (key !== 'w' && card.querySelector('.vocabulary-answer').hidden) return;
+    var button = card.querySelector(key === 'w' ? '.vocabulary-word-toggle' : '[data-rating="' + ratings[key] + '"]');
+    if (button && !button.disabled) {
+      event.preventDefault();
+      button.click();
+    }
+  }
+  function addExtra() {
     checkDay();
     if (!catalog || !selectionReady) return;
     var today = core.plan(catalog.words, progress, Date.now(), dailyBatch);
-    var ids = new Set(today.daily_batch.ids.concat(today.due.map(function (word) { return word.id; })));
-    catalog.words.forEach(function (word) {
-      if (core.state(word, progress).last_reviewed_on === day) ids.add(word.id);
-    });
-    queue = Array.from(ids);
-    if (!queue.length) return;
-    replay = { day: day, ids: queue.slice() };
+    var added = today.extra_candidates.slice(0, core.dailyLimit);
+    if (!added.length) return;
+    dailyBatch = today.daily_batch;
+    added.forEach(function (word) { dailyBatch.carry[word.id] = day; });
+    var saved = save();
     render();
-    find('feedback').textContent = '已开始重新复习今日 ' + queue.length + ' 个单词，学习记录已保留。';
-    saveReplay();
+    if (saved) find('feedback').textContent = '已增加复习 ' + added.length + ' 个单词，跳过今天已复习和已在清单中的单词。';
     focusCurrent();
+    queueSync();
+  }
+  function appendExamples(parent, word) {
+    (word.examples || []).forEach(function (example) {
+      var quote = element('blockquote', 'vocabulary-example');
+      var sentence = element('p', '', example.original_sentence);
+      sentence.lang = 'en';
+      quote.appendChild(sentence);
+      if (example.translation) quote.appendChild(element('p', 'vocabulary-translation', example.translation));
+      parent.appendChild(quote);
+    });
+  }
+  function renderLibrary() {
+    if (!catalog || find('library').hidden) return;
+    var query = find('search').value.trim().toLowerCase();
+    var words = catalog.words.filter(function (word) {
+      return [word.word, word.meaning, word.sense].join(' ').toLowerCase().indexOf(query) !== -1;
+    }).sort(function (a, b) { return a.word.localeCompare(b.word); });
+    find('library-count').textContent = '显示 ' + words.length + ' / ' + catalog.words.length + ' 个单词 · 点击展开例句';
+    find('library-empty').hidden = words.length > 0;
+    find('library-empty').textContent = catalog.words.length ? '未找到匹配的单词。' : '词库还没有单词。';
+    var list = find('library-list');
+    list.replaceChildren();
+    words.forEach(function (item) {
+      var word = core.state(item, progress);
+      var entry = element('details', 'vocabulary-library-word');
+      entry.dataset.wordId = word.id;
+      var summary = element('summary');
+      summary.appendChild(element('span', 'vocabulary-library-name', word.word));
+      summary.appendChild(element('span', 'vocabulary-meaning', word.meaning || word.sense || '暂无释义'));
+      entry.appendChild(summary);
+      entry.appendChild(element('p', 'vocabulary-meta', (word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : word.first_learned_on ? '初学 ' + word.first_learned_on : '待学') + (word.next_review_on ? ' · 下次复习 ' + word.next_review_on : '')));
+      appendExamples(entry, word);
+      list.appendChild(entry);
+    });
+  }
+  function toggleLibrary() {
+    var library = find('library');
+    library.hidden = !library.hidden;
+    find('browse').setAttribute('aria-expanded', String(!library.hidden));
+    find('browse').textContent = library.hidden ? '全部单词' : '收起全部单词';
+    if (!library.hidden) {
+      renderLibrary();
+      find('search').focus({ preventScroll: true });
+      library.scrollIntoView({ block: 'nearest' });
+    }
   }
   function render() {
     find('day').textContent = day;
     find('day').dateTime = day;
-    find('restart').disabled = !catalog || !selectionReady;
+    find('browse').disabled = !catalog;
+    find('add-extra').disabled = true;
+    renderLibrary();
     if (!catalog) return;
     if (!selectionReady) {
       find('total').textContent = catalog.words.length;
@@ -149,14 +197,8 @@
       if (!syncing) queueSync();
     }
     var due = today.due;
-    if (replay) {
-      var replayIds = new Set(replay.ids);
-      var scheduledIds = new Set(due.map(function (word) { return word.id; }));
-      due = due.concat(catalog.words.map(function (word) { return core.state(word, progress); }).filter(function (word) {
-        return replayIds.has(word.id) && !scheduledIds.has(word.id) && word.first_learned_on && word.first_learned_on <= day;
-      }));
-    }
-    find('restart').disabled = !today.rotation_total && !due.length && !today.completed;
+    find('add-extra').disabled = !today.extra_candidates.length;
+    find('add-extra').title = today.extra_candidates.length ? '从剩余单词中增加复习 ' + Math.min(core.dailyLimit, today.extra_candidates.length) + ' 个，最久没复习的优先' : '今天的单词已复习或已在清单中，暂无可增加的单词';
     find('due').textContent = due.length;
     find('completed').textContent = today.completed;
     find('total').textContent = today.total;
@@ -182,9 +224,11 @@
       toggle.type = 'button';
       toggle.setAttribute('aria-expanded', 'false');
       toggle.setAttribute('aria-controls', 'vocabulary-answer-' + word.id);
+      toggle.setAttribute('aria-keyshortcuts', 'w');
+      toggle.title = '按 W 展开或收起释义和例句';
       title.appendChild(toggle);
       heading.appendChild(title);
-      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : replay ? '今日重练' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : '今日轮换'));
+      heading.appendChild(element('span', 'vocabulary-badge', word.same_day_retest_pending ? '当日巩固' : !word.last_reviewed_on ? '首次复习' : word.next_review_on < day ? '逾期 · ' + word.next_review_on : word.next_review_on === day ? '今日到期' : today.daily_batch.carry[word.id] === day ? '追加复习' : '今日轮换'));
       card.appendChild(heading);
       card.appendChild(element('p', 'vocabulary-meta', word.last_reviewed_on ? '上次复习 ' + word.last_reviewed_on : '初学 ' + word.first_learned_on));
       var answer = element('div', 'vocabulary-answer');
@@ -195,19 +239,13 @@
         toggle.setAttribute('aria-expanded', String(!answer.hidden));
       });
       if (word.meaning || word.sense) answer.appendChild(element('p', 'vocabulary-meaning', word.meaning || word.sense));
-      (word.examples || []).forEach(function (example) {
-        var quote = element('blockquote', 'vocabulary-example');
-        var sentence = element('p', '', example.original_sentence);
-        sentence.lang = 'en';
-        quote.appendChild(sentence);
-        if (example.translation) quote.appendChild(element('p', 'vocabulary-translation', example.translation));
-        answer.appendChild(quote);
-      });
+      appendExamples(answer, word);
       var actions = element('div', 'vocabulary-ratings');
-      [['remembered', '记得'], ['hesitant', '模糊'], ['forgotten', '忘了']].forEach(function (choice) {
-        var button = element('button', 'study-button' + (choice[0] === 'remembered' ? ' study-button-primary' : ''), choice[1]);
+      [['remembered', '记得', 'a'], ['hesitant', '模糊', 'b'], ['forgotten', '忘了', 'c']].forEach(function (choice) {
+        var button = element('button', 'study-button' + (choice[0] === 'remembered' ? ' study-button-primary' : ''), choice[1] + ' (' + choice[2].toUpperCase() + ')');
         button.type = 'button';
         button.dataset.rating = choice[0];
+        button.setAttribute('aria-keyshortcuts', choice[2]);
         button.addEventListener('click', function () { rate(word, choice[0]); });
         actions.appendChild(button);
       });
@@ -218,7 +256,7 @@
     var empty = find('empty');
     empty.hidden = due.length > 0;
     empty.textContent = today.total === 0 ? '词库还没有单词。把学过的单词和原句发给助手录入后，这里会自动安排复习。' :
-      (replay ? '本轮重新复习已完成。' : today.completed ? '今天的选词和到期任务已复习完。' : '今天没有待复习单词。') + (today.next ? '下次更新：' + today.next + ' 05:00。' : '');
+      (today.completed ? '今天的选词和到期任务已复习完。' : '今天没有待复习单词。') + (today.extra_candidates.length ? '可点击“增加复习100个单词”继续。' : '') + (today.next ? '下次更新：' + today.next + ' 05:00。' : '');
   }
   async function refresh(force) {
     if (loading || (!force && Date.now() - lastLoadedAt < 60000)) return;
@@ -313,8 +351,6 @@
     if (current !== day) {
       day = current;
       queue = [];
-      replay = null;
-      saveReplay();
       selectionReady = !(config().token && config().gistId) || !!(dailyBatch && dailyBatch.day === day);
       find('feedback').textContent = '';
       render();
@@ -330,16 +366,18 @@
     refresh(false);
     queueSync();
   }
-  find('restart').addEventListener('click', restart);
+  find('add-extra').addEventListener('click', addExtra);
+  find('browse').addEventListener('click', toggleLibrary);
+  find('search').addEventListener('input', renderLibrary);
   find('sync').addEventListener('click', function () { sync(true); });
   gistSync.onRetry(function () { sync(false); });
+  document.addEventListener('keydown', handleShortcut);
   document.addEventListener('visibilitychange', resume);
   window.addEventListener('pageshow', resume);
   window.addEventListener('focus', resume);
   window.addEventListener('online', resume);
   window.addEventListener('storage', function (event) {
     if (event.key === KEY || event.key === null) { progress = core.mergeProgress(progress, readProgress()); dailyBatch = core.mergeDailyBatches(dailyBatch, readDailyBatch()); render(); }
-    if (event.key === REPLAY_KEY || event.key === null) { replay = readReplay(); queue = replay ? replay.ids.slice() : []; render(); }
     if (event.key === SYNC_KEY || event.key === null) { paintSync(); sync(false); }
   });
   paintSync();

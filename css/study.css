@@ -68,6 +68,16 @@
 .vocabulary-footer { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--ref-line); }
 .vocabulary-footer p { flex: 1 1 250px; margin: 0; font-size: 12px; }
 .vocabulary-sync-link { color: var(--ref-ink); font-size: 12px; text-underline-offset: 3px; }
+.vocabulary-library { margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--ref-line); scroll-margin-top: 100px; }
+.vocabulary-library-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.vocabulary-library-header h3 { margin: 0; font-size: 20px; }
+.vocabulary-library-list { display: grid; gap: 10px; max-height: 560px; overflow-y: auto; overscroll-behavior-y: contain; }
+.vocabulary-library-word { min-width: 0; padding: 14px 16px; border: 1px solid var(--ref-line); border-radius: 12px; }
+.vocabulary-library-word summary { cursor: pointer; overflow-wrap: anywhere; }
+.vocabulary-library-word summary:focus-visible { outline: 2px solid var(--ref-accent); outline-offset: 4px; }
+.vocabulary-library-name { margin-right: 12px; font-size: 17px; font-weight: 600; }
+.vocabulary-library-word summary .vocabulary-meaning { color: var(--ref-muted); }
+.vocabulary-library-word > .vocabulary-meta { margin-top: 14px; }
 @media (max-width: 640px) {
   .vocabulary-review { padding: 20px; }
   .vocabulary-card { padding: 16px; }

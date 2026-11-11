@@ -12,7 +12,7 @@
   <link rel="stylesheet" href="/css/refined.css?v=11">
   <link rel="stylesheet" href="/css/navigation.css?v=20261031">
   
-  <link rel="stylesheet" href="/css/study.css?v=20261111-1">
+  <link rel="stylesheet" href="/css/study.css?v=20261111-3">
   
   
   <script>
@@ -119,7 +119,8 @@
       <p class="vocabulary-schedule"><time data-vocabulary-day></time> · 每天 05:00 更新 · 北京时间</p>
     </div>
     <div class="study-actions">
-      <button type="button" class="study-button study-button-primary" data-vocabulary-restart disabled title="再练一轮今日清单，保留学习记录">重新复习今日单词</button>
+      <button type="button" class="study-button" data-vocabulary-browse disabled aria-expanded="false" aria-controls="vocabulary-library">全部单词</button>
+      <button type="button" class="study-button study-button-primary" data-vocabulary-add-extra disabled title="从今天尚未复习且未排入清单的单词中，再选最多100个">增加复习100个单词</button>
     </div>
   </header>
   <div class="vocabulary-stats" aria-label="单词复习概况">
@@ -129,11 +130,24 @@
     <span>今日选词 <strong data-vocabulary-selected>—</strong> / 100</span>
     <span>额外复习 <strong data-vocabulary-extra>—</strong></span>
   </div>
-  <p class="vocabulary-hint">每天选取100个最久没复习的词，不足100个则全选；到期和未完成的旧词额外保留，重复词合并。每次一个，点击单词查看释义和例句，核对后评分继续。</p>
+  <p class="vocabulary-hint">每天选取100个最久没复习的词，不足100个则全选；到期和未完成的旧词额外保留，重复词合并。还想继续时，可增加复习100个单词，不足100个则加入剩余词。每次一个，点击单词查看释义和例句，核对后评分继续。</p>
+  <p class="vocabulary-hint">快捷键：W 展开或收起释义；展开后按 A 记得、B 模糊、C 忘了。</p>
   <p class="vocabulary-feedback" data-vocabulary-feedback role="status"></p>
   <p class="vocabulary-feedback" data-vocabulary-load-status role="status"></p>
   <div class="vocabulary-list" data-vocabulary-list></div>
   <p class="vocabulary-empty" data-vocabulary-empty tabindex="-1">正在加载单词清单…</p>
+  <section id="vocabulary-library" class="vocabulary-library" data-vocabulary-library aria-labelledby="vocabulary-library-title" hidden>
+    <header class="vocabulary-library-header">
+      <h3 id="vocabulary-library-title">全部单词</h3>
+      <label class="study-search">
+        <span>搜索单词或释义</span>
+        <input type="search" data-vocabulary-search placeholder="输入英文或中文" autocomplete="off">
+      </label>
+    </header>
+    <p class="vocabulary-meta" data-vocabulary-library-count role="status"></p>
+    <div class="vocabulary-library-list" data-vocabulary-library-list></div>
+    <p class="vocabulary-empty" data-vocabulary-library-empty hidden>未找到匹配的单词。</p>
+  </section>
   <footer class="vocabulary-footer">
     <p data-vocabulary-sync-status>复习进度保存在此设备。</p>
     <button type="button" class="study-button" data-vocabulary-sync hidden>同步进度</button>
@@ -379,8 +393,8 @@
   <script src="/todo/timer/review.js?v=20261101-3"></script>
   <script src="/js/study.js?v=20261031-3"></script>
   <script src="/todo/gist-sync.js?v=20261106-3"></script>
-  <script src="/js/vocabulary-core.js?v=20261104-5"></script>
-  <script src="/js/vocabulary.js?v=20261111-2"></script>
+  <script src="/js/vocabulary-core.js?v=20261111-3"></script>
+  <script src="/js/vocabulary.js?v=20261111-4"></script>
   
 </body>
 </html>

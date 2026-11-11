@@ -113,6 +113,10 @@
       var carried = batch.carry[word.id] && batch.carry[word.id] <= day;
       return word.same_day_retest_pending || scheduled || carried || (selected.has(word.id) && word.last_reviewed_on !== day);
     }).sort(oldestFirst);
+    var pending = new Set(due.map(function (word) { return word.id; }));
+    var extraCandidates = all.filter(function (word) {
+      return word.first_learned_on && word.first_learned_on <= day && word.last_reviewed_on !== day && !selected.has(word.id) && !pending.has(word.id);
+    }).sort(oldestFirst);
     var upcoming = all.filter(function (word) { return word.first_learned_on && word.next_review_on > day; });
     var next = upcoming.map(function (word) { return word.next_review_on; }).sort()[0] || null;
     if (all.some(function (word) { return word.first_learned_on && word.first_learned_on <= day; })) {
@@ -127,6 +131,7 @@
       total: all.length,
       daily_batch: batch,
       rotation_total: selected.size,
+      extra_candidates: extraCandidates,
       extra_due: due.filter(function (word) { return !selected.has(word.id); }).length
     };
   }

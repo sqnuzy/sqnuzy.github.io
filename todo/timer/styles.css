@@ -1382,6 +1382,39 @@ body::before {
 [data-theme="dark"] .btn-soft:disabled { background: rgba(255, 255, 255, 0.06); border-color: rgba(255, 255, 255, 0.08); }
 [data-theme="dark"] .flow-empty { border-color: rgba(255, 255, 255, 0.12); }
 
+/* 深色饼图与历史面板：保留科目原色，提高引线、色标和日历文字的辨识度 */
+[data-theme="dark"] .pie-leader { stroke: color-mix(in srgb, var(--c) 45%, #fff); }
+[data-theme="dark"] .legend .sw,
+[data-theme="dark"] #historySheet .session-row .sw {
+  box-shadow: 0 0 0 1px rgba(230, 235, 245, 0.65);
+}
+[data-theme="dark"] #historySheet .sheet-panel {
+  --ink-2: #d9dce5;
+  --muted: #b7becb;
+  background: linear-gradient(160deg, rgba(38, 40, 48, 0.96), rgba(26, 28, 34, 0.94));
+}
+[data-theme="dark"] .cal .cal-cell.has {
+  background: color-mix(in srgb, var(--accent) calc(var(--heat, .2) * 65%), transparent);
+  color: var(--ink);
+}
+[data-theme="dark"] .cal .cal-cell .m { font-size: 10px; font-weight: 600; line-height: 1.2; height: 12px; }
+[data-theme="dark"] .cal .cal-cell.has .m { color: var(--ink-2); opacity: 1; }
+[data-theme="dark"] .cal .cal-cell.today { border-color: #c5c8d4; }
+[data-theme="dark"] .cal .cal-cell.sel,
+[data-theme="dark"] .cal .cal-cell.sel:hover {
+  background: var(--accent);
+  color: #24150f;
+}
+[data-theme="dark"] .cal .cal-cell.sel .m { color: inherit; opacity: 1; }
+[data-theme="dark"] .cal .cal-cell.sel::after { background: currentColor; opacity: 1; }
+[data-theme="dark"] .cal .cal-cell:focus-visible,
+[data-theme="dark"] .cal-nav:focus-visible,
+[data-theme="dark"] #historySheet .session-del:focus-visible {
+  outline: 2px solid #ffc1a5;
+  outline-offset: 2px;
+}
+[data-theme="dark"] #historySheet .session-del:hover { color: #ffb3a3; background: rgba(255, 128, 107, 0.12); }
+
 /* ---------------- 座右铭 ---------------- */
 .motto {
   display: flex;

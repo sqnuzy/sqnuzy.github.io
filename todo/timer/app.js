@@ -911,7 +911,7 @@
         const anchor = right ? 'start' : 'end';
         const dx = right ? 6 : -6;
         if (span >= 8) {
-          svg += `<polyline points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}"
+          svg += `<polyline class="pie-leader" style="--c:${esc(row.color)}" points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}"
             fill="none" stroke="${esc(row.color)}" stroke-width="1.4" stroke-linecap="round"/>`;
           svg += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y - 3).toFixed(1)}" text-anchor="${anchor}" font-size="12.5" font-weight="600" fill="var(--ink-2)">${esc(row.name)}</text>`;
           svg += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y + 13).toFixed(1)}" text-anchor="${anchor}" font-size="11" fill="var(--muted)">${fmtHM(row.sec)}</text>`;
@@ -1315,6 +1315,8 @@
     const muted = dark ? '#9a9a92' : '#91918a';
     const bg = dark ? '#1b1b19' : '#ffffff';
     const line = dark ? '#33332e' : '#e9e8e4';
+    const swatchOutline = dark ? '#c9c9c2' : 'none';
+    const segmentOutline = dark ? '#c9c9c2' : bg;
     const W = 760, H = 520, CX = 240, CY = 248, R = 150;
     const fonts = `font-family="-apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif"`;
 
@@ -1329,7 +1331,7 @@
       const s = polar(CX, CY, R, a0);
       const e = polar(CX, CY, R, a1);
       const large = span > 180 ? 1 : 0;
-      arcs += `<path d="M ${CX} ${CY} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z" fill="${row.color}" stroke="${bg}" stroke-width="2"/>`;
+      arcs += `<path d="M ${CX} ${CY} L ${s.x.toFixed(2)} ${s.y.toFixed(2)} A ${R} ${R} 0 ${large} 1 ${e.x.toFixed(2)} ${e.y.toFixed(2)} Z" fill="${row.color}" stroke="${segmentOutline}" stroke-width="2"/>`;
       const mid = a0 + span / 2;
       if (span >= 8) {
         const p1 = polar(CX, CY, R + 6, mid);
@@ -1338,7 +1340,7 @@
         const right = Math.cos((mid - 90) * Math.PI / 180) >= 0;
         const anchor = right ? 'start' : 'end';
         const dx = right ? 8 : -8;
-        arcs += `<polyline points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}" fill="none" stroke="${row.color}" stroke-width="1.6" stroke-linecap="round"/>`;
+        arcs += `<polyline points="${p1.x.toFixed(1)},${p1.y.toFixed(1)} ${p2.x.toFixed(1)},${p2.y.toFixed(1)} ${p3.x.toFixed(1)},${p3.y.toFixed(1)}" fill="none" stroke="${dark ? shade(row.color, 112) : row.color}" stroke-width="1.6" stroke-linecap="round"/>`;
         arcs += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y - 2).toFixed(1)}" text-anchor="${anchor}" font-size="15" font-weight="600" fill="${ink}" ${fonts}>${esc(row.name)}</text>`;
         arcs += `<text x="${(p3.x + dx).toFixed(1)}" y="${(p3.y + 18).toFixed(1)}" text-anchor="${anchor}" font-size="12.5" fill="${muted}" ${fonts}>${fmtHM(row.sec)}</text>`;
       }
@@ -1348,7 +1350,7 @@
     rows.forEach((row, i) => {
       const y = 176 + i * 62;
       legend += `
-        <rect x="470" y="${y - 11}" width="11" height="11" rx="3" fill="${row.color}"/>
+        <rect x="470" y="${y - 11}" width="11" height="11" rx="3" fill="${row.color}" stroke="${swatchOutline}"/>
         <text x="490" y="${y}" font-size="15" fill="${ink}" ${fonts}>${esc(row.name)}</text>
         <text x="700" y="${y}" text-anchor="end" font-size="14" font-weight="700" fill="${ink}" ${fonts}>${((row.sec / total) * 100).toFixed(1)}%</text>
         <text x="490" y="${y + 19}" font-size="12" fill="${muted}" ${fonts}>${fmtHM(row.sec)}</text>`;

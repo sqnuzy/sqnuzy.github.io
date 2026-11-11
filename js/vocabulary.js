@@ -140,6 +140,11 @@
       if (example.translation) quote.appendChild(element('p', 'vocabulary-translation', example.translation));
       parent.appendChild(quote);
     });
+    var related = (word.related_words || []).map(function (id) {
+      var match = catalog.words.find(function (item) { return item.id === id; });
+      return match && match.word;
+    }).filter(Boolean);
+    if (related.length) parent.appendChild(element('p', 'vocabulary-related', '相近／易混词：' + related.join('、')));
   }
   function renderLibrary() {
     if (!catalog || find('library').hidden) return;

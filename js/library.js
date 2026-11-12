@@ -5,9 +5,11 @@
   var cards = Array.from(library.querySelectorAll('[data-library-card]'));
   var buttons = Array.from(library.querySelectorAll('[data-library-category]'));
   var category = '';
+  var composing = false;
+  var committedQuery = input.value;
 
   function filter() {
-    var terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    var terms = committedQuery.trim().toLowerCase().split(/\s+/).filter(Boolean);
     var count = 0;
     cards.forEach(function (card) {
       var metadata = card.dataset.keywords.toLowerCase();
@@ -28,7 +30,17 @@
     library.querySelector('[data-library-empty]').hidden = count !== 0;
   }
 
-  input.addEventListener('input', filter);
+  function filterInput(event) {
+    if (composing || event.isComposing || input.value === committedQuery) return;
+    committedQuery = input.value;
+    filter();
+  }
+  input.addEventListener('compositionstart', function () { composing = true; });
+  input.addEventListener('compositionend', function (event) {
+    composing = false;
+    filterInput(event);
+  });
+  input.addEventListener('input', filterInput);
   buttons.forEach(function (button) {
     button.addEventListener('click', function () {
       category = button.dataset.libraryCategory;

@@ -75,9 +75,10 @@
     if (!event.target.closest('.header-actions') && !event.target.closest('.header-panel')) closePanels();
   });
   document.addEventListener('keydown', function (event) {
-    if (event.key !== 'Escape') return;
+    if (event.key !== 'Escape' || event.isComposing) return;
     var openPanel = document.querySelector('[data-panel].open');
     if (!openPanel) return;
+    event.preventDefault();
     var toggle = document.querySelector('[data-panel-toggle="' + openPanel.dataset.panel + '"]');
     closePanels();
     if (toggle) toggle.focus();
@@ -114,13 +115,63 @@
     });
   });
 
+  var scrollRegions = [];
+  function updateScrollRegions() {
+    scrollRegions.forEach(function (item) {
+      var overflowing = item.region.scrollWidth > item.region.clientWidth + 1;
+      item.hint.hidden = !overflowing;
+      item.region.classList.toggle('has-horizontal-overflow', overflowing);
+      if (overflowing) {
+        item.region.setAttribute('tabindex', '0');
+        item.region.setAttribute('role', 'region');
+        item.region.setAttribute('aria-label', item.label + '，可左右滚动');
+      } else {
+        item.region.removeAttribute('tabindex');
+        item.region.removeAttribute('role');
+        item.region.removeAttribute('aria-label');
+      }
+    });
+  }
+  var scrollObserver = window.ResizeObserver ? new ResizeObserver(updateScrollRegions) : null;
+  function addScrollRegion(region, block, label) {
+    var hint = document.createElement('p');
+    hint.className = 'scroll-hint';
+    hint.textContent = '左右滑动查看完整' + label;
+    hint.hidden = true;
+    block.parentNode.insertBefore(hint, block);
+    scrollRegions.push({ region: region, hint: hint, label: label });
+    if (scrollObserver) {
+      scrollObserver.observe(region);
+      if (region.firstElementChild) scrollObserver.observe(region.firstElementChild);
+    }
+  }
+
   document.querySelectorAll('.article-body table').forEach(function (table) {
     if (table.closest('figure.highlight')) return;
     var wrapper = document.createElement('div');
     wrapper.className = 'table-wrap';
+    var maxColumns = Array.prototype.reduce.call(table.rows, function (maximum, row) {
+      var columns = Array.prototype.reduce.call(row.cells, function (total, cell) { return total + cell.colSpan; }, 0);
+      return Math.max(maximum, columns);
+    }, 0);
+    wrapper.classList.toggle('has-wide-table', maxColumns >= 3);
+    wrapper.style.setProperty('--table-columns', maxColumns);
     table.parentNode.insertBefore(wrapper, table);
     wrapper.appendChild(table);
+    addScrollRegion(wrapper, wrapper, '表格');
   });
+
+  document.querySelectorAll('.article-body figure.highlight').forEach(function (figure) {
+    var table = figure.querySelector('table');
+    if (table) addScrollRegion(table, figure, '代码');
+  });
+  document.querySelectorAll('.article-body pre').forEach(function (pre) {
+    if (!pre.closest('figure.highlight')) addScrollRegion(pre, pre, '代码');
+  });
+  updateScrollRegions();
+  if (!scrollObserver) window.addEventListener('resize', updateScrollRegions);
+  window.addEventListener('load', updateScrollRegions);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(updateScrollRegions);
 
   document.querySelectorAll('figure.highlight').forEach(function (figure) {
     var lang = Array.prototype.slice.call(figure.classList).filter(function (name) {
@@ -178,6 +229,7 @@
   });
   var headings = Array.prototype.slice.call(document.querySelectorAll('.article-body h1, .article-body h2, .article-body h3, .article-body h4'));
   var tocToggle;
+  var setTocCollapsed;
   if (toc && headings.length) {
     toc.innerHTML = '';
     headings.forEach(function (heading, index) {
@@ -193,7 +245,7 @@
         heading.scrollIntoView({ behavior: 'auto', block: 'start' });
         if (history.replaceState) history.replaceState(null, '', link.hash);
         if (tocToggle && window.matchMedia('(max-width: 860px)').matches) {
-          tocToggle.click();
+          setTocCollapsed(true, false);
           heading.setAttribute('tabindex', '-1');
           heading.focus({ preventScroll: true });
         }
@@ -245,21 +297,33 @@
     tocToggle.setAttribute('aria-expanded', 'true');
     tocCard.id = 'article-toc';
     tocToggle.setAttribute('aria-controls', tocCard.id);
-    if (window.matchMedia('(max-width: 860px)').matches) {
-      tocCard.classList.add('is-collapsed');
-      if (postGrid) postGrid.classList.add('toc-collapsed');
-      tocToggle.setAttribute('aria-expanded', 'false');
-    }
     document.body.appendChild(tocToggle);
-    tocToggle.addEventListener('click', function () {
-      var collapsed = tocCard.classList.toggle('is-collapsed');
+    setTocCollapsed = function (collapsed, restoreFocus) {
+      tocCard.classList.toggle('is-collapsed', collapsed);
       if (postGrid) postGrid.classList.toggle('toc-collapsed', collapsed);
       tocToggle.setAttribute('aria-expanded', String(!collapsed));
+      if (!window.matchMedia('(max-width: 860px)').matches) return;
+      if (collapsed) {
+        if (restoreFocus) tocToggle.focus({ preventScroll: true });
+      } else {
+        closePanels();
+        var firstControl = tocCard.querySelector('input, a');
+        if (firstControl) firstControl.focus({ preventScroll: true });
+      }
+    };
+    setTocCollapsed(window.matchMedia('(max-width: 860px)').matches, false);
+    tocToggle.addEventListener('click', function () {
+      setTocCollapsed(!tocCard.classList.contains('is-collapsed'), true);
     });
+    document.addEventListener('click', function (event) {
+      if (window.matchMedia('(max-width: 860px)').matches && !tocCard.classList.contains('is-collapsed') && !tocCard.contains(event.target) && !tocToggle.contains(event.target)) {
+        setTocCollapsed(true, tocCard.contains(document.activeElement));
+      }
+    }, true);
     document.addEventListener('keydown', function (event) {
-      if (event.key === 'Escape' && !tocCard.classList.contains('is-collapsed') && window.matchMedia('(max-width: 860px)').matches) {
-        tocToggle.click();
-        tocToggle.focus();
+      if (!event.defaultPrevented && !event.isComposing && event.key === 'Escape' && !tocCard.classList.contains('is-collapsed') && window.matchMedia('(max-width: 860px)').matches) {
+        event.preventDefault();
+        setTocCollapsed(true, true);
       }
     });
   }

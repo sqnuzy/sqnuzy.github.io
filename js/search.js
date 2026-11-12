@@ -88,8 +88,10 @@
     if (!input || !output) return;
     var version = 0;
     var timer;
+    var composing = false;
 
     function render() {
+      if (composing) return;
       var current = ++version;
       var query = input.value.trim();
       var terms = query.toLowerCase().split(/\s+/).filter(Boolean);
@@ -122,11 +124,22 @@
       });
     }
 
-    input.addEventListener('input', function () {
+    function queueRender(event) {
       version++;
       clearTimeout(timer);
+      if (composing || event.isComposing) return;
       timer = setTimeout(render, 120);
+    }
+    input.addEventListener('compositionstart', function () {
+      composing = true;
+      version++;
+      clearTimeout(timer);
     });
+    input.addEventListener('compositionend', function (event) {
+      composing = false;
+      queueRender(event);
+    });
+    input.addEventListener('input', queueRender);
     if (navbar) {
       var panel = document.querySelector('[data-panel="search"]');
       function open() {

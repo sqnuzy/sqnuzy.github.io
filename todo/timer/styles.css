@@ -844,6 +844,7 @@ kbd {
   border-radius: 5px;
 }
 .sync-input { display: flex; gap: 8px; margin: 10px 0 8px; }
+#study-sync .btn[hidden] { display: none; }
 .sync-input input {
   flex: 1;
   min-width: 0;

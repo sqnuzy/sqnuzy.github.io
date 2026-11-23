@@ -1593,6 +1593,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
   let syncCfg = loadSyncCfg();
   let syncing = false;
   let syncError = '';
+  let editingSyncToken = false;
 
   function saveSyncCfg() {
     try {
@@ -1620,7 +1621,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
   async function gh(path, opts = {}) {
     const headers = {
       'Accept': 'application/vnd.github+json',
-      'Authorization': 'Bearer ' + syncCfg.token,
+      'Authorization': 'Bearer ' + (opts.token || syncCfg.token),
       'X-GitHub-Api-Version': '2022-11-28'
     };
     if (opts.body) headers['Content-Type'] = 'application/json';
@@ -1631,7 +1632,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       if (err.rateLimited) throw err;
       throw new Error('网络连不上 GitHub');
     }
-    if (res.status === 401) throw new Error('token 无效或没有 gist 权限');
+    if (res.status === 401) throw new Error('GitHub token 无效或已过期，请更新授权');
     if (res.status === 403) throw new Error('GitHub 授权缺少 Gist 读写权限，请检查授权');
     if (res.status === 404) return null;
     if (!res.ok) throw new Error('GitHub 返回 ' + res.status);
@@ -1665,13 +1666,13 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     return created;
   }
 
-  async function readGist(gist) {
+  async function readGist(gist, token = syncCfg.token) {
     const f = gist && gist.files && gist.files[GIST_FILE];
     if (!f) return null;
     let content = f.content;
     if (f.truncated && f.raw_url) {
       try {
-        const r = await fetch(f.raw_url, { headers: { Authorization: 'Bearer ' + syncCfg.token } });
+        const r = await fetch(f.raw_url, { headers: { Authorization: 'Bearer ' + token } });
         content = await r.text();
       } catch (err) { throw new Error('读取 Gist 内容失败'); }
     }
@@ -1779,9 +1780,17 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     syncing = true;
     syncError = '';
     paintSync();
+    const replacement = opts.replacementToken;
     try {
-      const gist = await ensureGist();
-      const remote = await readGist(gist);
+      const gist = replacement ? await gh('/gists/' + encodeURIComponent(syncCfg.gistId), { token: replacement }) : await ensureGist();
+      if (replacement) {
+        if (!gist) throw new Error('找不到原来的 Gist，请检查 GitHub 账号和授权');
+        const account = await gh('/user', { token: replacement });
+        if (!account?.id || account.id !== gist.owner?.id) {
+          throw new Error('请使用原 Gist 所属 GitHub 账号签发的 token');
+        }
+      }
+      const remote = await readGist(gist, replacement);
       const changed = remote ? mergeRemote(remote) : false;
       if (changed) {
         persistLocal();
@@ -1790,11 +1799,13 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       const localJson = JSON.stringify(syncPayload(), null, 1);
       const remoteJson = remote ? JSON.stringify(syncPayload(remote), null, 1) : '';
       if (localJson !== remoteJson) {
-        await gh('/gists/' + syncCfg.gistId, {
+        await gh('/gists/' + encodeURIComponent(syncCfg.gistId), {
           method: 'PATCH',
+          token: replacement,
           body: JSON.stringify({ files: { [GIST_FILE]: { content: localJson } } })
         });
       }
+      if (replacement) syncCfg.token = replacement;
       syncCfg.lastSyncAt = Date.now();
       gistSync.succeeded();
       saveSyncCfg();
@@ -1856,8 +1867,14 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     const stateEl = $('#syncState');
     const setup = $('#syncSetup');
     const live = $('#syncLive');
-    if (setup) setup.hidden = on;
+    if (setup) setup.hidden = on && !editingSyncToken;
     if (live) live.hidden = !on;
+    $('#btnSyncUpdate').hidden = editingSyncToken;
+    $('#btnSyncCancel').hidden = !editingSyncToken;
+    $('#btnSyncConnect').textContent = editingSyncToken ? '更新并同步' : '连接并同步';
+    for (const id of ['syncToken', 'btnSyncConnect', 'btnSyncCancel', 'btnSyncUpdate', 'btnSyncNow', 'btnSyncRecover', 'btnSyncDisconnect']) {
+      $('#' + id).disabled = syncing;
+    }
 
     let label = '未开启';
     let cls = '';
@@ -1887,26 +1904,42 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       if (syncCfg.gistId) { link.href = 'https://gist.github.com/' + syncCfg.gistId; link.hidden = false; }
       else link.hidden = true;
     }
-    const tokenInput = $('#syncToken');
-    if (tokenInput && !on) tokenInput.value = '';
+  }
+
+  function openSyncSettings() {
+    openSettings();
+    const section = $('#study-sync');
+    section.scrollIntoView({ block: 'start' });
+    section.focus({ preventScroll: true });
+  }
+
+  function editSyncToken(editing) {
+    editingSyncToken = editing;
+    const input = $('#syncToken');
+    input.value = '';
+    paintSync();
+    if (editing) input.focus();
+    else if (syncCfg.token) $('#btnSyncUpdate').focus();
   }
 
   async function connectSync() {
+    if (syncing) return;
     const input = $('#syncToken');
     const token = (input ? input.value : '').trim();
     if (!token) { toast('先粘贴 GitHub token'); if (input) input.focus(); return; }
     if (!/^(ghp_|github_pat_)/.test(token)) {
       if (!window.confirm('这个 token 看起来不是 GitHub 的格式（通常以 ghp_ 开头），仍然尝试连接吗？')) return;
     }
-    syncCfg.token = token;
-    syncCfg.gistId = '';
-    syncCfg.lastSyncAt = 0;
-    saveSyncCfg();
-    paintSync();
-    const ok = await syncNow();
+    const replacing = editingSyncToken && !!syncCfg.gistId;
+    if (!replacing) {
+      syncCfg = { token, gistId: '', lastSyncAt: 0 };
+      saveSyncCfg();
+      paintSync();
+    }
+    const ok = await syncNow(replacing ? { replacementToken: token } : {});
     if (ok) {
-      if (input) input.value = '';
-      toast('已连接，之后会自动同步');
+      editSyncToken(false);
+      toast(replacing ? '授权已更新，仍使用原来的 Gist' : '已连接，之后会自动同步');
     } else {
       // 保留 token，网络恢复后还能继续重试；按钮提示失败原因
       toast('连接失败：' + (syncError || '未知错误'));
@@ -1918,7 +1951,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     gistSync.cancel('timer');
     syncCfg = { token: '', gistId: '', lastSyncAt: 0 };
     saveSyncCfg();
-    paintSync();
+    editSyncToken(false);
     toast('已断开云同步');
   }
 
@@ -2069,8 +2102,10 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
       toast('记录已清空');
     });
 
-    $('#btnSync').addEventListener('click', openSettings);
+    $('#btnSync').addEventListener('click', openSyncSettings);
     $('#btnSyncConnect').addEventListener('click', connectSync);
+    $('#btnSyncUpdate').addEventListener('click', () => editSyncToken(true));
+    $('#btnSyncCancel').addEventListener('click', () => editSyncToken(false));
     $('#btnSyncNow').addEventListener('click', () => syncNow());
     $('#btnSyncRecover').addEventListener('click', () => recoverFromAllGists());
     $('#btnSyncDisconnect').addEventListener('click', disconnectSync);
@@ -2135,6 +2170,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: none !impo
     renderFlow();
     paintSync();
     bind();
+    if (location.hash === '#study-sync') openSyncSettings();
     // 刷新 / 重新打开后，把没结束的那一段恢复成「已暂停」
     restoreSession();
 

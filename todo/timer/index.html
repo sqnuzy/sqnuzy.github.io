@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#f5f1e9">
 <title>学习计时 | sqnuzy 的算法小站</title>
 <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="styles.css?v=20261110-2">
+<link rel="stylesheet" href="styles.css?v=20261123-1">
 </head>
 <body>
 <div class="page">
@@ -253,9 +253,9 @@
         </form>
       </div>
 
-      <div class="panel-section">
+      <div class="panel-section" id="study-sync" tabindex="-1" aria-labelledby="studySyncTitle">
         <div class="section-head">
-          <h3>跨设备同步</h3>
+          <h3 id="studySyncTitle">跨设备同步</h3>
           <span class="sync-state" id="syncState">未开启</span>
         </div>
         <div id="syncSetup">
@@ -263,11 +263,12 @@
           <ol class="sync-steps">
             <li>打开 <a href="https://github.com/settings/tokens/new?scopes=gist&amp;description=study-timer" target="_blank" rel="noopener">github.com/settings/tokens</a>（需要先登录）</li>
             <li>页面里的权限列表很长，用 <kbd>Ctrl</kbd>+<kbd>F</kbd> 搜 <b>gist</b>，只勾这一项（描述是 <i>Create gists</i>），再点绿色 <b>Generate token</b></li>
-            <li>复制生成的 <code>ghp_…</code> token，粘贴到下面，点「连接并同步」；另一台设备重复一次即可</li>
+            <li>复制生成的 <code>ghp_…</code> token，粘贴到下面提交。更新授权时使用原 GitHub 账号</li>
           </ol>
           <div class="sync-input">
             <input id="syncToken" type="password" placeholder="ghp_…" autocomplete="off" spellcheck="false" aria-label="GitHub token">
             <button class="btn btn-soft" id="btnSyncConnect" type="button">连接并同步</button>
+            <button class="btn btn-soft" id="btnSyncCancel" type="button" hidden>取消</button>
           </div>
           <p class="muted small">Token 只保存在这台设备的浏览器里；只给 gist 权限，随时可在 GitHub 撤销。</p>
         </div>
@@ -275,6 +276,7 @@
           <p class="muted small" id="syncInfo">已连接</p>
           <div class="data-actions">
             <button class="btn btn-soft" id="btnSyncNow" type="button">立即同步</button>
+            <button class="btn btn-soft" id="btnSyncUpdate" type="button">更新授权</button>
             <a class="btn btn-soft" id="syncGist" target="_blank" rel="noopener" href="#">查看 Gist</a>
             <button class="btn btn-soft" id="btnSyncRecover" type="button">从其他 Gist 找回</button>
             <button class="btn btn-danger" id="btnSyncDisconnect" type="button">断开</button>
@@ -299,6 +301,6 @@
 
 <script src="review.js?v=20261101-3"></script>
 <script src="../gist-sync.js?v=20261106-3"></script>
-<script src="app.js?v=20261110-2"></script>
+<script src="app.js?v=20261123-1"></script>
 </body>
 </html>
